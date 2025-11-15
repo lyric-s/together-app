@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# Expo files
+.expo/
+.expo-shared/
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# Bundles
+dist/
+build/
+web-build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
