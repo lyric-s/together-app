@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import ModificationMission from './pages_web/assos/ModificationMission'
+import ChangeMission from './pages_web/assos/ChangeMission'
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -15,7 +15,7 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <ModificationMission/>
+      <ChangeMission/>
       {/*
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
