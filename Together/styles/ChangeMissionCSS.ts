@@ -147,4 +147,46 @@ export const styles =  StyleSheet.create({
     borderRadius: 10,
     width: "80%",
   },
+  icon: {
+    width: 28,
+    height: 28,
+    marginRight: 8,
+  },
+  searchBar: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 14,
+    marginTop: 20,
+  },
+  itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+  },
+  benevoleText: {
+    fontSize: 16,
+  },
+  croixCircle: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    marginLeft: 50,
+    borderColor: '#6A66B8',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  croixText: {
+    fontSize: 20,
+    lineHeight: 18,
+    color: '#6A66B8',
+  },
+  separator: {
+    height: 0.5,
+    backgroundColor: '#767676',
+  },
 });
