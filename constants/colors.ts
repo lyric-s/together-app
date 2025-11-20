@@ -6,4 +6,5 @@ export const Colors = {
     violetText: '#544FB3',
     grayText: '#6B6475',
     inputBackground: '#6A66B8',
+    WhiteText: '#FFFFFF',
 };
