@@ -38,7 +38,11 @@ return (
     <TextInput
       style={styles.input}
       placeholder="Rechercher..."
+<<<<<<< HEAD
       placeholderTextColor={Colors.grayPlaceholder}
+=======
+      placeholderTextColor={Colors.placeholderGris}
+>>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
       value={text}
       onChangeText={(t) => setText(t)}
     />
@@ -49,11 +53,19 @@ return (
         selectedValue={selected1}
         onValueChange={(v) => setSelected1(v)}
         style={styles.picker}
+<<<<<<< HEAD
         dropdownIconColor={Colors.black}
       >
         <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
         {filters_1.map((f) => (
           <Picker.Item key={f} label={f} value={f} color={Colors.black} />
+=======
+        dropdownIconColor={Colors.noir}
+      >
+        <Picker.Item label="Choisir…" value="-" color={Colors.placeholderGris} />
+        {filters_1.map((f) => (
+          <Picker.Item key={f} label={f} value={f} color={Colors.noir} />
+>>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
         ))}
       </Picker>
     </View>
@@ -64,11 +76,19 @@ return (
         selectedValue={selected2}
         onValueChange={(v) => setSelected2(v)}
         style={styles.picker}
+<<<<<<< HEAD
         dropdownIconColor={Colors.black}
       >
         <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
         {filters_2.map((f) => (
           <Picker.Item key={f} label={f} value={f} color={Colors.black} />
+=======
+        dropdownIconColor={Colors.noir}
+      >
+        <Picker.Item label="Choisir…" value="-" color={Colors.placeholderGris} />
+        {filters_2.map((f) => (
+          <Picker.Item key={f} label={f} value={f} color={Colors.noir} />
+>>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
         ))}
       </Picker>
     </View>
