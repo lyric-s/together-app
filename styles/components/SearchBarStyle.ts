@@ -12,17 +12,17 @@ export const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-    backgroundColor: Colors.blanc,
+    backgroundColor: Colors.white,
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 10,
     fontSize: 16,
-    color: Colors.noir,
+    color: Colors.black,
   },
 
   pickerWrapper: {
     width: 130,
-    backgroundColor: Colors.blanc,
+    backgroundColor: Colors.white,
     borderRadius: 10,
     borderWidth: 0,      
     overflow: "hidden",
@@ -34,12 +34,12 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     margin: 0,
-    color: Colors.placeholderGris,  
+    color: Colors.grayPlaceholder,  
     borderWidth: 0,   
   },
 
   resetButton: {
-    backgroundColor: Colors.blanc,
+    backgroundColor: Colors.white,
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,

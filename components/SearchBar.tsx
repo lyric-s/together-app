@@ -38,7 +38,7 @@ return (
     <TextInput
       style={styles.input}
       placeholder="Rechercher..."
-      placeholderTextColor={Colors.placeholderGris}
+      placeholderTextColor={Colors.grayPlaceholder}
       value={text}
       onChangeText={(t) => setText(t)}
     />
@@ -49,11 +49,11 @@ return (
         selectedValue={selected1}
         onValueChange={(v) => setSelected1(v)}
         style={styles.picker}
-        dropdownIconColor={Colors.noir}
+        dropdownIconColor={Colors.black}
       >
-        <Picker.Item label="Choisir…" value="-" color={Colors.placeholderGris} />
+        <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
         {filters_1.map((f) => (
-          <Picker.Item key={f} label={f} value={f} color={Colors.noir} />
+          <Picker.Item key={f} label={f} value={f} color={Colors.black} />
         ))}
       </Picker>
     </View>
@@ -64,11 +64,11 @@ return (
         selectedValue={selected2}
         onValueChange={(v) => setSelected2(v)}
         style={styles.picker}
-        dropdownIconColor={Colors.noir}
+        dropdownIconColor={Colors.black}
       >
-        <Picker.Item label="Choisir…" value="-" color={Colors.placeholderGris} />
+        <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
         {filters_2.map((f) => (
-          <Picker.Item key={f} label={f} value={f} color={Colors.noir} />
+          <Picker.Item key={f} label={f} value={f} color={Colors.black} />
         ))}
       </Picker>
     </View>

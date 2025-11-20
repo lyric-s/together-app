@@ -1,13 +1,13 @@
 export const Colors = {
     orange: '#FF9A66',
     violet: '#6A66B8',
-    fondHaut: '#FFF7F3',
-    fondBas: '#FFE5CF',
-    texteViolet: '#544FB3',
-    texteGris: '#6B6475',
-    champFond: '#6A66B8',
-    placeholderGris: '#666666',
-    noir: '#000000',
-    blanc: '#FFFFFF',
+    topBackground: '#FFF7F3',
+    bottomBackground: '#FFE5CF',
+    violetText: '#544FB3',
+    grayText: '#6B6475',
+    inputBackground: '#6A66B8',
+    grayPlaceholder: '#666666',
+    black: '#000000',
+    white: '#FFFFFF',
     mauve : '#81458F'
 };
