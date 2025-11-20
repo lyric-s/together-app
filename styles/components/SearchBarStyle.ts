@@ -13,28 +13,40 @@ export const styles = StyleSheet.create({
   input: {
     flex: 1,
 <<<<<<< HEAD
+<<<<<<< HEAD
     backgroundColor: Colors.white,
 =======
     backgroundColor: Colors.blanc,
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    backgroundColor: Colors.white,
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 10,
     fontSize: 16,
 <<<<<<< HEAD
+<<<<<<< HEAD
     color: Colors.black,
 =======
     color: Colors.noir,
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    color: Colors.black,
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
   },
 
   pickerWrapper: {
     width: 130,
 <<<<<<< HEAD
+<<<<<<< HEAD
     backgroundColor: Colors.white,
 =======
     backgroundColor: Colors.blanc,
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    backgroundColor: Colors.white,
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
     borderRadius: 10,
     borderWidth: 0,      
     overflow: "hidden",
@@ -47,19 +59,27 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 14,
     margin: 0,
 <<<<<<< HEAD
+<<<<<<< HEAD
     color: Colors.grayPlaceholder,  
 =======
     color: Colors.placeholderGris,  
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    color: Colors.grayPlaceholder,  
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
     borderWidth: 0,   
   },
 
   resetButton: {
 <<<<<<< HEAD
+<<<<<<< HEAD
     backgroundColor: Colors.white,
 =======
     backgroundColor: Colors.blanc,
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    backgroundColor: Colors.white,
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,

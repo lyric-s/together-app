@@ -39,10 +39,14 @@ return (
       style={styles.input}
       placeholder="Rechercher..."
 <<<<<<< HEAD
+<<<<<<< HEAD
       placeholderTextColor={Colors.grayPlaceholder}
 =======
       placeholderTextColor={Colors.placeholderGris}
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+      placeholderTextColor={Colors.grayPlaceholder}
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
       value={text}
       onChangeText={(t) => setText(t)}
     />
@@ -54,6 +58,7 @@ return (
         onValueChange={(v) => setSelected1(v)}
         style={styles.picker}
 <<<<<<< HEAD
+<<<<<<< HEAD
         dropdownIconColor={Colors.black}
       >
         <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
@@ -61,11 +66,18 @@ return (
           <Picker.Item key={f} label={f} value={f} color={Colors.black} />
 =======
         dropdownIconColor={Colors.noir}
+=======
+        dropdownIconColor={Colors.black}
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
       >
-        <Picker.Item label="Choisir…" value="-" color={Colors.placeholderGris} />
+        <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
         {filters_1.map((f) => (
+<<<<<<< HEAD
           <Picker.Item key={f} label={f} value={f} color={Colors.noir} />
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+          <Picker.Item key={f} label={f} value={f} color={Colors.black} />
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
         ))}
       </Picker>
     </View>
@@ -77,6 +89,7 @@ return (
         onValueChange={(v) => setSelected2(v)}
         style={styles.picker}
 <<<<<<< HEAD
+<<<<<<< HEAD
         dropdownIconColor={Colors.black}
       >
         <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
@@ -84,11 +97,18 @@ return (
           <Picker.Item key={f} label={f} value={f} color={Colors.black} />
 =======
         dropdownIconColor={Colors.noir}
+=======
+        dropdownIconColor={Colors.black}
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
       >
-        <Picker.Item label="Choisir…" value="-" color={Colors.placeholderGris} />
+        <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
         {filters_2.map((f) => (
+<<<<<<< HEAD
           <Picker.Item key={f} label={f} value={f} color={Colors.noir} />
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+          <Picker.Item key={f} label={f} value={f} color={Colors.black} />
+>>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
         ))}
       </Picker>
     </View>
