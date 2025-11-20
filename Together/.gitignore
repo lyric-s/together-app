@@ -5,6 +5,7 @@ node_modules/
 
 # Expo
 .expo/
+.expo-shared/
 dist/
 web-build/
 expo-env.d.ts
@@ -42,5 +43,18 @@ app-example
 /ios
 /android
 
-# .idea
+# editors
 .idea/
+.vscode/
+*.iml
+
+# OS junk
+Thumbs.db
+
+# Environment variables
+.env*
+!.env.example
+
+# JetBrains
+shelf/
+workspace.xml
