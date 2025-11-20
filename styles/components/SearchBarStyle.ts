@@ -48,7 +48,7 @@ export const styles = StyleSheet.create({
   },
 
   resetText: {
-    color: Colors.mauve,
+    color: Colors.palePurple,
     fontWeight: "bold",
     fontSize: 16,
     paddingHorizontal: 14,
