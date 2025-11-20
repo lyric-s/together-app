@@ -1,6 +1,11 @@
 import React from 'react';
-import Connexion from '@/pages/Connexion';
+import {  View } from 'react-native';
+import Cross from '@/components/Cross';
 
-export default function Index() {
-    return <Connexion />;
+export default function Connexion() {
+    return (
+        <View style={{ flex: 1 }}>
+            <Cross onClose={() => console.log('Fermeture')} />
+        </View>
+    );
 }
