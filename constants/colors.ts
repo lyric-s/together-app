@@ -6,5 +6,8 @@ export const Colors = {
     violetText: '#544FB3',
     grayText: '#6B6475',
     inputBackground: '#6A66B8',
-    WhiteText: '#FFFFFF',
+    grayPlaceholder: '#666666',
+    black: '#000000',
+    white: '#FFFFFF',
+    palePurple : '#81458F'
 };
