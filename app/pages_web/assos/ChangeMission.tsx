@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, ScrollView, Text, TextInput, Button, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
+import { FlatList, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../../../styles/ChangeMissionCSS';
 import { handleSaveMission, updateMissionField } from '../../../utils/pages_web/ChangeMissionTS';
