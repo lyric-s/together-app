@@ -11,4 +11,6 @@ export const Colors = {
     white: '#FFFFFF',
     palePurple : '#81458F',
     lightOrange: "#FF9A66",
+    red: '#FF2626',
+    buttonBackgroundViolet: '#584EAF'
 };
