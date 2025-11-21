@@ -9,5 +9,6 @@ export const Colors = {
     grayPlaceholder: '#666666',
     black: '#000000',
     white: '#FFFFFF',
-    palePurple : '#81458F'
+    palePurple : '#81458F',
+    lightOrange: "#FF9A66",
 };
