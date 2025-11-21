@@ -1,5 +1,5 @@
+import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
-import React from 'react';
 import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type Benevole = {
@@ -61,7 +61,7 @@ export default function ListeBenevolesModal({
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text style={styles.title}>{title} - Liste des bénévoles</Text>
                 <TouchableOpacity onPress={onClose}>
-                <Text style={[styles.croixText, { fontSize: 50, color: '#FF2626' }]}>×</Text>
+                <Text style={[styles.croixText, { fontSize: 50, color: Colors.red }]}>×</Text>
                 </TouchableOpacity>
             </View>
 
@@ -87,7 +87,7 @@ export default function ListeBenevolesModal({
             />
 
             <TouchableOpacity
-                style={[styles.button, {backgroundColor: '#584EAF', marginHorizontal: 50}]}
+                style={[styles.button, {backgroundColor: Colors.buttonBackgroundViolet, marginHorizontal: 50}]}
                 onPress={onClose}
             >
                 <Text style={styles.buttonText}>Envoyer un mail aux bénévoles</Text>
