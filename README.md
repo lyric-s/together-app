@@ -53,10 +53,14 @@ Join our community of developers creating universal apps.
 
 ## How to properly name commits 
 
-### `<prefix(among expected below, mandatory)>: <JIRA-1(if linked to a ticket)> commit message`
+### `<prefix>: <JIRA-1> <commit message>`
 
-`JIRA-1` is an example **meant to be replaced** by the actual ticket name related to the work being done on the branch. \
-If the branch you are committing on is not **linked** to a JIRA ticket, just write the message; otherwise, you **must** include the ticket name.
+`prefix` is **meant to be replaced** by one of the expected prefixes which can be found in the section below, it is **mandatory** to put one. 
+
+`JIRA-1` is an example **meant to be replaced** by the actual ticket name, in capital letters, related to the work being done on the branch. \
+If the branch you are committing on is **not linked** to a JIRA ticket, just write the message; otherwise, you **must** include the ticket name. 
+
+`commit message` is **meant to be replaced** and must have **no capital letters**. It should be no more than a **short, but clear, sentence**.
 
 ## Expected prefixes
 
