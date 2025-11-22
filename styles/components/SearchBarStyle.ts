@@ -69,10 +69,14 @@ export const styles = StyleSheet.create({
 
   resetText: {
 <<<<<<< HEAD
+<<<<<<< HEAD
     color: Colors.palePurple,
 =======
     color: Colors.mauve,
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    color: Colors.palePurple,
+>>>>>>> 2e0de777 (feat: TA-63 profil picture)
     fontWeight: "bold",
     fontSize: 16,
     paddingHorizontal: 14,
@@ -83,7 +87,11 @@ export const styles = StyleSheet.create({
     height: 35,
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
 });
 =======
 });
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+});
+>>>>>>> 2e0de777 (feat: TA-63 profil picture)
