@@ -1,24 +1,9 @@
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import InputField from '@/components/InputField';
+import React from 'react';
+import CustomButton from '@/components/ImageButton'
 
-export default function InputFieldTest() {
-    const [value, setValue] = useState('');
-
-    return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#FFF7F3',
-            }}
-        >
-            <InputField
-                placeholder="Test input"
-                value={value}
-                onChangeText={setValue}
-            />
-        </View>
-    );
+export default function Index() {
+    return <CustomButton
+            image={require("../assets/images/reward.png")}
+            onPress={() => console.log("clic !")}
+            />;
 }
