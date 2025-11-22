@@ -6,11 +6,13 @@ export const Colors = {
     violetText: '#544FB3',
     grayText: '#6B6475',
     grayPlaceholder: '#666666',
+    gray: '#767676',
     black: '#000000',
     white: '#FFFFFF',
     palePurple : '#81458F',
     lightOrange: "#FF9A66",
     red: '#FF2626',
     buttonBackgroundViolet: '#584EAF',
-    whiteLittleGray: "#DDDDDD"
+    whiteLittleGray: "#DDDDDD",
+    transparentBlack: "rgba(0, 0, 0, 0.5)"
 };

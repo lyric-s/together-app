@@ -1,9 +1,8 @@
 import React from 'react';
-import CustomButton from '@/components/ImageButton'
+import BackButton from '@/components/BackButton';
 
 export default function Index() {
-    return <CustomButton
-            image={require("../assets/images/reward.png")}
-            onPress={() => console.log("clic !")}
-            />;
+    return <BackButton
+                name_page = 'Mon profil'
+            />
 }
