@@ -48,3 +48,58 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+---
+
+## How to properly name commits 
+
+### `<prefix(among expected below, mandatory)>: <JIRA-1(if linked to a ticket)> commit message`
+
+`JIRA-1` is an example **meant to be replaced** by the actual ticket name related to the work being done on the branch. \
+If the branch you are committing on is not **linked** to a JIRA ticket, just write the message; otherwise, you **must** include the ticket name.
+
+## Expected prefixes
+
+### `feat:`
+Introduces a **new feature**.
+
+### `fix:`
+A **bug fix**.
+
+### `build:`
+Changes that affect the **build system or external dependencies**.
+
+### `chore:`
+Routine tasks that **don’t affect source or test code** (e.g., maintenance, cleanup).
+
+### `ci:`
+Changes to **continuous integration configuration** (CI scripts, workflows).
+
+### `docs:`
+Documentation-only changes.
+
+### `style:`
+Code changes that **don’t affect meaning** (formatting, whitespace, semicolons).
+
+### `refactor:`
+Code changes that **neither fix bugs nor add features** (structural improvements).
+
+### `perf:`
+Code changes that **improve performance**.
+
+### `test:`
+Adding or modifying **tests**.
+
+### `revert:`
+Reverts a previous commit.
+
+## Breaking Changes
+
+### **BREAKING CHANGE:** (footer)
+A footer indicating a **breaking API change** → major SemVer bump.
+
+### **! after type**
+Alternative breaking-change notation:  
+Example: `feat!: change API behavior` 
+
+[source: conventional commits organization website](https://www.conventionalcommits.org/en/v1.0.0/#specification)
