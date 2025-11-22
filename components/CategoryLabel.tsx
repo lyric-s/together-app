@@ -14,7 +14,7 @@ export default function CategoryLabel({
 }: Props) {
   return (
     <View
-      style={[styles.container, { backgroundColor }]}
+      style={[styles.container, { backgroundColor: backgroundColor }]}
     >
       <Text style={[styles.text]} numberOfLines={1} ellipsizeMode="tail">
         {text}

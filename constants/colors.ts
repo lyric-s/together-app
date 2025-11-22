@@ -13,5 +13,6 @@ export const Colors = {
     lightOrange: "#FF9A66",
     red: '#FF2626',
     buttonBackgroundViolet: '#584EAF',
-    whiteLittleGray: "#DDDDDD"
+    whiteLittleGray: "#DDDDDD",
+    transparentBlack: "rgba(0, 0, 0, 0.5)"
 };
