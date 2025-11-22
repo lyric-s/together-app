@@ -1,27 +1,28 @@
+import { Colors } from '@/constants/colors';
 import { StyleSheet } from 'react-native';
 
 export const styles =  StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: Colors.white,
     padding: 20,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#000000",
+    color: Colors.black,
     marginBottom: 10,
   },
   label: {
     fontWeight: "600",
     marginTop: 10,
     marginBottom: 10,
-    color: "#333",
+    color: Colors.black,
   },
   text: {
     fontSize: 14,
     marginBottom: 20,
-    color: "#555",
+    color: Colors.grayText,
   },
   image: {
     width: 200,
@@ -32,7 +33,7 @@ export const styles =  StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: Colors.whiteLittleGray,
     borderRadius: 8,
     padding: 8,
     marginTop: 5,
@@ -41,19 +42,19 @@ export const styles =  StyleSheet.create({
     width: '100%',
   },
   dropDownStyle: {
-    backgroundColor: '#f0f0f0',  // fond gris clair pour la liste déroulante
+    backgroundColor: Colors.white,  // fond gris clair pour la liste déroulante
     borderRadius: 8,
   },
   placeholderStyle: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.grayPlaceholder,
   },
   labelStyle: {
     fontSize: 14,
-    color: '#333',
+    color: Colors.black,
   },
   button: {
-    backgroundColor: "#FF7630",
+    backgroundColor: Colors.orange,
     padding: 8,
     marginTop: 20,
     borderRadius: 20,
@@ -65,7 +66,7 @@ export const styles =  StyleSheet.create({
     fontWeight: "bold",
   },
   buttonAction: {
-    backgroundColor: "#FF7630",
+    backgroundColor: Colors.orange,
     padding: 15,
     marginTop: 20,
     borderRadius: 10,
@@ -76,13 +77,14 @@ export const styles =  StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: Colors.black,
   },
   modalContainer: {
     backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    width: "80%",
+    width: "90%",
+    maxHeight: '80%' 
   },
   icon: {
     width: 28,
@@ -91,7 +93,7 @@ export const styles =  StyleSheet.create({
   },
   searchBar: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: Colors.whiteLittleGray,
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
@@ -113,17 +115,17 @@ export const styles =  StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     marginLeft: 50,
-    borderColor: '#6A66B8',
+    borderColor: Colors.violet,
     justifyContent: 'center',
     alignItems: 'center',
   },
   croixText: {
     fontSize: 20,
     lineHeight: 18,
-    color: '#6A66B8',
+    color: Colors.violet,
   },
   separator: {
     height: 0.5,
-    backgroundColor: '#767676',
+    backgroundColor: Colors.gray,
   },
 });

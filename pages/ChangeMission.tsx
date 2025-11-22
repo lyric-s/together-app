@@ -1,8 +1,8 @@
+import { styles } from '@/styles/pages/ChangeMissionCSS';
+import { handleSaveMission, updateMissionField } from '@/utils/pages/ChangeMissionTS';
 import { useState } from 'react';
 import { FlatList, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { styles } from '../../../styles/ChangeMissionCSS';
-import { handleSaveMission, updateMissionField } from '../../../utils/pages_web/ChangeMissionTS';
 
 type Mission = {
   id: string,
@@ -83,7 +83,7 @@ export default function ChangeMission() {
     else{
       const numericValue = parseInt(value);
       if (!isNaN(numericValue)) {
-        setMissionModifiable({...missionModifiable, nbMin: numericValue});
+        setMissionModifiable(updateMissionField(missionModifiable, field, numericValue));
       }
     }
   }
@@ -207,7 +207,7 @@ export default function ChangeMission() {
           <TextInput
             style={styles.input}
             value={missionModifiable.place}
-            onChangeText={(text) => handleChange("lieu", text)}
+            onChangeText={(text) => handleChange("place", text)}
           />
 
           <View style={{ flexDirection : 'row', justifyContent : 'space-between'}}>
@@ -236,7 +236,7 @@ export default function ChangeMission() {
           <TextInput
             style={styles.input}
             value={missionModifiable.nbRegistered.toString()}
-            onChangeText={(text) => handleChangeNb("nbInscrit", text)}
+            onChangeText={(text) => handleChangeNb("nbRegistered", text)}
             keyboardType="numeric"
           />
 
@@ -330,7 +330,7 @@ export default function ChangeMission() {
                 </View>
                 <View style={[styles.searchBar, { flexDirection : 'row', alignItems: 'center'}]}>
                   <Image
-                    source = {require('./../../../assets/images/loupe.png')}
+                    source = {require('@/assets/images/loupe.png')}
                     style = {styles.icon}
                   />
                   <TextInput
