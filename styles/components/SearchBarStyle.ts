@@ -89,10 +89,14 @@ export const styles = StyleSheet.create({
 
   resetText: {
 <<<<<<< HEAD
+<<<<<<< HEAD
     color: Colors.palePurple,
 =======
     color: Colors.mauve,
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+    color: Colors.palePurple,
+>>>>>>> 01e54fdf ([TA-65] Category label C13)
     fontWeight: "bold",
     fontSize: 16,
     paddingHorizontal: 14,
@@ -103,7 +107,11 @@ export const styles = StyleSheet.create({
     height: 35,
   },
 <<<<<<< HEAD
+<<<<<<< HEAD
 });
 =======
 });
 >>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
+=======
+});
+>>>>>>> 01e54fdf ([TA-65] Category label C13)

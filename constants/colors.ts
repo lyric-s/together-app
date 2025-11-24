@@ -35,6 +35,12 @@ export const Colors = {
     grayPlaceholder: '#666666',
     black: '#000000',
     white: '#FFFFFF',
+<<<<<<< HEAD
     mauve : '#81458F'
 };
 >>>>>>> da10eb56 (feature/TA-69-C17-search-bar colors modifications)
+=======
+    palePurple : '#81458F',
+    lightOrange: "#FF9A66",
+};
+>>>>>>> 01e54fdf ([TA-65] Category label C13)
