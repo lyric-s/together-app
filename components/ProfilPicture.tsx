@@ -1,14 +1,20 @@
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
 import { Colors } from "../constants/colors";
 
 // ------------- Component C11
 // how to use : <ProfilePicture uri={require('../assets/images/profil-picture.png')} size={120} />
-export default function ProfilePicture({ uri, size = 100 }) {
+
+interface ProfilePictureProps {
+  source: ImageSourcePropType;
+  size?: number;
+}
+
+export default function ProfilePicture({ source, size = 100 }: ProfilePictureProps) {
   return (
     <View style={[styles.container, { width: size, height: size, borderRadius: size / 2 }]}>
       <Image
-        source={ uri }
+        source={ source }
         style={{ width: size, height: size, borderRadius: size / 2 }}
       />
     </View>
