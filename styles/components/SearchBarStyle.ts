@@ -12,29 +12,17 @@ export const styles = StyleSheet.create({
 
   input: {
     flex: 1,
-<<<<<<< HEAD
     backgroundColor: Colors.white,
-=======
-    backgroundColor: Colors.blanc,
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 10,
     fontSize: 16,
-<<<<<<< HEAD
     color: Colors.black,
-=======
-    color: Colors.noir,
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
   },
 
   pickerWrapper: {
     width: 130,
-<<<<<<< HEAD
     backgroundColor: Colors.white,
-=======
-    backgroundColor: Colors.blanc,
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
     borderRadius: 10,
     borderWidth: 0,      
     overflow: "hidden",
@@ -46,20 +34,12 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     margin: 0,
-<<<<<<< HEAD
     color: Colors.grayPlaceholder,  
-=======
-    color: Colors.placeholderGris,  
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
     borderWidth: 0,   
   },
 
   resetButton: {
-<<<<<<< HEAD
     backgroundColor: Colors.white,
-=======
-    backgroundColor: Colors.blanc,
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 10,
@@ -68,15 +48,7 @@ export const styles = StyleSheet.create({
   },
 
   resetText: {
-<<<<<<< HEAD
-<<<<<<< HEAD
     color: Colors.palePurple,
-=======
-    color: Colors.mauve,
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
-=======
-    color: Colors.palePurple,
->>>>>>> 2e0de777 (feat: TA-63 profil picture)
     fontWeight: "bold",
     fontSize: 16,
     paddingHorizontal: 14,
@@ -86,12 +58,4 @@ export const styles = StyleSheet.create({
     width: 35,
     height: 35,
   },
-<<<<<<< HEAD
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> fdb55362 (feature/TA-69-C17-search-bar)
-=======
-});
->>>>>>> 2e0de777 (feat: TA-63 profil picture)
