@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
+<<<<<<< HEAD
+=======
+import { Colors } from "../constants/colors";
+>>>>>>> f16b4188 (feat: TA-67 C15-mission-volunteer-card)
 import CategoryLabel from "./CategoryLabel";
 import { styles } from "../styles/components/MissionVolunteerCardStyle"
 
@@ -20,6 +24,7 @@ interface MissionCardProps {
   image: any; // require(...)
 }
 
+<<<<<<< HEAD
 /**
  * Renders a touchable mission card with image, category badge, optional favorite toggle, mission details, and volunteer counts.
  *
@@ -39,6 +44,8 @@ interface MissionCardProps {
  * @param image - Image source displayed at the top of the card
  * @returns The rendered mission card component
  */
+=======
+>>>>>>> f16b4188 (feat: TA-67 C15-mission-volunteer-card)
 export default function MissionVolunteerCard({
   mission_title,
   association_name,
@@ -138,4 +145,8 @@ export default function MissionVolunteerCard({
         image={require("../assets/images/dogs_img.png")}
         onPressMission={() => console.log("Mission 1 clicked")}
         onPressFavorite={(fav) => console.log("Favorite 1:", fav)}
+<<<<<<< HEAD
       /> */}
+=======
+      /> */}
+>>>>>>> f16b4188 (feat: TA-67 C15-mission-volunteer-card)
