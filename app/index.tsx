@@ -1,9 +1,11 @@
 import React from 'react';
-import CustomButton from '@/components/ImageButton'
+import {  View } from 'react-native';
+import Cross from '@/components/Cross';
 
-export default function Index() {
-    return <CustomButton
-            image={require("../assets/images/reward.png")}
-            onPress={() => console.log("clic !")}
-            />;
+export default function Connexion() {
+    return (
+        <View style={{ flex: 1 }}>
+            <Cross onClose={() => console.log('Fermeture')} />
+        </View>
+    );
 }
