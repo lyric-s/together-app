@@ -14,7 +14,7 @@ export default StyleSheet.create({
         alignItems: 'center',
     },
     text: {
-        color: Colors.champBlanc,
+        color: Colors.white,
         fontSize: 20,
         fontWeight: '500',
     },
