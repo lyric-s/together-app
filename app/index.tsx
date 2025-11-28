@@ -1,11 +1,8 @@
 import React from 'react';
-import {  View } from 'react-native';
-import Cross from '@/components/Cross';
+import BackButton from '@/components/BackButton';
 
-export default function Connexion() {
-    return (
-        <View style={{ flex: 1 }}>
-            <Cross onClose={() => console.log('Fermeture')} />
-        </View>
-    );
+export default function Index() {
+    return <BackButton
+                name_page = 'Mon profil'
+            />
 }
