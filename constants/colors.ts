@@ -22,4 +22,5 @@ export const Colors = {
     texteViolet: '#544FB3',
     texteGris: '#6B6475',
     champFond: '#6A66B8',
+    brightOrange : "#FF7630",
 };
