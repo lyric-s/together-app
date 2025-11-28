@@ -1,10 +1,12 @@
 export const Colors = {
-    orange: '#FF7630',
+    orange: '#FF9A66',
     violet: '#6A66B8',
     topBackground: '#FFF7F3',
     bottomBackground: '#FFE5CF',
     violetText: '#544FB3',
     grayText: '#6B6475',
+    inputBackground: '#6A66B8',
+    WhiteText: '#FFFFFF',
     grayPlaceholder: '#666666',
     gray: '#767676',
     black: '#000000',
@@ -14,5 +16,10 @@ export const Colors = {
     red: '#FF2626',
     buttonBackgroundViolet: '#584EAF',
     whiteLittleGray: "#DDDDDD",
-    transparentBlack: "rgba(0, 0, 0, 0.5)"
+    transparentBlack: "rgba(0, 0, 0, 0.5)",
+    fondHaut: '#FFF7F3',
+    fondBas: '#FFE5CF',
+    texteViolet: '#544FB3',
+    texteGris: '#6B6475',
+    champFond: '#6A66B8',
 };
