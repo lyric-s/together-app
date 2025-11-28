@@ -1,6 +1,7 @@
 export const Colors = {
     orange: '#FF9A66',
     violet: '#6A66B8',
+<<<<<<< HEAD
     topBackground: '#FFF7F3',
     bottomBackground: '#FFE5CF',
     violetText: '#544FB3',
@@ -15,4 +16,12 @@ export const Colors = {
     red: '#FF2626',
     buttonBackgroundViolet: '#584EAF',
     whiteLittleGray: "#DDDDDD"
+
+=======
+    fondHaut: '#FFF7F3',
+    fondBas: '#FFE5CF',
+    texteViolet: '#544FB3',
+    texteGris: '#6B6475',
+    champFond: '#6A66B8',
+>>>>>>> b48348aa (chore: updated project directories and files path)
 };
