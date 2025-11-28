@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -21,5 +22,19 @@ export default function RootLayout() {
       <StatusBar style="auto" />
     </ThemeProvider>
   );
+=======
+import { Stack } from 'expo-router';
+import React from 'react';
 
+export default function RootLayout() {
+    return (
+        <Stack
+            screenOptions={{
+                headerShown: false,
+            }}
+        >
+            <Stack.Screen name="index" /> {/* écran principal */}
+        </Stack>
+    );
+>>>>>>> 3ba22b2d (adding component  button for web and mobile)
 }
