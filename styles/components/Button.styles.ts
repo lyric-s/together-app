@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
 
 export default StyleSheet.create({
-    button: {
+    bouton: {
         marginTop: 98,
         alignSelf: 'center',
         width: '56%',
@@ -13,7 +13,7 @@ export default StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    text: {
+    texte: {
         color: Colors.champBlanc,
         fontSize: 20,
         fontWeight: '500',

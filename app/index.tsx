@@ -9,7 +9,7 @@ export default function Connexion() {
             <Cross onClose={() => console.log('Fermeture')} />
 =======
 import { View } from 'react-native';
-import ButtonAuth from "@/components/Button";
+import BoutonAuth from '@/components/Button';
 
 export default function Index() {
     return (
@@ -21,8 +21,8 @@ export default function Index() {
                 backgroundColor: '#FDF7F2',
             }}
         >
-            <ButtonAuth
-                text="Test button"
+            <BoutonAuth
+                texte="Test button"
                 onPress={() => console.log('Bouton pressé')}
             />
 >>>>>>> 3ba22b2d (adding component  button for web and mobile)
