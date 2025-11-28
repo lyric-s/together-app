@@ -43,7 +43,6 @@ app-example
 /ios
 /android
 
-<<<<<<< HEAD:.gitignore
 # editors
 .idea/
 .vscode/
@@ -59,7 +58,3 @@ Thumbs.db
 # JetBrains
 shelf/
 workspace.xml
-=======
-# .idea
-.idea/
->>>>>>> b560d33a (ajout des dossiers pages et styles et rectification):Together/.gitignore
