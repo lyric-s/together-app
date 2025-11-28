@@ -3,14 +3,14 @@ import { TouchableOpacity, Text } from 'react-native';
 import styles from '@/styles/components/Button.styles';
 
 type Props = {
-    texte: string;
+    text: string;
     onPress?: () => void;
 };
 
-export default function BoutonAuth({ texte, onPress }: Props) {
+export default function ButtonAuth({ text, onPress }: Props) {
     return (
-        <TouchableOpacity style={styles.bouton} onPress={onPress}>
-            <Text style={styles.texte}>{texte}</Text>
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+            <Text style={styles.text}>{text}</Text>
         </TouchableOpacity>
     );
 }
