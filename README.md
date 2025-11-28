@@ -48,8 +48,6 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 ---
 
@@ -109,7 +107,3 @@ Alternative breaking-change notation:
 Example: `feat!: change API behavior` 
 
 [source: conventional commits organization website](https://www.conventionalcommits.org/en/v1.0.0/#specification)
-=======
->>>>>>> 3ba22b2d (adding component  button for web and mobile)
-=======
->>>>>>> b48348aa (chore: updated project directories and files path)
