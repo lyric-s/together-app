@@ -5,6 +5,13 @@ import MobileSearchBar from '@/components/MobileSearchBar';
 import { useState } from "react";
 
 
+/**
+ * Renders a search UI with a category-enabled MobileSearchBar and a simple results count.
+ *
+ * The component maintains a local `results` state and passes `handleSearch` to the search bar; `handleSearch` is invoked when the user submits a search (currently logs inputs and is a placeholder for fetching or filtering results).
+ *
+ * @returns The React Native view containing the MobileSearchBar and a text element showing the number of results.
+ */
 export default function Index() {
     const [results, setResults] = useState([]);
   
