@@ -4,7 +4,7 @@ import { Colors } from "../../constants/colors";
 export const styles = StyleSheet.create({
   container: {
     width: "100%",
-    padding: 10,
+    // padding: 10,
   },
 
   /** TOP BAR */
@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
   },
 
   filterInput: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.darkerWhite,
     borderRadius: 8,
     padding: 8,
     marginTop: 5,
@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
   },
 
   categoryButton: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.darkerWhite,
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -117,13 +117,13 @@ export const styles = StyleSheet.create({
 
   datePickerButton: {
     marginTop: 5,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.darkerWhite,
     padding: 10,
     borderRadius: 10,
   },
 
   datePickerText: {
-    color: Colors.grayPlaceholder,
+    color: Colors.black,
   },
 
   resetButton: {

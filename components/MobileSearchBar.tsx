@@ -166,7 +166,8 @@ export default function MobileSearchBar({
             placeholder="Tape une ville..."
             value={cityInputText}
             onChangeText={(text) => {
-            setCityInputText(text); 
+            setCityInputText(text);
+            setSelectedCity(null); // keep filter state in sync with edited text
             fetchCitySuggestions(text); // calling API pour autocompletion
             }}
           />
@@ -244,6 +245,7 @@ export default function MobileSearchBar({
                 setSelectedCity(null);
                 setSelectedDate(null);
                 setCitySuggestions([]);
+                setCityInputText(default_city ?? "");
             }}
             >
             <Text style={styles.resetButtonText}>Réinitialiser les filtres</Text>

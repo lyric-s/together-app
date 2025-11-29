@@ -17,13 +17,8 @@ export const Colors = {
     buttonBackgroundViolet: '#584EAF',
     whiteLittleGray: "#DDDDDD",
     transparentBlack: "rgba(0, 0, 0, 0.5)",
-    fondHaut: '#FFF7F3',
-    fondBas: '#FFE5CF',
-    texteViolet: '#544FB3',
-    texteGris: '#6B6475',
-    champFond: '#6A66B8',
     purpleBackground: '#2D1C56',
     lavender: '#A99DD9',
     brightOrange: '#FF7630',
-
+    darkerWhite: '#EEEEEE',
 };
