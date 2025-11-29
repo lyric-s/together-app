@@ -41,7 +41,7 @@ export default function MissionAdminAssosCard({
 
     const formattedDate =
         date.toLocaleDateString("fr-FR") +
-        (date.getHours() !== 0
+        (date.getHours() !== 0 || date.getMinutes() !== 0
             ? ` à ${date.toLocaleTimeString("fr-FR", {
                 hour: "2-digit",
                 minute: "2-digit",
