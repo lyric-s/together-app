@@ -1,15 +1,9 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 import { Colors } from "../../constants/colors";
-
-const screenWidth = Dimensions.get("window").width;
-// console.log(screenWidth); ca ma print 1400
-
-// breakpoint at 900px = PC/tablette large
-const isLargeScreen = screenWidth > 1000;
 
 export const styles = StyleSheet.create({
   card: {
-    width: isLargeScreen?"30%":"100%",
+    // width: isLargeScreen?"30%":"100%",
     backgroundColor: Colors.white,
     borderRadius: 12,
     marginVertical: 12,
