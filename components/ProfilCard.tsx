@@ -3,7 +3,7 @@ import { styles } from '@/styles/components/ProfilCardStyle';
 import { Platform, Alert, ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
-import { FormData } from '@/types/profile'; 
+import { FormData } from '@/types/ProfileUser';
 
 type UserType = 'asso' | 'benevole' | 'admin';
 

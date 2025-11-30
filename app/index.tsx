@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { View } from 'react-native';
 import ProfilCard from '@/components/ProfilCard';
 import AlertToast from '@/components/AlertToast';
-import { FormData } from '@/types/profile'; 
+import { FormData } from '@/types/ProfileUser'; 
 
 export default function Index() {
 
