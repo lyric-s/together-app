@@ -1,20 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View } from 'react-native';
 import ProfilCard from '@/components/ProfilCard';
 import AlertToast from '@/components/AlertToast';
-
-type FormData = {
-    picture: any;
-    lastname: string;
-    firstname: string;
-    email: string;
-    mobile: string;
-    role: string;
-    codeRNA: string;
-    recepisse: string;
-    password: string;
-    confirmPassword: string;
-};
+import { FormData } from '@/types/profile'; 
 
 export default function Index() {
 
@@ -33,17 +21,21 @@ export default function Index() {
         role: 'Administrateur',
         codeRNA: '',
         recepisse: '',
-        password: 'hashedpassword',
+        password: 'testPassword123', // Demo data only
         confirmPassword: '',
     };
 
-    const showAlert = (title: string, message: string) => {
+    const showAlert = useCallback((title: string, message: string) => {
         setAlertModal({ visible: true, title, message });
-    };
+    }, []);
 
     const handleSave = async (data: FormData) => {
         console.log('Sauvegardé')
     };
+
+    const handleAlertClose = useCallback(() => {
+        setAlertModal({ visible: false, title: '', message: '' })
+    }, []);
 
     return (
         <View style={{ flex: 1 }}>
@@ -57,7 +49,7 @@ export default function Index() {
                 visible={alertModal.visible}
                 title={alertModal.title}
                 message={alertModal.message}
-                onClose={() => setAlertModal({ visible: false, title: '', message: '' })}
+                onClose={handleAlertClose}
             />
         </View>
     );

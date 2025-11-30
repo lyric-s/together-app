@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react'
 import { styles } from '@/styles/components/AlertToastStyles'
 import { Text, TouchableOpacity, View, Animated } from 'react-native';
-import { Colors } from '@/constants/colors';
 
 type Props = {
   visible: boolean;
@@ -11,50 +10,50 @@ type Props = {
   autoCloseDelay?: number; // delay in ms
 };
 
-export default function AlterToast({ 
-visible, 
-title, 
-message, 
-onClose,
-autoCloseDelay = 4000 
+export default function AlertToast({ 
+  visible, 
+  title, 
+  message, 
+  onClose,
+  autoCloseDelay = 4000 
 }: Props) {
 
-const fadeAnim = React.useRef(new Animated.Value(0)).current;
-const slideAnim = React.useRef(new Animated.Value(-100)).current;
-  useEffect(() => {
-  if (visible) {
-    // Montre le toast
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
-    ]).start();
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(-100)).current;
+    useEffect(() => {
+    if (visible) {
+      // Montre le toast
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+        Animated.timing(slideAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+      ]).start();
 
-    // Auto-close
-    const timer = setTimeout(onClose, autoCloseDelay);
-    return () => clearTimeout(timer);
-  } else {
-    // Cache le toast
-    Animated.parallel([
-      Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
-      Animated.timing(slideAnim, { toValue: -100, duration: 300, useNativeDriver: true }),
-    ]).start();
-  }
-}, [visible, autoCloseDelay, onClose]);
+      // Auto-close
+      const timer = setTimeout(onClose, autoCloseDelay);
+      return () => clearTimeout(timer);
+    } else {
+      // Cache le toast
+      Animated.parallel([
+        Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
+        Animated.timing(slideAnim, { toValue: -100, duration: 300, useNativeDriver: true }),
+      ]).start();
+    }
+  }, [visible, autoCloseDelay, onClose]);
 
-if (!visible) return null;
+  if (!visible) return null;
 
-return (
-  <Animated.View 
-    style={[
-      styles.toastContainer,
-      { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
-    ]}
-  >
-    <TouchableOpacity style={styles.toastContent} onPress={onClose} activeOpacity={0.9}>
-      <Text style={styles.toastTitle}>{title}</Text>
-      <Text style={styles.toastMessage}>{message}</Text>
-      <Text style={styles.toastClose}>✕</Text>
-    </TouchableOpacity>
-  </Animated.View>
-);
+  return (
+    <Animated.View 
+      style={[
+        styles.toastContainer,
+        { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+      ]}
+    >
+      <TouchableOpacity style={styles.toastContent} onPress={onClose} activeOpacity={0.9}>
+        <Text style={styles.toastTitle}>{title}</Text>
+        <Text style={styles.toastMessage}>{message}</Text>
+        <Text style={styles.toastClose}>✕</Text>
+      </TouchableOpacity>
+    </Animated.View>
+  );
 };
