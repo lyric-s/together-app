@@ -14,12 +14,15 @@ export const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
-     
+    width: 350,
   },
 
   imageContainer: {
-    width: "100%",
+    borderRadius: 12,
+    width: "95%",
     height: 150,
+    alignSelf: 'center',
+    marginTop: 10,
     overflow: "hidden",
   },
 
@@ -34,11 +37,14 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 12,
+    marginTop: 5,
+    position: 'relative',
   },
 
   textContainer: {
     flex: 1,
-    paddingRight: 10,
+    paddingRight: 20,
+    paddingLeft: 5,
   },
 
   title: {
@@ -60,9 +66,12 @@ export const styles = StyleSheet.create({
   },
 
   detailButton: {
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
     backgroundColor: Colors.brightOrange,
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingHorizontal: 22,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
