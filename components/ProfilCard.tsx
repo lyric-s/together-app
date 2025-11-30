@@ -1,10 +1,9 @@
-import { Colors } from '@/constants/colors';
 import { useState, useEffect } from 'react';
 import { styles } from '@/styles/components/ProfilCardStyle';
 import { Platform, Alert, ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
-import AlertToast from './AlertToast';
+import { FormData } from '@/types/profile'; 
 
 type UserType = 'asso' | 'benevole' | 'admin';
 
@@ -16,19 +15,6 @@ type FormLabels = {
     role?: string;
     codeRNA?: string;
     recepisse?: string;
-    password: string;
-    confirmPassword: string;
-};
-
-type FormData = {
-    picture: any;
-    lastname: string;
-    firstname: string;
-    email: string;
-    mobile: string;
-    role: string;
-    codeRNA: string;
-    recepisse: string;
     password: string;
     confirmPassword: string;
 };
@@ -134,7 +120,7 @@ export default function ProfilCard({
 
         // Open gallery
         const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ['images'], //ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
             quality: 1,
@@ -156,7 +142,6 @@ export default function ProfilCard({
         try {
             if (!formData.lastname.trim()) {
                 showAlert('Erreur', 'Le nom est obligatoire');
-                //showAlert('Erreur', 'Le nom est obligatoire');
                 return;
             }
 
@@ -169,14 +154,6 @@ export default function ProfilCard({
                     showAlert('Erreur', 'L\'adresse email est obligatoire');
                     return;
                 }
-                if (!formData.password.trim()) {
-                    showAlert('Erreur', 'Le mot de passe est obligatoire');
-                    return;
-                }
-                if (!formData.confirmPassword.trim()) {
-                    showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
-                    return;
-                }
             } else if (userType === 'asso') {
                 if (!formData.codeRNA.trim()) {
                     showAlert('Erreur', 'Le code RNA est obligatoire');
@@ -184,14 +161,6 @@ export default function ProfilCard({
                 }
                 if (!formData.recepisse.trim()) {
                     showAlert('Erreur', 'Le récépissé préfectoral est obligatoire');
-                    return;
-                }
-                if (!formData.password.trim()) {
-                    showAlert('Erreur', 'Le mot de passe est obligatoire');
-                    return;
-                }
-                if (!formData.confirmPassword.trim()) {
-                    showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
                     return;
                 }
             } else if (userType === 'admin') {
@@ -211,18 +180,21 @@ export default function ProfilCard({
                     showAlert('Erreur', 'Le rôle est obligatoire');
                     return;
                 }
-                if (!formData.password) {
-                    showAlert('Erreur', 'Le mot de passe est obligatoire');
-                    return;
-                }
-                if (formData.password.length < 10) {
-                    showAlert('Erreur', 'Le mot de passe doit avoir minimum 10 caractères');
-                    return;
-                }
-                if (!formData.confirmPassword) {
-                    showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
-                    return;
-                }
+            }
+
+            if (!formData.password) {
+                showAlert('Erreur', 'Le mot de passe est obligatoire');
+                return;
+            }
+
+            if (formData.password.length < 10) {
+                showAlert('Erreur', 'Le mot de passe doit avoir minimum 10 caractères');
+                return;
+            }
+
+            if (!formData.confirmPassword) {
+                showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
+                return;
             }
 
             // Check password
