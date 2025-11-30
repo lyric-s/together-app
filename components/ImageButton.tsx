@@ -5,12 +5,14 @@ import { styles } from "@/styles/components/ImageButtonStyle";
 interface CustomButtonProps {
   image: any;           
   onPress?: () => void; 
+  style?: any;
+  styleIcon?: any;
 }
 
-export default function CustomButton({ image, onPress }: CustomButtonProps) {
+export default function CustomButton({ image, onPress, style, styleIcon }: CustomButtonProps) {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Image source={image} style={styles.icon} />
+    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+      <Image source={image} style={[styles.icon, styleIcon]} />
       {<Text style={styles.label}></Text>}
     </TouchableOpacity>
   );

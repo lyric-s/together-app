@@ -1,9 +1,10 @@
 import { Colors } from '@/constants/colors';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { styles } from '@/styles/components/ProfilCardStyle';
-import { Alert, ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Platform, Alert, ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
+import AlertToast from './AlertToast';
 
 type UserType = 'asso' | 'benevole' | 'admin';
 
@@ -34,8 +35,9 @@ type FormData = {
 
 type Props = {
     userType: UserType;
-    profilePicture?: any;
-    onSubmit?: (data: FormData) => void;
+    userData: FormData; // Data of the user from the database
+    onSave?: (data: FormData) => Promise<void>; // Function to save into the database
+    showAlert: (title: string, message: string) => void;
 };
 
 const DEFAULT_PHOTO = require('@/assets/images/profil-picture.png');
@@ -80,31 +82,44 @@ const getLabels = (userType: UserType): FormLabels => {
 
 export default function ProfilCard({
     userType,
-    profilePicture,
-    onSubmit
+    userData,
+    onSave,
+    showAlert,
 }: Props) {
+
+    // Function to show alerts (compatible web and mobile)
+    /*const showAlert = (title: string, message: string) => {
+        if (Platform.OS === 'web') {
+            alert(`${title}\n\n${message}`);
+        } else {
+            Alert.alert(title, message);
+        }
+    };*/
     
     const [isEditing, setIsEditing] = useState(false);
 
     const handleEdit = () => {
+        // Creation of copy of original data
+        setFormData({ ...originalData });
         setIsEditing(true);
     }
+
     const labels = getLabels(userType);
     
-    const [formData, setFormData] = useState<FormData>({
-        picture: profilePicture || DEFAULT_PHOTO,
-        lastname: '',
-        firstname: '',
-        email: '',
-        mobile: '',
-        role: '',
-        codeRNA: '',
-        recepisse: '',
-        password: '',
-        confirmPassword: '',
-    });
+    // Original data (immutable copy)
+    const [originalData, setOriginalData] = useState<FormData>(userData);
+    
+    // Editable data (working copy)
+    const [formData, setFormData] = useState<FormData>({ ...userData });
+
+    // Update the data when userData change (ex: after a refresh of database)
+    useEffect(() => {
+        setOriginalData(userData);
+        setFormData({ ...userData });
+    }, [userData]);
 
     const handleChange = (field: string, value: string) => {
+        // Only working copy
         setFormData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -113,7 +128,7 @@ export default function ProfilCard({
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         
         if (permissionResult.granted === false) {
-            Alert.alert('Permission refusée', 'Vous devez autoriser l\'accès à la galerie pour changer votre photo de profil.');
+            showAlert('Permission refusée', 'Vous devez autoriser l\'accès à la galerie pour changer votre photo de profil.');
             return;
         }
 
@@ -130,23 +145,140 @@ export default function ProfilCard({
         }
     };
 
-
-    const handleSubmit = () => {
-        if (onSubmit) {
-            onSubmit(formData);
-        }
+    const handleCancel = () => {
+        // Cancel changes: restore original data
+        setFormData({ ...originalData });
         setIsEditing(false);
-        console.log('Sauvegardé:', formData);
+        console.log('Modifications annulées, données restaurées');
+    };
+
+    const handleSubmit = async () => {
+        try {
+            if (!formData.lastname.trim()) {
+                showAlert('Erreur', 'Le nom est obligatoire');
+                //showAlert('Erreur', 'Le nom est obligatoire');
+                return;
+            }
+
+            if (userType === 'benevole') {
+                if (!formData.firstname.trim()) {
+                    showAlert('Erreur', 'Le prénom est obligatoire');
+                    return;
+                }
+                if (!formData.email.trim()) {
+                    showAlert('Erreur', 'L\'adresse email est obligatoire');
+                    return;
+                }
+                if (!formData.password.trim()) {
+                    showAlert('Erreur', 'Le mot de passe est obligatoire');
+                    return;
+                }
+                if (!formData.confirmPassword.trim()) {
+                    showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
+                    return;
+                }
+            } else if (userType === 'asso') {
+                if (!formData.codeRNA.trim()) {
+                    showAlert('Erreur', 'Le code RNA est obligatoire');
+                    return;
+                }
+                if (!formData.recepisse.trim()) {
+                    showAlert('Erreur', 'Le récépissé préfectoral est obligatoire');
+                    return;
+                }
+                if (!formData.password.trim()) {
+                    showAlert('Erreur', 'Le mot de passe est obligatoire');
+                    return;
+                }
+                if (!formData.confirmPassword.trim()) {
+                    showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
+                    return;
+                }
+            } else if (userType === 'admin') {
+                if (!formData.firstname.trim()) {
+                    showAlert('Erreur', 'Le prénom est obligatoire');
+                    return;
+                }
+                if (!formData.email.trim()) {
+                    showAlert('Erreur', 'L\'adresse email est obligatoire');
+                    return;
+                }
+                if (!formData.mobile.trim()) {
+                    showAlert('Erreur', 'Le numéro de téléphone est obligatoire');
+                    return;
+                }
+                if (!formData.role.trim()) {
+                    showAlert('Erreur', 'Le rôle est obligatoire');
+                    return;
+                }
+                if (!formData.password) {
+                    showAlert('Erreur', 'Le mot de passe est obligatoire');
+                    return;
+                }
+                if (formData.password.length < 10) {
+                    showAlert('Erreur', 'Le mot de passe doit avoir minimum 10 caractères');
+                    return;
+                }
+                if (!formData.confirmPassword) {
+                    showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
+                    return;
+                }
+            }
+
+            // Check password
+            if (formData.password !== formData.confirmPassword) {
+                showAlert('Erreur', 'Les mots de passe ne correspondent pas');
+                return;
+            }
+
+            // Check email
+            if ((userType === 'benevole' || userType === 'admin') && formData.email.trim()) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.email)) {
+                    showAlert('Erreur', 'L\'adresse email n\'est pas valide');
+                    return;
+                }
+            }
+
+            // Check mobile number (FR)
+            if (userType === 'admin' && formData.mobile.trim()) {
+                const phoneRegex = /^[0-9]{10}$/;
+                const cleanPhone = formData.mobile.replace(/\s/g, '');
+                if (!phoneRegex.test(cleanPhone)) {
+                    showAlert('Erreur', 'Le numéro de téléphone doit contenir 10 chiffres');
+                    return;
+                }
+            }
+
+            // Save in database
+            if (onSave) {
+                await onSave(formData);
+            }
+
+            // Update original data with new data saved
+            setOriginalData({ ...formData });
+            setIsEditing(false);
+            
+            showAlert('Succès', 'Profil enregistré avec succès');
+            console.log('Données sauvegardées:', formData);
+        } catch (error) {
+            showAlert('Erreur', 'Impossible de sauvegarder les modifications');
+            console.error('Erreur de sauvegarde:', error);
+        }
     };
 
     return (
-        <ScrollView style={styles.card} contentContainerStyle={styles.scrollContent} >
+        <ScrollView
+            style={styles.card}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+        >
             {isEditing ? (
                 <>
                     <View>
                         <TouchableOpacity onPress={handleImagePick}>
                             <Image 
-                                source={formData.picture} 
+                                source={formData.picture || DEFAULT_PHOTO} 
                                 style={styles.photo} 
                             />
                             <View style={styles.editIconContainer}>
@@ -311,21 +443,25 @@ export default function ProfilCard({
                         <View style={styles.buttonWrapper}>
                             <CustomButton
                                 image={require('@/assets/images/return.png')}
-                                onPress={() => setIsEditing(false)}
+                                onPress={handleCancel}
+                                style={{width:130, height:36, marginBottom: 20,}}
                             />
                         </View>
                         <View style={styles.buttonWrapper}>
                             <CustomButton
                                 image={require('@/assets/images/validate.png')}
                                 onPress={handleSubmit}
+                                style={{width:130, height:36, marginBottom: 20,}}
                             />
                         </View>
                     </View>
                 </>
             ) : (
                 <>
-                    {/* Mode consultation */}
-                    <Image source={formData.picture} style={styles.photo} />
+                    <Image
+                        source={formData.picture || DEFAULT_PHOTO} 
+                        style={styles.photo}
+                    />
                     
                     <View style={styles.inputRow}>
                         <View style={styles.labelContainer}>
@@ -419,10 +555,11 @@ export default function ProfilCard({
                         </View>
                     </View>
             
-                    <View style={{ marginTop: 20, alignItems: 'center' }}>
+                    <View style={{ width: '100%', marginTop: 20, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', }}>
                         <CustomButton
                             image={require('@/assets/images/edit.png')}
                             onPress={handleEdit}
+                            style={{width:150, height:36, marginBottom: 20,}}
                         />
                     </View>
                 </>
