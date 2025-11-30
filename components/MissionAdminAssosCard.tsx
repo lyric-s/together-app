@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, ImageSourcePropType, useWindowDimensions  } from "react-native";
 import { styles } from "../styles/components/MissionAdminAssosCardStyle";
+import Button from "./Button";
 
 interface MissionAdminAssosCardProps {
     mission_title: string;
@@ -39,7 +40,7 @@ export default function MissionAdminAssosCard({
     onPressDetail,
 }: MissionAdminAssosCardProps) {
     const { width } = useWindowDimensions();
-    const cardWidth = width > 1000 ? '30%' : '100%';
+    //const cardWidth = width > 1000 ? '30%' : '100%';
 
     const formattedDate =
         date.toLocaleDateString("fr-FR") +
@@ -51,8 +52,8 @@ export default function MissionAdminAssosCard({
             : "");
 
     return (
-        <View style={[styles.card, { width: cardWidth }]}>
-            
+        //<View style={[styles.card, { width: cardWidth }]}>
+        <View style={styles.card}>
             {/* Image */}
             <View style={styles.imageContainer}>
                 <Image source={image} style={styles.image} />
@@ -68,7 +69,7 @@ export default function MissionAdminAssosCard({
 
                 {/* Bouton "Voir détail" */}
                 <TouchableOpacity style={styles.detailButton} onPress={onPressDetail}>
-                    <Text style={styles.detailButtonText}>Voir détail</Text>
+                    <Text style={styles.detailButtonText}>Voir détails</Text>
                 </TouchableOpacity>
             </View>
 
