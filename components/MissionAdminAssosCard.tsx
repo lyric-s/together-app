@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, ImageSourcePropType, useWindowDimensions  } from "react-native";
 import { styles } from "../styles/components/MissionAdminAssosCardStyle";
 
 interface MissionAdminAssosCardProps {
     mission_title: string;
     association_name: string;
     date: Date;
-    image: any; // require(...)
+    image: ImageSourcePropType;
     onPressDetail: () => void;
 }
 /**
@@ -25,7 +25,7 @@ interface MissionAdminAssosCardProps {
  *
  * @param mission_title        Title of the mission.
  * @param association_name     Name of the association.
- * @param date                 Mission date. The time part is shown only if hour !== 0.
+ * @param date                 Mission date. The time part is shown only if hour or minute is non-zero.
  * @param image                Image displayed at the top of the card (require(...)).
  * @param onPressDetail        Callback executed when the "Voir détail" button is pressed.
  *
@@ -38,6 +38,8 @@ export default function MissionAdminAssosCard({
     image,
     onPressDetail,
 }: MissionAdminAssosCardProps) {
+    const { width } = useWindowDimensions();
+    const cardWidth = width > 1000 ? '30%' : '100%';
 
     const formattedDate =
         date.toLocaleDateString("fr-FR") +
@@ -49,7 +51,7 @@ export default function MissionAdminAssosCard({
             : "");
 
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, { width: cardWidth }]}>
             
             {/* Image */}
             <View style={styles.imageContainer}>
