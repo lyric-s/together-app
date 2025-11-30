@@ -19,32 +19,12 @@ interface Props {
 }
 
 /**
- * MobileSearchBar Component
+ * Mobile search bar with a text input, a filter panel (city autocomplete, single-select category, date ≥ today), and a search action.
  *
- * A customizable mobile search bar that allows users to:
- * - Enter a text query
- * - Apply optional filters (city with autocomplete, category, date ≥ today)
- * - Trigger a search action with the search icon
- * - Open a filter panel using the settings icon
- * - Reset all filters through a dedicated reset button
- *
- * Props:
- * - onSearch: (text: string, filters: { category?: string | null, city?: string | null, date?: Date | null }) => void
- *      Callback triggered when the user submits a search.
- *
- * - category_list: string[]
- *      List of available categories. Only one can be selected.
- *
- * - default_city?: string
- *      Optional initial city value that is automatically applied as a filter.
- *
- * Features:
- * - Autocompletion for French cities (API geo.api.gouv.fr)
- * - Single-choice category filter
- * - Date picker with restriction to today or future dates
- * - Display of active filters as colored tags
- * - Smooth open/close filter panel
- * - Reset button to clear all filters
+ * @param onSearch - Callback invoked when the user submits a search. Receives the current text and an object with optional filters: `{ category?: string | null, city?: string | null, date?: Date | null }`.
+ * @param category_list - Array of available category names (single selection).
+ * @param default_city - Optional initial city value applied to the city filter and city input.
+ * @returns The rendered MobileSearchBar UI element.
  */
 export default function MobileSearchBar({
   onSearch,
