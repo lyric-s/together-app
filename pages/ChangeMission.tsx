@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
+import BackButton from '@/components/BackButton';
 
 type Mission = {
   id: string,
@@ -112,6 +113,7 @@ export default function ChangeMission() {
   const handleBack = () => {
     setMissionModifiable(mission); // Cancel modifications
     setIsEditing(false);
+    setOpen(false);
   };
 
   const [search, setSearch] = useState('')
@@ -120,28 +122,6 @@ export default function ChangeMission() {
     {id: "2", lastname: "XU", firstname: "Irène"},
     {id: "3", lastname: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", firstname: "abcdefghijklmnopqrstuvwxyz"},
   ])
-
-  // Research function
-  const filteredBenevoles = benevoles.filter(b =>
-    (b.lastname + ' ' + b.firstname).toLowerCase().includes(search.toLowerCase())
-  );
-
-  // Delete function
-  const removeBenevole = (id: string) => {
-    setBenevoles(benevoles.filter(b => b.id !== id));
-  };
-
-  const renderItem = ({ item }: { item: Benevole }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.benevoleText}>{item.lastname} {item.firstname}</Text>
-      <TouchableOpacity
-        style={styles.croixCircle}
-        onPress={() => removeBenevole(item.id)}
-      >
-        <Text style={styles.croixText}>×</Text>
-      </TouchableOpacity>
-    </View>
-  );
 
   if (!mission) {
     return <Text>Chargement...</Text>;
@@ -185,13 +165,6 @@ export default function ChangeMission() {
           </View>
 
           <Text style={styles.label}>Catégorie de la mission</Text>
-          {/*
-          <TextInput
-            style={styles.input}
-            value={missionModifiable.categ}
-            onChangeText={(text) => handleChange("categ", text)}
-          />
-          */}
           <DropDownPicker
             open={open}
             value={missionModifiable.categ}
@@ -271,6 +244,9 @@ export default function ChangeMission() {
         </>
         ) : (
         <>
+          <BackButton
+            name_page='Mission à venir'
+          />
           <Text style={styles.title}>{mission.title}</Text>
 
           <Text style={styles.label}>Image</Text>
@@ -297,7 +273,6 @@ export default function ChangeMission() {
             text = {mission.categ}
             backgroundColor = {getBackgroundColorCateg(mission.categ)}
           />
-          {/*<Text style={styles.text}>{mission.categ}</Text>*/}
 
           <Text style={styles.label}>Lieu</Text>
           <Text style={styles.text}>{mission.place}</Text>
@@ -325,45 +300,7 @@ export default function ChangeMission() {
               </TouchableOpacity>
             </View>
           </View>
-{/*
-          <Modal visible={modalVisible}
-            transparent={true}
-            animationType="slide"
-            onRequestClose={() => setModalVisible(false)}
-          >
-            <View style={{ flex:1, justifyContent:'center', alignItems:'center', backgroundColor:'rgba(0,0,0,0.5)' }}>
-              <View style={{ padding:20, backgroundColor:'white', borderRadius:10 }}>
-                <View style={{ flexDirection : 'row', justifyContent : 'space-between'}}>
-                  <Text style={styles.title}>{mission.title}</Text>
-                  <TouchableOpacity onPress={() => setModalVisible(false)}>
-                    <Text style={[styles.croixText, {fontSize: 50, color: '#FF2626'}]}>×</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={[styles.searchBar, { flexDirection : 'row', alignItems: 'center'}]}>
-                  <Image
-                    source = {require('@/assets/images/loupe.png')}
-                    style = {styles.icon}
-                  />
-                  <TextInput
-                    placeholder="Recherche un bénévole"
-                    value={search}
-                    onChangeText={setSearch}
-                    style={{flex: 1, fontSize: 16, padding: 0, margin: 0, borderWidth: 0, outlineWidth: 0 }}
-                  />
-                </View>
-                <FlatList
-                  data={filteredBenevoles}
-                  keyExtractor={item => item.id}
-                  renderItem={renderItem}
-                  ItemSeparatorComponent={() => <View style={styles.separator} />}
-                />
-                <TouchableOpacity style={[styles.button, {backgroundColor: '#584EAF', marginRight: 50, marginLeft: 50, marginTop: 100}]} onPress={() => setModalVisible(false)}>
-                  <Text style={styles.buttonText}>Envoyer un mail aux bénévoles</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
-          */}
+
           <ListeBenevolesModal
             visible = {modalVisible}
             onClose = {() => setModalVisible(false)}
