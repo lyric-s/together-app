@@ -13,13 +13,13 @@ export default function BackButton({
     const navigation = useNavigation();
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center'}}>
                 <Image
                     source={require('@/assets/images/back.png')}
                     style={styles.icon}
                 />
-                <Text style={ [styles.title, {marginLeft: -10}]}>{name_page}</Text>
+                <Text style={ [styles.titleBackButton, {marginLeft: -5}]}>{name_page}</Text>
             </TouchableOpacity>
         </View>
     );

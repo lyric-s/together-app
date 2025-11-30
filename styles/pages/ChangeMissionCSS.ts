@@ -8,10 +8,15 @@ export const styles =  StyleSheet.create({
         padding: 20,
     },
     title: {
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: "bold",
         color: Colors.black,
         marginBottom: 10,
+    },
+    titleBackButton: {
+        fontSize: 15,
+        fontWeight: "bold",
+        color: Colors.black,
     },
     label: {
         fontWeight: "600",
