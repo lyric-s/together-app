@@ -22,5 +22,8 @@ export const Colors = {
     texteViolet: '#544FB3',
     texteGris: '#6B6475',
     champFond: '#6A66B8',
-    brightOrange : "#FF7630",
+    purpleBackground: '#2D1C56',
+    lavender: '#A99DD9',
+    brightOrange: '#FF7630',
+
 };
