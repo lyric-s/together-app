@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   sidebar: {
     width: "25%",
     height: "100%",
-    minWidth: 270,
+    minWidth: 280,
     backgroundColor: Colors.purpleBackground,
     paddingLeft: 20,
     paddingVertical:10,

@@ -5,7 +5,7 @@ import Sidebar from '@/components/SideBar';
 export default function Index() {
     return <Sidebar
         userType="admin"
-        userName="Jean"
+        userName="tres tres tres long prenom qui prend bcp fde place "
         onNavigate={(route) => console.log("Go to:", route)}
         />
 
