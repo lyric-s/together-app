@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { styles } from '@/styles/components/ProfilCardStyle';
-import { Platform, Alert, ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
 import { FormData } from '@/types/ProfileUser';
@@ -72,15 +72,6 @@ export default function ProfilCard({
     onSave,
     showAlert,
 }: Props) {
-
-    // Function to show alerts (compatible web and mobile)
-    /*const showAlert = (title: string, message: string) => {
-        if (Platform.OS === 'web') {
-            alert(`${title}\n\n${message}`);
-        } else {
-            Alert.alert(title, message);
-        }
-    };*/
     
     const [isEditing, setIsEditing] = useState(false);
 
