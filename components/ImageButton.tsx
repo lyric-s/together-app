@@ -1,12 +1,12 @@
-import { TouchableOpacity, Image, Text } from "react-native";
+import { TouchableOpacity, Image, Text, ViewStyle, ImageStyle } from "react-native";
 import { styles } from "@/styles/components/ImageButtonStyle";
 
 //  -------------- Component C16
 interface CustomButtonProps {
   image: any;           
   onPress?: () => void; 
-  style?: any;
-  styleIcon?: any;
+  style?: ViewStyle;
+  styleIcon?: ImageStyle;
 }
 
 export default function CustomButton({ image, onPress, style, styleIcon }: CustomButtonProps) {
