@@ -104,9 +104,15 @@ export default function ChangeMission() {
     // Validate numeric constraints
     const min = typeof missionModifiable.nbMin === 'number' ? missionModifiable.nbMin : parseInt(String(missionModifiable.nbMin));
     const max = typeof missionModifiable.nbMax === 'number' ? missionModifiable.nbMax : parseInt(String(missionModifiable.nbMax));
-    
+    const registered = typeof missionModifiable.nbRegistered === 'number' ? missionModifiable.nbRegistered : parseInt(String(missionModifiable.nbRegistered));
+
     if (min > max) {
       showAlert('Erreur', 'Le nombre minimum ne peut pas être supérieur au maximum');
+      return;
+    }
+
+    if (registered < min || registered > max) {
+      showAlert('Erreur', 'Le nombre de bénévoles inscrits doit être entre le minimum et le maximum');
       return;
     }
     
