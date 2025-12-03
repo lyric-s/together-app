@@ -3,7 +3,7 @@ import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
 import { Colors } from "../constants/colors";
 
 // ------------- Component C11
-// how to use : <ProfilePicture uri={require('../assets/images/profil-picture.png')} size={120} />
+// how to use : <ProfilePicture source={require('../assets/images/profil-picture.png')} size={120} />
 
 interface ProfilePictureProps {
   source: ImageSourcePropType;
