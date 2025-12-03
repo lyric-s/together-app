@@ -48,10 +48,9 @@ export default function ChangeMission() {
   // Value selected for the drop-down list for the category
   const [selectedCategory, setSelectedCategory] = useState(mission.categ);
   const [items, setItems] = useState([
-    { label: "Animaux", value: "Animaux", backgroundColor: "#FF7630" },
+    { label: "Animaux", value: "Animaux", backgroundColor: Colors.brightOrange },
     { label: "Végétation", value: "Végétation", backgroundColor: "#02fe41ff" },
     { label: "Accompagnement", value: "Accompagnement", backgroundColor: "#AEDDFF" },
-    //{ label: "Ajouter une nouvelle catégorie", value: "__add__" }, // Option spéciale
   ]);
   const getBackgroundColorCateg = (categ : string) => {
     const item = items.find(i => i.value === categ)
@@ -94,6 +93,7 @@ export default function ChangeMission() {
   };
 
   const handleDelete = () => {
+    // TODO: Implement delete logic (API call, confirmation dialog, etc.)
     console.log('Delete mission:', mission.id);
   };
 
@@ -172,7 +172,7 @@ export default function ChangeMission() {
             placeholderStyle={styles.placeholderStyle}
             labelStyle={styles.labelStyle}
             placeholder="Choisir une catégorie"
-            zIndex={1000}  //  Important for the dropdown to appear above other elements
+            zIndex={1000}
           />
 
           <Text style={styles.label}>Lieu</Text>
