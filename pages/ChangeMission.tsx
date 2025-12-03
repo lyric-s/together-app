@@ -172,7 +172,7 @@ export default function ChangeMission() {
             placeholderStyle={styles.placeholderStyle}
             labelStyle={styles.labelStyle}
             placeholder="Choisir une catégorie"
-            zIndex={1000}  // Important pour que le dropdown passe au-dessus d'autres éléments
+            zIndex={1000}  //  Important for the dropdown to appear above other elements
           />
 
           <Text style={styles.label}>Lieu</Text>
