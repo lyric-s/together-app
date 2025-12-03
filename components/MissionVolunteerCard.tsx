@@ -69,7 +69,7 @@ export default function MissionVolunteerCard({
   // date format → jj/mm/aaaa hh:mm
   const formattedDate =
     date.toLocaleDateString("fr-FR") +
-    (date.getHours() !== 0 ? ` à ${date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : "");
+    (date.getHours() !== 0 || date.getMinutes() !== 0 ? ` à ${date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : "");
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPressMission}>
