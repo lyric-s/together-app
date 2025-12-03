@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import CategoryLabel from "./CategoryLabel";
 import { styles } from "../styles/components/MissionVolunteerCardStyle"
@@ -55,6 +55,10 @@ export default function MissionVolunteerCard({
 }: MissionCardProps) {
   
   const [isFavorite, setIsFavorite] = useState(favorite);
+
+  useEffect(() => {
+    setIsFavorite(favorite);
+  }, [favorite]);
 
   const toggleFavorite = () => {
     const newValue = !isFavorite;
