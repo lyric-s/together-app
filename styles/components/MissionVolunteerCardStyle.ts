@@ -2,14 +2,6 @@ import { StyleSheet, Dimensions } from "react-native";
 import { Colors } from "../../constants/colors";
 
 const screenWidth = Dimensions.get("window").width;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-// console.log(screenWidth); ca ma print 1400
->>>>>>> 103182b0 (feat: TA-67 C15-mission-volunteer-card)
-=======
-// console.log(screenWidth); ca ma print 1400
->>>>>>> f16b4188 (feat: TA-67 C15-mission-volunteer-card)
 
 // breakpoint at 900px = PC/tablette large
 const isLargeScreen = screenWidth > 1000;
