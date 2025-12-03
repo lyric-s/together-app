@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
-import { Colors } from "../constants/colors";
 import CategoryLabel from "./CategoryLabel";
 import { styles } from "../styles/components/MissionVolunteerCardStyle"
 
