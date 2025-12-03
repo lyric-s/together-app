@@ -2,11 +2,12 @@ import CategoryLabel from '@/components/CategoryLabel';
 import ListeBenevolesModal from '@/components/ListBenevolesModal';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
 import { handleSaveMission, updateMissionField } from '@/utils/ChangeMissionTS';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
 import BackButton from '@/components/BackButton';
+import AlertToast from '@/components/AlertToast';
 
 type Mission = {
   id: string,
@@ -29,6 +30,19 @@ type Benevole = {
 }
 
 export default function ChangeMission() {
+  const [alertModal, setAlertModal] = useState({ 
+    visible: false, 
+    title: '', 
+    message: '' 
+  });
+
+  const showAlert = useCallback((title: string, message: string) => {
+    setAlertModal({ visible: true, title, message });
+  }, []);
+
+  const handleAlertClose = useCallback(() => {
+    setAlertModal({ visible: false, title: '', message: '' })
+  }, []);
   // Values to be replaced by those in the database
   const [mission, setMission] = useState<Mission>({
     id: "1",
@@ -87,6 +101,19 @@ export default function ChangeMission() {
   }
 
   const handleSave = () => {
+    // Validate numeric constraints
+    const min = typeof missionModifiable.nbMin === 'number' ? missionModifiable.nbMin : parseInt(String(missionModifiable.nbMin));
+    const max = typeof missionModifiable.nbMax === 'number' ? missionModifiable.nbMax : parseInt(String(missionModifiable.nbMax));
+    
+    if (min > max) {
+      showAlert('Erreur', 'Le nombre minimum ne peut pas être supérieur au maximum');
+      return;
+    }
+    
+    if (!missionModifiable.title.trim()) {
+      showAlert('Erreur', 'Le titre est requis');
+      return;
+    }
     setMission(missionModifiable);
     setIsEditing(false);
     handleSaveMission(missionModifiable);
@@ -119,6 +146,13 @@ export default function ChangeMission() {
   }
 
   return (
+    <>
+    <AlertToast
+      visible={alertModal.visible}
+      title={alertModal.title}
+      message={alertModal.message}
+      onClose={handleAlertClose}
+    />
     <ScrollView style={styles.container}>
       {isEditing ? (
         <>
@@ -322,5 +356,6 @@ export default function ChangeMission() {
         )
       }
     </ScrollView>
+    </>
   );
 }
