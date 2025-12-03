@@ -225,7 +225,7 @@ export default function MobileSearchBar({
                 setSelectedCity(null);
                 setSelectedDate(null);
                 setCitySuggestions([]);
-                setCityInputText(default_city ?? "");
+                setCityInputText("");
             }}
             >
             <Text style={styles.resetButtonText}>Réinitialiser les filtres</Text>
