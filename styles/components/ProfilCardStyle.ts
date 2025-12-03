@@ -1,11 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { Colors } from '@/constants/colors'
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
     card: {
         flexDirection: 'row',
         backgroundColor: Colors.white,
-        //padding: 15,
         margin: 20,
         borderRadius: 8,
         shadowColor: Colors.black,
@@ -13,9 +14,8 @@ export const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 5,
         maxHeight: 530,
-        width: 420,
-        //alignSelf: 'center',
-        //alignItems: 'center',
+        width: Math.min(screenWidth - 60, 420),
+        maxWidth: 420,
     },
     scrollContent: {
         margin: 40,
@@ -40,7 +40,6 @@ export const styles = StyleSheet.create({
     },
 
     buttonWrapper: {
-        //flex: 1,
         alignItems: 'center',
     },
     photo: {
