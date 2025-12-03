@@ -15,9 +15,9 @@ type Mission = {
   dateStart: string,
   dateEnd: string,
   categ: string,
-  nbMin: number,
-  nbMax: number,
-  nbRegistered: number,
+  nbMin: number | string,
+  nbMax: number | string,
+  nbRegistered: number | string,
   place: string,
   description: string,
 };
@@ -61,19 +61,6 @@ export default function ChangeMission() {
   // Opening the drop-down list
   const [open, setOpen] = useState(false);
 
-  // Updates the mission when the category changes
-  const onCategoryChange = (value: string) => {
-    if (value === "__add__") {
-      // Logic for adding a new category, for example opening a modal or input
-      console.log("Ouvrir modal pour ajouter catégorie");
-      // You can also close the list
-      setIsEditing(false);
-    } else {
-      setSelectedCategory(value);
-      handleChange("categ", value);
-    }
-  };
-
   // Edit mode
   const [isEditing, setIsEditing] = useState(false);
 
@@ -106,6 +93,10 @@ export default function ChangeMission() {
     handleSaveMission(missionModifiable);
   };
 
+  const handleDelete = () => {
+    console.log('Delete mission:', mission.id);
+  };
+
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -133,7 +124,8 @@ export default function ChangeMission() {
         <>
           <TextInput
               style={styles.input}
-              placeholder={missionModifiable.title}
+              value={missionModifiable.title}
+              placeholder="Titre de la mission"
               onChangeText={(text) => handleChange("title", text)}
           />
 
@@ -321,7 +313,7 @@ export default function ChangeMission() {
               </TouchableOpacity>
             </View>
             <View style={{flex: 1, marginLeft:50}}>
-              <TouchableOpacity style={[styles.buttonAction, {backgroundColor: '#FF2626'}]} onPress={handleSave}>
+              <TouchableOpacity style={[styles.buttonAction, {backgroundColor: Colors.red}]} onPress={handleDelete}>
                 <Text style={styles.buttonText}>Supprimer la mission</Text>
               </TouchableOpacity>
             </View>
