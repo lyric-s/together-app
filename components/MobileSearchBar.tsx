@@ -7,10 +7,11 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
 
 
 import { styles } from "../styles/components/MobileSearchBarStyle";
+import DatePickerField from "./DatePickerFields";
 
 interface Props {
   onSearch: (text: string, filters: any) => void;
@@ -19,7 +20,7 @@ interface Props {
 }
 
 /**
- * Mobile search bar with a text input, a filter panel (city autocomplete, single-select category, date ≥ today), and a search action.
+ * Mobile and web search bar with a text input, a filter panel (city autocomplete, single-select category, date ≥ today), and a search action.
  *
  * @param onSearch - Callback invoked when the user submits a search. Receives the current text and an object with optional filters: `{ category?: string | null, city?: string | null, date?: Date | null }`.
  * @param category_list - Array of available category names (single selection).
@@ -194,28 +195,11 @@ export default function MobileSearchBar({
           {/* Date */}
           <Text style={styles.filterTitle}>Date</Text>
 
-          <TouchableOpacity
-            style={styles.datePickerButton}
-            onPress={() => setShowDatePicker(true)}
-            >
-            <Text style={styles.datePickerText}>
-                {selectedDate
-                ? selectedDate.toLocaleDateString("fr-FR")
-                : "Choisir une date"}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-                value={selectedDate ?? new Date()}
-                mode="date"
-                display="spinner"
-                minimumDate={new Date()}  
-                onChange={(event, date) => {
-                setShowDatePicker(false);
-                if (date) setSelectedDate(date);
-                }}
-            />
-          )}
+          <DatePickerField 
+            date={selectedDate}
+            onChange={setSelectedDate}
+          />
+
 
           {/* Reset button */}
           <TouchableOpacity
