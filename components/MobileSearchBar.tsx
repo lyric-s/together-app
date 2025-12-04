@@ -45,7 +45,6 @@ export default function MobileSearchBar({
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   // date
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   // Autocompletion
