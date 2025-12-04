@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, useWindowDimensions  } from "react-native";
 import ProfilePicture from "./ProfilPicture";
-import { styles } from "../styles/components/SideBarStyle"
+import { getStyles } from "../styles/components/SideBarStyle"
 
 type SidebarProps = {
   userType: "volunteer" | "volunteer_guest" | "association" | "admin";
@@ -28,6 +28,9 @@ type SidebarButtonProps = {
  * When `active` is true, the background becomes bright orange to highlight selection.
  */
 function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps) {
+  const { width } = useWindowDimensions();
+  const styles = getStyles(width);
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -56,6 +59,9 @@ function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps
  */
 
 export default function Sidebar({ userType, userName, onNavigate }: SidebarProps) {
+  const { width } = useWindowDimensions();
+  const styles = getStyles(width);
+
   const appTitle =
     userType === "volunteer" || userType === "volunteer_guest"
       ? "Together"
