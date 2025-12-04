@@ -1,87 +1,92 @@
-/**
- * @file index.tsx
- * @description Main entry point or playground for testing components.
- * Displays different variations of the SwitchButton and the SearchBar.
- */
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import MobileSearchBar from '@/components/MobileSearchBar';
-// Ensure the import path is correct based on your project structure
-import SwitchButton from '@/components/SwitchButton'; 
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-export default function Index() {
-  const [results, setResults] = useState([]);
-  
-  const categoryList = [
-    "Environnement", "Social", "Éducation", "Culture", "Animaux",
-  ];
-  const defaultCity = "Paris";
+const ORANGE_LIGHT = '#FFE4C4';
+const ORANGE_DARK = 'black';
 
-  const handleSearch = (searchText: string, filters: any) => {
-    console.log("Recherche :", searchText, filters);
-  };
+type ActiveTab = 'Mission' | 'Association';
 
-  return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      
-      <Text style={styles.headerTitle}>Zone de Test Composants</Text>
+export default function SegmentedControl() {
+    const [activeTab, setActiveTab] = useState<ActiveTab>('Mission');
 
-      {/* TEST 1: Mission Variant (Default) */}
-      <View style={styles.testSection}>
-        <Text style={styles.label}>Variante 1 : Mission (Default)</Text>
-        <SwitchButton 
-            variant="mission" 
-            onChange={(tab) => console.log("Switch Mission ->", tab)}
-        />
-      </View>
+    return (
+        <View style={styles.container}>
+            <View style={styles.segmentedControl}>
 
-      {/* TEST 2: Auth Variant (New) */}
-      <View style={styles.testSection}>
-        <Text style={styles.label}>Variante 2 : Auth (Inscription/Connexion)</Text>
-        <SwitchButton 
-            variant="auth" 
-            onChange={(tab) => console.log("Switch Auth ->", tab)}
-        />
-      </View>
+                <TouchableOpacity
+                    style={[
+                        styles.button,
+                        activeTab === 'Mission' && styles.activeButton
+                    ]}
+                    onPress={() => setActiveTab('Mission')}
+                    activeOpacity={0.8}
+                >
+                    <Text
+                        style={[
+                            styles.text,
+                            activeTab === 'Mission' ? styles.activeText : styles.inactiveText
+                        ]}
+                    >
+                        Mission
+                    </Text>
+                </TouchableOpacity>
 
-      {/* Existing SearchBar Component */}
-      <View style={styles.testSection}>
-        <Text style={styles.label}>Composant SearchBar</Text>
-        <MobileSearchBar
-            category_list={categoryList}
-            default_city={defaultCity}
-            onSearch={handleSearch}
-        />
-      </View>
-
-    </ScrollView>
-  );
+                <TouchableOpacity
+                    style={[
+                        styles.button,
+                        activeTab === 'Association' && styles.activeButton
+                    ]}
+                    onPress={() => setActiveTab('Association')}
+                    activeOpacity={0.8}
+                >
+                    <Text
+                        style={[
+                            styles.text,
+                            activeTab === 'Association' ? styles.activeText : styles.inactiveText
+                        ]}
+                    >
+                        Association
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-    scrollContainer: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#F5F5F5',
+    container: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 60, // Margin to avoid status bar overlap
+        backgroundColor: '#E5E5E5',
     },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 30,
-        color: '#333',
+    segmentedControl: {
+        flexDirection: 'row',
+        backgroundColor: ORANGE_LIGHT,
+        borderRadius: 100,
+        padding: 4,
+        width: 300,
+        height: 50,
     },
-    testSection: {
-        marginBottom: 40,
-        width: '100%',
+    button: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 100,
+        backgroundColor: ORANGE_LIGHT,
     },
-    label: {
+    activeButton: {
+        backgroundColor: 'white',
+    },
+    text: {
         fontSize: 16,
-        color: '#666',
-        marginBottom: 10,
         fontWeight: '600',
+    },
+    activeText: {
+        color: ORANGE_DARK,
+    },
+    inactiveText: {
+        color: ORANGE_DARK,
+        opacity: 0.7,
     }
 });
