@@ -1,94 +1,84 @@
-/**
- * @file index.tsx
- * @description Main entry point acting as a "Playground" or "Test Zone" for UI components.
- * It demonstrates different variations of the SwitchButton and the MobileSearchBar.
- */
-
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import MobileSearchBar from '@/components/MobileSearchBar';
-// Ensure the import path matches your project structure
-import SwitchButton from '@/components/SwitchButton'; 
+import { View, TouchableOpacity, StyleSheet} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function Index() {
-  // State for search results (currently unused in this display example)
-  const [results, setResults] = useState([]);
-  
-  // Mock data for the search bar
-  const categoryList = [
-    "Environnement", "Social", "Éducation", "Culture", "Animaux",
-  ];
-  const defaultCity = "Paris";
+type TabItem = {
+    id: string;
+    iconName: keyof typeof Ionicons.glyphMap;
+    iconOutline: keyof typeof Ionicons.glyphMap;
+};
 
-  /**
-   * Handles the search action triggered by the SearchBar.
-   * @param searchText - The string entered by the user.
-   * @param filters - The active filters associated with the search.
-   */
-  const handleSearch = (searchText: string, filters: any) => {
-    console.log("Recherche :", searchText, filters);
-  };
+export default function BottomNavBar() {
+    const [activeTab, setActiveTab] = useState<string>('home');
 
-  return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      
-      <Text style={styles.headerTitle}>Zone de Test Composants</Text>
+    const tabs: TabItem[] = [
+        { id: 'home', iconName: 'home', iconOutline: 'home-outline' },
+        { id: 'search', iconName: 'search', iconOutline: 'search-outline' },
+        { id: 'library', iconName: 'book', iconOutline: 'book-outline' },
+        { id: 'profile', iconName: 'person', iconOutline: 'person-outline' },
+    ];
 
-      {/* TEST 1: Mission Variant (Default) */}
-      <View style={styles.testSection}>
-        <Text style={styles.label}>Variante 1 : Mission (Default)</Text>
-        <SwitchButton 
-            variant="mission" 
-            onChange={(tab) => console.log("Switch Mission ->", tab)}
-        />
-      </View>
+    return (
+        <View style={styles.container}>
 
-      {/* TEST 2: Auth Variant (New) */}
-      <View style={styles.testSection}>
-        <Text style={styles.label}>Variante 2 : Auth (Inscription/Connexion)</Text>
-        <SwitchButton 
-            variant="auth" 
-            onChange={(tab) => console.log("Switch Auth ->", tab)}
-        />
-      </View>
+            <View style={styles.navBar}>
 
-      {/* Existing SearchBar Component */}
-      <View style={styles.testSection}>
-        <Text style={styles.label}>Composant SearchBar</Text>
-        <MobileSearchBar
-            category_list={categoryList}
-            default_city={defaultCity}
-            onSearch={handleSearch}
-        />
-      </View>
+                {tabs.map((tab) => {
+                    const isActive = activeTab === tab.id;
 
-    </ScrollView>
-  );
+                    return (
+                        <TouchableOpacity
+                            key={tab.id}
+                            style={styles.tabButton}
+                            onPress={() => setActiveTab(tab.id)}
+                            activeOpacity={0.7}
+                        >
+                            {isActive && <View style={styles.activeIndicator} />}
+
+                            <Ionicons
+                                name={isActive ? tab.iconName : tab.iconOutline}
+                                size={28}
+                                color="#F97316"
+                            />
+                        </TouchableOpacity>
+                    );
+                })}
+
+            </View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-    scrollContainer: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#F5F5F5',
+    container: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        backgroundColor: '#E5E5E5',
+    },
+    navBar: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        height: 80,
+        paddingBottom: 20,
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    tabButton: {
+        flex: 1,
         alignItems: 'center',
-        paddingTop: 60, // Top padding to avoid status bar overlap
+        justifyContent: 'center',
+        position: 'relative',
     },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 30,
-        color: '#333',
+    activeIndicator: {
+        position: 'absolute',
+        top: 0,
+        width: 40,
+        height: 4,
+        backgroundColor: '#F97316',
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
     },
-    testSection: {
-        marginBottom: 40,
-        width: '100%',
-        alignItems: 'center',
-    },
-    label: {
-        fontSize: 16,
-        color: '#666',
-        marginBottom: 10,
-        fontWeight: '600',
-    }
 });
