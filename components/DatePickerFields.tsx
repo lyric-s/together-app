@@ -79,7 +79,7 @@ export default function DatePickerField({
         onPress={() => setShowPicker(true)}
         style={{
           padding: 10,
-          backgroundColor: "#eee",
+          backgroundColor: Colors.darkerWhite,
           borderRadius: 10,
           marginBottom: 10,
         }}
