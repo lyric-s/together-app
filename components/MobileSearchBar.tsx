@@ -200,6 +200,7 @@ export default function MobileSearchBar({
           <DatePickerField 
             date={selectedDate}
             onChange={setSelectedDate}
+            minimumDate={new Date()}
           />
 
 
