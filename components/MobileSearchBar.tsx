@@ -66,12 +66,15 @@ export default function MobileSearchBar({
     if (!text) return setCitySuggestions([]);
     try {
         const response = await fetch(
-        `https://geo.api.gouv.fr/communes?nom=${text}&fields=nom&boost=population&limit=10`
-        );
-        const data = await response.json();
-        setCitySuggestions(data.map((c: any) => c.nom));
-        } catch (error) {
-            console.error("Error fetching cities:", error);
+        `https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(
+          text
+        )}&fields=nom&boost=population&limit=10`
+      );
+      const data = await response.json();
+      setCitySuggestions(data.map((c: { nom: string }) => c.nom));
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      setCitySuggestions([]); // avoid showing stale suggestions on error
     }
   };
 
