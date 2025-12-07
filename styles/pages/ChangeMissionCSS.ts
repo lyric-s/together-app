@@ -47,7 +47,7 @@ export const styles =  StyleSheet.create({
         width: '100%',
     },
     dropDownStyle: {
-        backgroundColor: Colors.white,  // fond gris clair pour la liste déroulante
+        backgroundColor: Colors.white,
         borderRadius: 8,
     },
     placeholderStyle: {
