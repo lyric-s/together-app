@@ -8,13 +8,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
 import BackButton from '@/components/BackButton';
 import AlertToast from '@/components/AlertToast';
-import { Mission } from '@/types/Mission';
-
-type Benevole = {
-  id: string,
-  lastname: string,
-  firstname: string,
-}
+import { Mission, MissionEditable } from '@/types/Mission';
+import { Benevole } from '@/types/ProfileUser';
 
 export default function ChangeMission() {
   const [alertModal, setAlertModal] = useState({ 
@@ -30,6 +25,7 @@ export default function ChangeMission() {
   const handleAlertClose = useCallback(() => {
     setAlertModal({ visible: false, title: '', message: '' })
   }, []);
+
   // Values to be replaced by those in the database
   const [mission, setMission] = useState<Mission>({
     id: "1",
@@ -44,10 +40,26 @@ export default function ChangeMission() {
     place: "Parc des cannetons, 12 rue du Grand lac 62511 Bordeaux",
     description: "Promener nos 16 chiens au parc des Canetons.\nChiens avec et sans laisses.\nLes chiens sont adorables !\nIls ne mordent pas.",
   });
-  const [missionModifiable, setMissionModifiable] = useState(mission);
+
+  const toEditable = (mission: Mission): MissionEditable => ({
+    ...mission,
+    nbMin: mission.nbMin.toString(),
+    nbMax: mission.nbMax.toString(),
+    nbRegistered: mission.nbRegistered.toString(),
+  });
+
+  const toMission = (editable: MissionEditable): Mission => ({
+    ...editable,
+    nbMin: typeof editable.nbMin === 'number' ? editable.nbMin : parseInt(String(editable.nbMin)) || 0,
+    nbMax: typeof editable.nbMax === 'number' ? editable.nbMax : parseInt(String(editable.nbMax)) || 0,
+    nbRegistered: typeof editable.nbRegistered === 'number' ? editable.nbRegistered : parseInt(String(editable.nbRegistered)) || 0,
+  });
+
+  const [missionModifiable, setMissionModifiable] = useState<MissionEditable>(
+    toEditable(mission)
+  );
 
   // Value selected for the drop-down list for the category
-  const [selectedCategory, setSelectedCategory] = useState(mission.categ);
   const [items, setItems] = useState([
     { label: "Animaux", value: "Animaux", backgroundColor: Colors.brightOrange },
     { label: "Végétation", value: "Végétation", backgroundColor: "#02fe41ff" },
@@ -67,30 +79,34 @@ export default function ChangeMission() {
   // Displaying the pop-up for the list of volunteers
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleChange = <K extends keyof Mission>(field: K, value: Mission[K]) => {
-    setMissionModifiable(updateMissionField(missionModifiable, field, value));
+  const handleChange = (field: keyof MissionEditable, value: any) => {
+    setMissionModifiable(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const handleChangeNb = (field: any, value: any) => {
-    if (value === ''){
-      setMissionModifiable(updateMissionField(missionModifiable, field, ''));
-    }
-    else{
+  const handleChangeNb = (field: 'nbMin' | 'nbMax' | 'nbRegistered', value: string) => {
+    if (value === '') {
+      handleChange(field, '');
+    } else {
       const numericValue = parseInt(value);
       if (!isNaN(numericValue)) {
-        setMissionModifiable(updateMissionField(missionModifiable, field, numericValue));
+        handleChange(field, numericValue);
       }
     }
-  }
+  };
 
   const handleListVolunteer = () => {
     setModalVisible(true);
   }
 
   const handleSave = () => {
+    const missionToSave = toMission(missionModifiable);
+    
     // Validate date format and order
-   const dateStartValid = /^\d{2}\/\d{2}\/\d{4} \d{2}h\d{2}$/.test(missionModifiable.dateStart);
-   const dateEndValid = /^\d{2}\/\d{2}\/\d{4} \d{2}h\d{2}$/.test(missionModifiable.dateEnd);
+   const dateStartValid = /^\d{2}\/\d{2}\/\d{4} \d{2}h\d{2}$/.test(missionToSave.dateStart);
+   const dateEndValid = /^\d{2}\/\d{2}\/\d{4} \d{2}h\d{2}$/.test(missionToSave.dateEnd);
    
    if (!dateStartValid || !dateEndValid) {
      showAlert('Erreur', 'Format de date invalide. Utilisez DD/MM/YYYY HHhMM');
@@ -98,9 +114,9 @@ export default function ChangeMission() {
    }
 
     // Validate numeric constraints
-    const min = typeof missionModifiable.nbMin === 'number' ? missionModifiable.nbMin : parseInt(String(missionModifiable.nbMin));
-    const max = typeof missionModifiable.nbMax === 'number' ? missionModifiable.nbMax : parseInt(String(missionModifiable.nbMax));
-    const registered = typeof missionModifiable.nbRegistered === 'number' ? missionModifiable.nbRegistered : parseInt(String(missionModifiable.nbRegistered));
+    const min = missionToSave.nbMin
+    const max = missionToSave.nbMax
+    const registered = missionToSave.nbRegistered
 
     if ([min, max, registered].some((n) => Number.isNaN(n))) {
       showAlert('Erreur', 'Les champs numériques doivent contenir des valeurs valides');
@@ -112,8 +128,8 @@ export default function ChangeMission() {
       return;
     }
 
-    if (registered < min || registered > max) {
-      showAlert('Erreur', 'Le nombre de bénévoles inscrits doit être entre le minimum et le maximum');
+    if (registered > max) {
+      showAlert('Erreur', 'Le nombre de bénévoles inscrits doit être inférieur au maximum');
       return;
     }
     
@@ -121,24 +137,25 @@ export default function ChangeMission() {
       showAlert('Erreur', 'Le titre est requis');
       return;
     }
-    setMission(missionModifiable);
+    setMission(missionToSave);
     setIsEditing(false);
-    handleSaveMission(missionModifiable);
+    handleSaveMission(missionToSave);
   };
 
   const handleDelete = () => {
     // Coming soon
-    // TODO: Implement delete logic (API call, confirmation dialog, etc.)
+    // Implement delete logic (API call, confirmation dialog, etc.)
     console.log('Delete mission:', mission.id);
-    handleDeleteMission(missionModifiable)
+    handleDeleteMission(mission)
   };
 
   const handleEdit = () => {
     setIsEditing(true);
+    setMissionModifiable(toEditable(mission));
   };
 
   const handleBack = () => {
-    setMissionModifiable(mission); // Cancel modifications
+    setMissionModifiable(toEditable(mission)); // Cancel modifications
     setIsEditing(false);
     setOpen(false);
   };
@@ -149,10 +166,6 @@ export default function ChangeMission() {
     {id: "2", lastname: "XU", firstname: "Irène"},
     {id: "3", lastname: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", firstname: "abcdefghijklmnopqrstuvwxyz"},
   ])
-
-  if (!mission) {
-    return <Text>Chargement...</Text>;
-  }
 
   return (
     <>
