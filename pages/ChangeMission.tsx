@@ -106,6 +106,11 @@ export default function ChangeMission() {
     const max = typeof missionModifiable.nbMax === 'number' ? missionModifiable.nbMax : parseInt(String(missionModifiable.nbMax));
     const registered = typeof missionModifiable.nbRegistered === 'number' ? missionModifiable.nbRegistered : parseInt(String(missionModifiable.nbRegistered));
 
+    if ([min, max, registered].some((n) => Number.isNaN(n))) {
+      showAlert('Erreur', 'Les champs numériques doivent contenir des valeurs valides');
+      return;
+    }
+
     if (min > max) {
       showAlert('Erreur', 'Le nombre minimum ne peut pas être supérieur au maximum');
       return;
