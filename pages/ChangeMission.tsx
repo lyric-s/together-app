@@ -8,21 +8,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
 import BackButton from '@/components/BackButton';
 import AlertToast from '@/components/AlertToast';
-import Toast from 'react-native-toast-message';
-
-type Mission = {
-  id: string,
-  title: string,
-  image: string,
-  dateStart: string,
-  dateEnd: string,
-  categ: string,
-  nbMin: number | string,
-  nbMax: number | string,
-  nbRegistered: number | string,
-  place: string,
-  description: string,
-};
+import { Mission } from '@/types/Mission';
 
 type Benevole = {
   id: string,
@@ -81,7 +67,7 @@ export default function ChangeMission() {
   // Displaying the pop-up for the list of volunteers
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleChange = (field: any, value: any) => {
+  const handleChange = <K extends keyof Mission>(field: K, value: Mission[K]) => {
     setMissionModifiable(updateMissionField(missionModifiable, field, value));
   };
 
@@ -102,6 +88,15 @@ export default function ChangeMission() {
   }
 
   const handleSave = () => {
+    // Validate date format and order
+   const dateStartValid = /^\d{2}\/\d{2}\/\d{4} \d{2}h\d{2}$/.test(missionModifiable.dateStart);
+   const dateEndValid = /^\d{2}\/\d{2}\/\d{4} \d{2}h\d{2}$/.test(missionModifiable.dateEnd);
+   
+   if (!dateStartValid || !dateEndValid) {
+     showAlert('Erreur', 'Format de date invalide. Utilisez DD/MM/YYYY HHhMM');
+     return;
+   }
+
     // Validate numeric constraints
     const min = typeof missionModifiable.nbMin === 'number' ? missionModifiable.nbMin : parseInt(String(missionModifiable.nbMin));
     const max = typeof missionModifiable.nbMax === 'number' ? missionModifiable.nbMax : parseInt(String(missionModifiable.nbMax));

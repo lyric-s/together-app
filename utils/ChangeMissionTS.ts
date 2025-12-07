@@ -1,6 +1,7 @@
 import Toast from 'react-native-toast-message';
+import { Mission } from '@/types/Mission';
 
-export const handleSaveMission = (mission: any) => {
+export const handleSaveMission = (mission: Mission) => {
   Toast.show({
     type: 'success',
     text1: `Mission sauvegardée : ${mission.title}`,
@@ -15,7 +16,7 @@ export const updateMissionField = <T, K extends keyof T>(
   return { ...mission, [field]: value };
 };
 
-export const handleDeleteMission = (mission: any) => {
+export const handleDeleteMission = (mission: Mission) => {
   Toast.show({
     type: 'success',
     text1: `Mission supprimée : ${mission.title}`,
