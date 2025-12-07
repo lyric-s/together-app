@@ -10,3 +10,9 @@ export type FormData = {
     password: string;
     confirmPassword: string;
 };
+
+export type Benevole = {
+  id: string,
+  lastname: string,
+  firstname: string,
+}

@@ -1,12 +1,7 @@
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
 import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-type Benevole = {
-    id: string;
-    lastname: string;
-    firstname: string;
-};
+import { Benevole } from '@/types/ProfileUser';
 
 type Props = {
     visible: boolean;
