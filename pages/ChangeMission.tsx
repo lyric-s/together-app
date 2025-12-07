@@ -126,6 +126,7 @@ export default function ChangeMission() {
   };
 
   const handleDelete = () => {
+    // Coming soon
     // TODO: Implement delete logic (API call, confirmation dialog, etc.)
     console.log('Delete mission:', mission.id);
   };
