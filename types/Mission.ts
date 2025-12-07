@@ -12,8 +12,7 @@ export type Mission = {
   description: string,
 };
 
-export type MissionEditable = Omit<Mission, 'nbMin' | 'nbMax' | 'nbRegistered'> & {
+export type MissionEditable = Omit<Mission, 'nbMin' | 'nbMax'> & {
   nbMin: number | string;
   nbMax: number | string;
-  nbRegistered: number | string;
 };

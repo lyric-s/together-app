@@ -45,14 +45,12 @@ export default function ChangeMission() {
     ...mission,
     nbMin: mission.nbMin.toString(),
     nbMax: mission.nbMax.toString(),
-    nbRegistered: mission.nbRegistered.toString(),
   });
 
   const toMission = (editable: MissionEditable): Mission => ({
     ...editable,
     nbMin: typeof editable.nbMin === 'number' ? editable.nbMin : parseInt(String(editable.nbMin)) || 0,
     nbMax: typeof editable.nbMax === 'number' ? editable.nbMax : parseInt(String(editable.nbMax)) || 0,
-    nbRegistered: typeof editable.nbRegistered === 'number' ? editable.nbRegistered : parseInt(String(editable.nbRegistered)) || 0,
   });
 
   const [missionModifiable, setMissionModifiable] = useState<MissionEditable>(
@@ -73,6 +71,15 @@ export default function ChangeMission() {
   // Opening the drop-down list
   const [open, setOpen] = useState(false);
 
+  const setCateg = useCallback((valueOrCallback: string | ((prev: string) => string)) => {
+    setMissionModifiable(prev => ({
+      ...prev,
+      categ: typeof valueOrCallback === 'function' 
+        ? valueOrCallback(prev.categ) 
+        : valueOrCallback
+    }));
+  }, []);
+
   // Edit mode
   const [isEditing, setIsEditing] = useState(false);
 
@@ -86,7 +93,7 @@ export default function ChangeMission() {
     }));
   };
 
-  const handleChangeNb = (field: 'nbMin' | 'nbMax' | 'nbRegistered', value: string) => {
+  const handleChangeNb = (field: 'nbMin' | 'nbMax', value: string) => {
     if (value === '') {
       handleChange(field, '');
     } else {
@@ -116,20 +123,14 @@ export default function ChangeMission() {
     // Validate numeric constraints
     const min = missionToSave.nbMin
     const max = missionToSave.nbMax
-    const registered = missionToSave.nbRegistered
 
-    if ([min, max, registered].some((n) => Number.isNaN(n))) {
+    if ([min, max].some((n) => Number.isNaN(n))) {
       showAlert('Erreur', 'Les champs numériques doivent contenir des valeurs valides');
       return;
     }
 
     if (min > max) {
       showAlert('Erreur', 'Le nombre minimum ne peut pas être supérieur au maximum');
-      return;
-    }
-
-    if (registered > max) {
-      showAlert('Erreur', 'Le nombre de bénévoles inscrits doit être inférieur au maximum');
       return;
     }
     
@@ -218,13 +219,12 @@ export default function ChangeMission() {
             value={missionModifiable.categ}
             items={items}
             setOpen={setOpen}
-            setValue={(valueOrCallback) => {
-              setMissionModifiable(prev => ({
-                ...prev,
-                categ: typeof valueOrCallback === 'function' 
-                  ? valueOrCallback(prev.categ) 
-                  : valueOrCallback
-              }));
+            setValue={setCateg}
+            setItems={setItems}
+            onChangeValue={(value) => {
+              if (value !== null) {
+                console.log('Catégorie sélectionnée:', value);
+              }
             }}
             style={styles.input}
             placeholderStyle={styles.placeholderStyle}
@@ -263,12 +263,7 @@ export default function ChangeMission() {
           </View>
 
           <Text style={styles.label}>Nombre de bénévoles inscrit</Text>
-          <TextInput
-            style={styles.input}
-            value={missionModifiable.nbRegistered.toString()}
-            onChangeText={(text) => handleChangeNb("nbRegistered", text)}
-            keyboardType="numeric"
-          />
+          <Text style={styles.text}>{missionModifiable.nbRegistered.toString()}</Text>
 
           <Text style={styles.label}>Description de la mission</Text>
           <TextInput
