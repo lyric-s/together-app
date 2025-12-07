@@ -1,13 +1,14 @@
 import CategoryLabel from '@/components/CategoryLabel';
 import ListeBenevolesModal from '@/components/ListBenevolesModal';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
-import { handleSaveMission, updateMissionField } from '@/utils/ChangeMissionTS';
+import { handleSaveMission, updateMissionField, handleDeleteMission } from '@/utils/ChangeMissionTS';
 import { useState, useCallback } from 'react';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
 import BackButton from '@/components/BackButton';
 import AlertToast from '@/components/AlertToast';
+import Toast from 'react-native-toast-message';
 
 type Mission = {
   id: string,
@@ -134,6 +135,7 @@ export default function ChangeMission() {
     // Coming soon
     // TODO: Implement delete logic (API call, confirmation dialog, etc.)
     console.log('Delete mission:', mission.id);
+    handleDeleteMission(missionModifiable)
   };
 
   const handleEdit = () => {
@@ -208,12 +210,14 @@ export default function ChangeMission() {
             value={missionModifiable.categ}
             items={items}
             setOpen={setOpen}
-            setValue={(callback) => {
-              const value = callback(selectedCategory);
-              setSelectedCategory(value);
-              handleChange("categ", value);
+            setValue={(valueOrCallback) => {
+              setMissionModifiable(prev => ({
+                ...prev,
+                categ: typeof valueOrCallback === 'function' 
+                  ? valueOrCallback(prev.categ) 
+                  : valueOrCallback
+              }));
             }}
-            setItems={setItems}
             style={styles.input}
             placeholderStyle={styles.placeholderStyle}
             labelStyle={styles.labelStyle}

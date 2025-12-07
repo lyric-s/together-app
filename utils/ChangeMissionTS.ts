@@ -1,7 +1,10 @@
-import { Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 export const handleSaveMission = (mission: any) => {
-  Alert.alert('Mission sauvegardée : ${mission.titre}');
+  Toast.show({
+    type: 'success',
+    text1: `Mission sauvegardée : ${mission.title}`,
+  });
 };
 
 export const updateMissionField = <T, K extends keyof T>(
@@ -10,4 +13,11 @@ export const updateMissionField = <T, K extends keyof T>(
   value: T[K],
 ) => {
   return { ...mission, [field]: value };
+};
+
+export const handleDeleteMission = (mission: any) => {
+  Toast.show({
+    type: 'success',
+    text1: `Mission supprimée : ${mission.title}`,
+  });
 };
