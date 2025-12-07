@@ -49,8 +49,8 @@ export default function ChangeMission() {
 
   const toMission = (editable: MissionEditable): Mission => ({
     ...editable,
-    nbMin: typeof editable.nbMin === 'number' ? editable.nbMin : parseInt(String(editable.nbMin)) || 0,
-    nbMax: typeof editable.nbMax === 'number' ? editable.nbMax : parseInt(String(editable.nbMax)) || 0,
+    nbMin: typeof editable.nbMin === 'number' ? editable.nbMin : parseInt(String(editable.nbMin)),
+    nbMax: typeof editable.nbMax === 'number' ? editable.nbMax : parseInt(String(editable.nbMax)),
   });
 
   const [missionModifiable, setMissionModifiable] = useState<MissionEditable>(
@@ -96,9 +96,10 @@ export default function ChangeMission() {
   const handleChangeNb = (field: 'nbMin' | 'nbMax', value: string) => {
     if (value === '') {
       handleChange(field, '');
+      return;
     } else {
       const numericValue = parseInt(value);
-      if (!isNaN(numericValue)) {
+      if (!isNaN(numericValue) && numericValue >= 0) {
         handleChange(field, numericValue);
       }
     }
@@ -109,6 +110,12 @@ export default function ChangeMission() {
   }
 
   const handleSave = () => {
+    if (missionModifiable.nbMin === '' || 
+        missionModifiable.nbMax === '') {
+      showAlert('Erreur', 'Tous les champs numériques doivent être remplis');
+      return;
+    }
+    
     const missionToSave = toMission(missionModifiable);
     
     // Validate date format and order
