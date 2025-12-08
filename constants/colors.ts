@@ -1,5 +1,5 @@
 export const Colors = {
-    orangeLight: '#FF9A66',
+    orange: '#FF9A66',
     violet: '#6A66B8',
     topBackground: '#FFF7F3',
     bottomBackground: '#FFE5CF',
