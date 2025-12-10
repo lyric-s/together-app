@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-
-const ORANGE_LIGHT = '#FFE4C4';
-const ORANGE_DARK = 'black';
+import { View, TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { Colors } from '@/constants/colors';
 
 type ActiveTab = 'Mission' | 'Association';
 
-export default function SegmentedControl() {
-    const [activeTab, setActiveTab] = useState<ActiveTab>('Mission');
+/**
+ * @interface SwitchProjectProps
+ * Définit les props pour le composant SwitchProject, permettant
+ * un comportement contrôlé ou non contrôlé (value/defaultValue).
+ */
+export interface SwitchProjectProps {
+    value?: ActiveTab;
+    defaultValue?: ActiveTab;
+    onChange?: (tab: ActiveTab) => void;
+    style?: StyleProp<ViewStyle>;
+}
+
+/**
+ * @component SwitchProject
+ * Switch à deux onglets (Mission/Association).
+ */
+export default function SwitchProject({ value, defaultValue = 'Mission', onChange, style }: SwitchProjectProps) {
+    const [internalActiveTab, setInternalActiveTab] = useState<ActiveTab>(defaultValue);
+
+    const activeTab = value ?? internalActiveTab;
+
+    const handlePress = (tab: ActiveTab) => {
+        if (value === undefined) {
+            setInternalActiveTab(tab);
+        }
+        onChange?.(tab);
+    };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, style]}>
             <View style={styles.segmentedControl}>
 
                 <TouchableOpacity
@@ -18,7 +41,7 @@ export default function SegmentedControl() {
                         styles.button,
                         activeTab === 'Mission' && styles.activeButton
                     ]}
-                    onPress={() => setActiveTab('Mission')}
+                    onPress={() => handlePress('Mission')}
                     activeOpacity={0.8}
                 >
                     <Text
@@ -36,7 +59,7 @@ export default function SegmentedControl() {
                         styles.button,
                         activeTab === 'Association' && styles.activeButton
                     ]}
-                    onPress={() => setActiveTab('Association')}
+                    onPress={() => handlePress('Association')}
                     activeOpacity={0.8}
                 >
                     <Text
@@ -55,14 +78,12 @@ export default function SegmentedControl() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#E5E5E5',
     },
     segmentedControl: {
         flexDirection: 'row',
-        backgroundColor: ORANGE_LIGHT,
+        backgroundColor: Colors.lightOrange,
         borderRadius: 100,
         padding: 4,
         width: 300,
@@ -73,7 +94,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 100,
-        backgroundColor: ORANGE_LIGHT,
+        backgroundColor: Colors.lightOrange,
     },
     activeButton: {
         backgroundColor: 'white',
@@ -83,10 +104,10 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     activeText: {
-        color: ORANGE_DARK,
+        color: Colors.black,
     },
     inactiveText: {
-        color: ORANGE_DARK,
+        color: Colors.black,
         opacity: 0.7,
     }
 });
