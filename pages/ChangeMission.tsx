@@ -160,9 +160,13 @@ export default function ChangeMission() {
       showAlert('Erreur', 'Le titre est requis');
       return;
     }
+    try {
     setMission(missionToSave);
     setIsEditing(false);
     handleSaveMission(missionToSave);
+  } catch (error) {
+    showAlert('Erreur', 'La sauvegarde a échoué. Veuillez réessayer.');
+  }
   };
 
   const [confirmVisible, setConfirmVisible] = useState(false);
