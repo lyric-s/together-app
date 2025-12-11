@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Colors } from '@/constants/colors';
-import { styles } from '@/styles/pages/AccountWithoutCoWeb';
+import { styles } from '@/styles/pages/AccountWithoutCo';
 import { Mission } from '@/types/Mission';
 
 export default function AccountWithoutCo() {
@@ -31,6 +31,7 @@ export default function AccountWithoutCo() {
       image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop',
       number_of_volunteers: 5,
       number_max_volunteers: 10,
+      favorite: false,
     },
     {
       id: '2',
@@ -43,6 +44,7 @@ export default function AccountWithoutCo() {
       image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop',
       number_of_volunteers: 3,
       number_max_volunteers: 5,
+      favorite: false,
     },
     {
       id: '3',
@@ -55,6 +57,7 @@ export default function AccountWithoutCo() {
       image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400&h=300&fit=crop',
       number_of_volunteers: 3,
       number_max_volunteers: 10,
+      favorite: false,
     },
   ];
 
@@ -196,7 +199,7 @@ export default function AccountWithoutCo() {
 
                 <View style={styles.cardContent}>
                   <Text style={styles.missionTitleWeb}>{mission.title}</Text>
-                  <Text style={styles.missionDateWeb}>{mission.date.getDay() + '/' + mission.date.getMonth() + '/' + mission.date.getFullYear() + ' - ' + mission.date.getHours().toString().padStart(2, '0') + 'h' + mission.date.getMinutes().toString().padStart(2, '0')}</Text>
+                  <Text style={styles.missionDateWeb}>{mission.date.getDate().toString().padStart(2, '0') + '/' + (mission.date.getMonth() + 1).toString().padStart(2, '0') + '/' + mission.date.getFullYear() + ' - ' + mission.date.getHours().toString().padStart(2, '0') + 'h' + mission.date.getMinutes().toString().padStart(2, '0')}</Text>
 
                   <View style={styles.cardFooter}>
                     <View style={styles.participantsContainer}>

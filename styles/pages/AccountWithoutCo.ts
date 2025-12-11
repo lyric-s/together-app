@@ -33,80 +33,20 @@ export const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.black,
   },
   seeAllText: {
     fontSize: 14,
     color: Colors.brightOrange,
   },
-  missionCardMobile: {
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    overflow: 'hidden',
-  },
-  missionImageMobile: {
-    width: '100%',
-    height: 180,
-  },
-  categoryBadgeMobile: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    backgroundColor: '#FF6B35',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  categoryTextMobile: {
-    color: '#FFF',
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  missionInfoMobile: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-  },
-  missionTextContainer: {
-    flex: 1,
-  },
-  missionTitleMobile: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 4,
-  },
-  missionDateMobile: {
-    fontSize: 14,
-    color: '#666',
-  },
-  iconButtonMobile: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FF6B35',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  iconText: {
-    color: '#FFF',
-    fontSize: 20,
-  },
   ctaSectionMobile: {
-    backgroundColor: '#FFF5F0',
+    backgroundColor: Colors.veryLightOrange,
     padding: 20,
     marginHorizontal: 16,
     marginBottom: 16,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#FF6B35',
+    borderColor: Colors.brightOrange,
   },
   ctaSectionLavender: {
     backgroundColor: Colors.white,
@@ -115,13 +55,13 @@ export const styles = StyleSheet.create({
   ctaTitleMobile: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.black,
     marginBottom: 12,
     textAlign: 'center',
   },
   ctaDescriptionMobile: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.grayPlaceholder,
     lineHeight: 20,
     marginBottom: 16,
     textAlign: 'center',
@@ -149,9 +89,9 @@ export const styles = StyleSheet.create({
   },
   bottomNav: {
     flexDirection: 'row',
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.white,
     borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
+    borderTopColor: Colors.darkerWhite,
     paddingVertical: 8,
   },
   navItem: {
@@ -165,7 +105,7 @@ export const styles = StyleSheet.create({
   },
   navIconActive: {
     fontSize: 24,
-    color: '#FF6B35',
+    color: Colors.brightOrange,
   },
 
   // ===== STYLES WEB =====
@@ -175,7 +115,7 @@ export const styles = StyleSheet.create({
   sectionTitleWeb: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: Colors.black,
     marginBottom: 24,
   },
   missionsGrid: {
@@ -185,9 +125,9 @@ export const styles = StyleSheet.create({
   },
   missionCardWeb: {
     width: 300,
-    backgroundColor: '#FFF',
+    backgroundColor: Colors.white,
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -205,13 +145,13 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-    backgroundColor: '#FF6B35',
+    backgroundColor: Colors.brightOrange,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
   },
   categoryTextWeb: {
-    color: '#FFF',
+    color: Colors.white,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -221,12 +161,12 @@ export const styles = StyleSheet.create({
   missionTitleWeb: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: Colors.black,
     marginBottom: 8,
   },
   missionDateWeb: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.grayPlaceholder,
     marginBottom: 12,
   },
   cardFooter: {
@@ -244,10 +184,10 @@ export const styles = StyleSheet.create({
   },
   participantsText: {
     fontSize: 14,
-    color: '#666',
+    color: Colors.grayPlaceholder,
   },
   detailLink: {
-    color: '#FF6B35',
+    color: Colors.brightOrange,
     fontSize: 14,
     fontWeight: '600',
   },
