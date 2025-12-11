@@ -1,193 +1,211 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Platform,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Picker } from "@react-native-picker/picker";
+import DatePickerField from "@/components/DatePickerFields"; 
+import {styles} from "@/styles/pages/CreationMissionStyle";
 
 export default function MissionCreation() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
   const [location, setLocation] = useState("");
   const [minVolunteers, setMinVolunteers] = useState("");
   const [maxVolunteers, setMaxVolunteers] = useState("");
   const [skills, setSkills] = useState("");
+  const [imageName, setImageName] = useState<string | null>(null);
+  const categories = ["Environnement", "Social", "Sport", "Santé","Animaux","Santé"] //TODO
+  
 
-  // required field
+
+  // --- Image Picker ---
+const pickImage = async () => {
+  try {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      quality: 1,
+      allowsEditing: false,
+    });
+
+    if (result.canceled) return;
+
+    const asset = result.assets?.[0];
+    if (!asset) return;
+
+    const uri = asset.uri;
+
+    const safeFileName: string =
+    asset.fileName ??
+    (uri ? uri.split("/").pop() || "image" : "image");
+
+    setImage(uri);
+    setImageName(safeFileName);
+
+  } catch (error) {
+    console.error("Erreur lors du choix d'image :", error);
+  }
+};
+
+
+
+  // --- Validate publication ---
   const handlePublish = () => {
-    if (!title || !description || !category || !startDate || !location ||
-        !image || !startDate || !maxVolunteers) {
+    if (
+      !title ||
+      !description ||
+      !category ||
+      !startDate ||
+      !location ||
+      !maxVolunteers
+    ) {
       alert("Veuillez remplir tous les champs obligatoires.");
       return;
     }
+    // TODO 
+    alert("OK (logique backend pas encore faite)");
   };
 
   return (
     <ScrollView>
-    <View style={styles.container}>
-      <Text style={styles.mainTitle}>Création d'une mission</Text>
-      <Text style={styles.subtitle}>Remplissez les informations pour créer une nouvelle mission.</Text>
+      <View style={styles.container}>
+        <Text style={styles.mainTitle}>Création d'une mission</Text>
+        <Text style={styles.subtitle}>
+          Remplissez les informations pour créer une nouvelle mission.
+        </Text>
 
-      {/* Section 1 */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Informations générales</Text>
+        {/* SECTION 1 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Informations générales</Text>
 
-        <Text style={styles.label}>Titre de la mission *</Text>
-        <TextInput
-          style={styles.input}
-          maxLength={100}
-          value={title}
-          onChangeText={setTitle}
-        />
+          <Text style={styles.label}>Titre de la mission *</Text>
+          <TextInput
+            style={styles.input}
+            maxLength={100}
+            value={title}
+            onChangeText={setTitle}
+          />
 
-        <Text style={styles.label}>Description de la mission *</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          maxLength={500}
-          multiline
-          value={description}
-          onChangeText={setDescription}
-        />
+          <Text style={styles.label}>Description de la mission *</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            maxLength={500}
+            multiline
+            value={description}
+            onChangeText={setDescription}
+          />
 
-        <Text style={styles.label}>Catégorie *</Text>
-        <TextInput
-          style={styles.input}
-          value={category}
-          onChangeText={setCategory}
-          placeholder="Sélectionnez une catégorie"
-        />
+          <Text style={styles.label}>Catégorie *</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={category}
+              onValueChange={(value) => setCategory(value)}
+              style={styles.picker}
+            >
+              <Picker.Item label="Sélectionnez une catégorie" value="" />
 
-        <Text style={styles.label}>Image</Text>
-        <TouchableOpacity style={styles.imageButton}>
-          <Text style={styles.imageButtonText}>+ Importer une image</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Section 2 */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Détails pratiques</Text>
-
-        <View style={styles.row}>
-          <View style={styles.half}>
-            <Text style={styles.label}>Date début *</Text>
-            <TouchableOpacity style={styles.input} onPress={() => setShowStartPicker(true)}>
-              <Text>{startDate ? startDate.toLocaleString() : "Sélectionner"}</Text>
-            </TouchableOpacity>
-            {showStartPicker && (
-              <DateTimePicker
-                value={startDate || new Date()}
-                mode="datetime"
-                onChange={(e, d) => {
-                  setShowStartPicker(false);
-                  if (d) setStartDate(d);
-                }}
-              />
-            )}
+              {categories.map((c, i) => (
+                <Picker.Item key={i} label={c} value={c} />
+              ))}
+            </Picker>
           </View>
 
-          <View style={styles.half}>
-            <Text style={styles.label}>Date fin</Text>
-            <TouchableOpacity style={styles.input} onPress={() => setShowEndPicker(true)}>
-              <Text>{endDate ? endDate.toLocaleString() : "Sélectionner"}</Text>
-            </TouchableOpacity>
-            {showEndPicker && (
-              <DateTimePicker
-                value={endDate || new Date()}
-                mode="datetime"
-                onChange={(e, d) => {
-                  setShowEndPicker(false);
-                  if (d) setEndDate(d);
-                }}
-              />
-            )}
-          </View>
+
+          <Text style={styles.label}>Image *</Text>
+          <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+            <Text style={styles.imageButtonText}>+ Importer une image</Text>
+          </TouchableOpacity>
+          {image && (
+            <Text style={{ fontSize: 12, marginTop: 4 }}>{imageName}</Text>
+          )}
+
         </View>
 
-        <Text style={styles.label}>Lieu *</Text>
-        <TextInput style={styles.input} value={location} onChangeText={setLocation} />
+        {/* SECTION 2 */}
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Détails pratiques</Text>
 
-        <View style={styles.row}>
-          <View style={styles.half}>
-            <Text style={styles.label}>Nombre minimum de bénévoles</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={minVolunteers}
-              onChangeText={setMinVolunteers}
-            />
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <Text style={styles.label}>Date début *</Text>
+              <DatePickerField
+                date={startDate}
+                onChange={setStartDate}
+              />
+            </View>
+
+            <View style={styles.half}>
+              <Text style={styles.label}>Date fin</Text>
+              <DatePickerField
+                date={endDate}
+                onChange={setEndDate}
+              />
+            </View>
           </View>
-          <View style={styles.half}>
-            <Text style={styles.label}>Nombre maximum de bénévoles</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={maxVolunteers}
-              onChangeText={setMaxVolunteers}
-            />
+
+          <Text style={styles.label}>Lieu *</Text>
+          <TextInput
+            style={styles.input}
+            value={location}
+            onChangeText={setLocation}
+          />
+
+          <View style={styles.row}>
+            <View style={styles.half}>
+              <Text style={styles.label}>Nombre minimum bénévoles</Text>
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                value={minVolunteers}
+                onChangeText={(t) => setMinVolunteers(t.replace(/[^0-9]/g, ""))}
+              />
+            </View>
+
+            <View style={styles.half}>
+              <Text style={styles.label}>Nombre maximum bénévoles *</Text>
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                value={maxVolunteers}
+                onChangeText={(t) => setMaxVolunteers(t.replace(/[^0-9]/g, ""))}
+              />
+            </View>
           </View>
+
+          <Text style={styles.label}>Compétences requises</Text>
+          <TextInput
+            style={styles.input}
+            value={skills}
+            onChangeText={setSkills}
+          />
         </View>
 
-        <Text style={styles.label}>Compétences requises</Text>
-        <TextInput style={styles.input} value={skills} onChangeText={setSkills} />
+        {/* BUTTONS */}
+        <View style={styles.buttonsRow}>
+          {/* // TODO or delete */}
+          {/* <TouchableOpacity style={styles.draftButton}>
+            <Text style={styles.draftText}>Enregistrer le brouillon</Text>
+          </TouchableOpacity> */}
+
+          
+          <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
+            <Text style={styles.publishText}>Publier la mission</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.requiredInfo}>* Champs obligatoires</Text>
       </View>
-
-      {/* Buttons */}
-      <View style={styles.buttonsRow}>
-        <TouchableOpacity style={styles.draftButton}>
-          <Text style={styles.draftText}>Enregistrer le brouillon</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
-          <Text style={styles.publishText}>Publier la mission</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Text style={styles.requiredInfo}>* Champs obligatoires</Text>
-    </View>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  mainTitle: { fontSize: 28, fontWeight: "bold", color: "black", marginBottom: 4 },
-  subtitle: { fontSize: 14, marginBottom: 20 },
-  card: {
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 25,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  sectionTitle: { fontSize: 20, fontWeight: "600", marginBottom: 12 },
-  label: { fontSize: 15, marginBottom: 6 },
-  input: {
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 15,
-  },
-  textArea: { height: 90 },
-  row: { flexDirection: "row", gap: 15 },
-  half: { flex: 1 },
-  imageButton: {
-    backgroundColor: "#EFEFEF",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 5,
-  },
-  imageButtonText: { fontWeight: "600" },
-  buttonsRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
-  draftButton: { backgroundColor: "#DDD", padding: 12, borderRadius: 8, flex: 1, marginRight: 10 },
-  draftText: { textAlign: "center" },
-  publishButton: { backgroundColor: "#FF8A3D", padding: 12, borderRadius: 8, flex: 1 },
-  publishText: { textAlign: "center", color: "white", fontWeight: "600" },
-  requiredInfo: { marginTop: 10, fontStyle: "italic", fontSize: 12 },
-});
+
