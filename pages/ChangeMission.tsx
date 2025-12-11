@@ -3,7 +3,7 @@ import ListeBenevolesModal from '@/components/ListBenevolesModal';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
 import { handleSaveMission, updateMissionField, handleDeleteMission } from '@/utils/ChangeMissionTS';
 import { useState, useCallback } from 'react';
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
 import BackButton from '@/components/BackButton';
@@ -165,11 +165,12 @@ export default function ChangeMission() {
     handleSaveMission(missionToSave);
   };
 
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
   const handleDelete = () => {
-    // Coming soon
-    // Implement delete logic (API call, confirmation dialog, etc.)
-    console.log('Delete mission:', mission.id);
-    handleDeleteMission(mission)
+    console.log('handleDelete cliquée !'); 
+    setConfirmVisible(true);
   };
 
   const handleEdit = () => {
@@ -396,6 +397,70 @@ export default function ChangeMission() {
         </>
         )
       }
+      <Modal
+        visible={confirmVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setConfirmVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: Colors.transparentBlack,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 20,
+              borderRadius: 8,
+              width: '80%',
+            }}
+          >
+            <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 10 }}>
+              Confirmation
+            </Text>
+            <Text style={{ marginBottom: 20 }}>
+              Êtes-vous sûr de vouloir supprimer cette mission ?
+            </Text>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <TouchableOpacity
+                onPress={() => setConfirmVisible(false)}
+                style={{ marginRight: 16 }}
+              >
+                <Text style={{ color: Colors.violet }}>Annuler</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={async () => {
+                  try {
+                    setDeleting(true);
+                    await handleDeleteMission(mission); // ton appel API
+                    setDeleting(false);
+                    setConfirmVisible(false);
+                    // TODO : navigation vers la liste + éventuel toast
+                  } catch (e) {
+                    setDeleting(false);
+                    setConfirmVisible(false);
+                    showAlert(
+                      'Erreur',
+                      "La suppression a échoué. Veuillez réessayer."
+                    );
+                  }
+                }}
+                disabled={deleting}
+              >
+                <Text style={{ color: Colors.red }}>
+                  {deleting ? 'Suppression...' : 'Supprimer'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
     </>
   );
