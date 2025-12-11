@@ -48,3 +48,68 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+---
+
+## How to properly name commits 
+
+### `<prefix>: <JIRA-1> <commit message>`
+
+`prefix` is **meant to be replaced** by one of the expected prefixes which can be found in the section below, it is **mandatory** to put one. 
+
+`JIRA-1` is an example **meant to be replaced** by the actual ticket name, in capital letters, related to the work being done on the branch. \
+If the branch you are committing on is **not linked** to a JIRA ticket, just write the message; otherwise, you **must** include the ticket name. 
+
+`commit message` is **meant to be replaced** and must have **no capital letters**. It should be no more than a **short, but clear, sentence**.
+
+## Expected prefixes
+
+### `feat:`
+Introduces a **new feature**.
+
+### `fix:`
+A **bug fix**.
+
+### `build:`
+Changes that affect the **build system or external dependencies**.
+
+### `chore:`
+Routine tasks that **don’t affect source or test code** (e.g., maintenance, cleanup).
+
+### `ci:`
+Changes to **continuous integration configuration** (CI scripts, workflows).
+
+### `docs:`
+Documentation-only changes.
+
+### `style:`
+Code changes that **don’t affect meaning** (formatting, whitespace, semicolons).
+
+### `refactor:`
+Code changes that **neither fix bugs nor add features** (structural improvements).
+
+### `perf:`
+Code changes that **improve performance**.
+
+### `test:`
+Adding or modifying **tests**.
+
+### `revert:`
+Reverts a previous commit.
+
+## Breaking Changes
+
+### **BREAKING CHANGE:** (footer)
+A footer indicating a **breaking API change** → major SemVer bump.
+
+### **! after type**
+Alternative breaking-change notation:  
+Example: `feat!: change API behavior` 
+
+[source: conventional commits organization website](https://www.conventionalcommits.org/en/v1.0.0/#specification)
+=======
+>>>>>>> 3ba22b2d (adding component  button for web and mobile)
+=======
+>>>>>>> b48348aa (chore: updated project directories and files path)
