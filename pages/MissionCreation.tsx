@@ -25,8 +25,7 @@ export default function MissionCreation() {
   const [maxVolunteers, setMaxVolunteers] = useState("");
   const [skills, setSkills] = useState("");
   const [imageName, setImageName] = useState<string | null>(null);
-  const categories = ["Environnement", "Social", "Sport", "Santé","Animaux","Santé"] //TODO
-  
+  const categories = ["Environnement", "Social", "Sport", "Santé", "Animaux"] //TODO  
 
 
   // --- Image Picker ---
@@ -35,6 +34,7 @@ const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
       allowsEditing: false,
+      mediaTypes: ["images"],
     });
 
     if (result.canceled) return;
@@ -58,7 +58,6 @@ const pickImage = async () => {
 
 
 
-  // --- Validate publication ---
   const handlePublish = () => {
     if (
       !title ||
@@ -66,14 +65,38 @@ const pickImage = async () => {
       !category ||
       !startDate ||
       !location ||
-      !maxVolunteers
+      !maxVolunteers ||
+      !image
     ) {
       alert("Veuillez remplir tous les champs obligatoires.");
       return;
     }
+
+    // Validate date range
+    if (endDate && endDate < startDate) {
+      alert("La date de fin doit être après la date de début.");
+      return;
+    }
+
+    // Validate volunteer counts
+    const min = parseInt(minVolunteers || "0");
+    const max = parseInt(maxVolunteers);
+    if (minVolunteers && min > max) {
+      alert("Le nombre minimum de bénévoles ne peut pas dépasser le maximum.");
+      return;
+    }
+
+    // Validate start date is not in the past
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (startDate < today) {
+      alert("La date de début ne peut pas être dans le passé.");
+      return;
+    }
+
     // TODO 
     alert("OK (logique backend pas encore faite)");
-  };
+  }; 
 
   return (
     <ScrollView>
