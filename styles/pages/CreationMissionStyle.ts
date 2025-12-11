@@ -2,8 +2,7 @@ import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors'
 
 export const styles = StyleSheet.create({
-  container: { padding: 20, flex :1 },
-
+  container: { padding: 20, flex: 1 },
   mainTitle: { 
     fontSize: 28,
     fontWeight: "bold",
