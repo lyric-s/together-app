@@ -7,6 +7,12 @@ type Props = {
   name_page: string;     
 };
 
+/**
+ * Renders a back button with an icon and label that navigates to the previous screen when pressed.
+ *
+ * @param name_page - The text label shown next to the back icon
+ * @returns A React element representing the back button (icon + label) that triggers navigation to the previous screen when tapped
+ */
 export default function BackButton({
   name_page,
 }: Props) {

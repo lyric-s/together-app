@@ -10,6 +10,13 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+/**
+ * Provides the app's root navigation layout, applying the current color scheme and mounting global UI elements.
+ *
+ * Renders a themed navigation stack with the main "(tabs)" screen and a "modal" screen, and includes a toast container and status bar.
+ *
+ * @returns A React element containing the themed navigation stack, a Toast container, and the StatusBar
+ */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 

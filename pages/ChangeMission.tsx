@@ -11,6 +11,18 @@ import AlertToast from '@/components/AlertToast';
 import { Mission, MissionEditable } from '@/types/Mission';
 import { Benevole } from '@/types/ProfileUser';
 
+/**
+ * Render the ChangeMission page allowing viewing, editing, and deleting a mission.
+ *
+ * The component displays mission details (title, image, dates, category, location, volunteer counts, description)
+ * and toggles between a read-only view and an edit form with validation. It also provides:
+ * - category selection with dynamic background color,
+ * - volunteer list modal,
+ * - alert toasts for validation and errors,
+ * - a delete confirmation modal that invokes the deletion handler.
+ *
+ * @returns The React element for the ChangeMission page UI.
+ */
 export default function ChangeMission() {
   const [alertModal, setAlertModal] = useState({ 
     visible: false, 
