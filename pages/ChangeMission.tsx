@@ -115,7 +115,7 @@ export default function ChangeMission() {
       showAlert('Erreur', 'Tous les champs numériques doivent être remplis');
       return;
     }
-    
+
     const missionToSave = toMission(missionModifiable);
     
     // Validate date format and order
@@ -124,6 +124,21 @@ export default function ChangeMission() {
    
    if (!dateStartValid || !dateEndValid) {
      showAlert('Erreur', 'Format de date invalide. Utilisez DD/MM/YYYY HHhMM');
+     return;
+   }
+
+   const parseDate = (dateStr: string) => {
+     const [date, time] = dateStr.split(' ');
+     const [day, month, year] = date.split('/');
+     const [hour, minute] = time.replace('h', ':').split(':');
+     return new Date(+year, +month - 1, +day, +hour, +minute);
+   };
+   
+   const startDate = parseDate(missionToSave.dateStart);
+   const endDate = parseDate(missionToSave.dateEnd);
+   
+   if (startDate >= endDate) {
+     showAlert('Erreur', 'La date de début doit être antérieure à la date de fin');
      return;
    }
 
