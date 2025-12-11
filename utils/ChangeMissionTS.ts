@@ -8,7 +8,7 @@ export const handleSaveMission = (mission: Mission) => {
   });
 };
 
-export const updateMissionField = <T, K extends keyof T>(
+export const updateMissionField = <T extends object, K extends keyof T>(
   mission: T,
   field: K,
   value: T[K],
