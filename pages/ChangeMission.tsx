@@ -206,13 +206,13 @@ export default function ChangeMission() {
   const handleNavigate = (route: string) => {
     switch (route) {
       case 'home':
-        router.push({ pathname: '/AccountWithoutCo' });
+        router.push({ pathname: '/AccountWithoutCo' as any});
         break;
       case 'upcoming':
-        router.push({ pathname: '/UpcomingMissions' });
+        router.push({ pathname: '/UpcomingMissions' as any });
         break;
       case 'profile':
-        router.push({ pathname: '/Profile' });
+        router.push({ pathname: '/Profile' as any });
         break;
       case 'logout':
         // TODO: Implement logout logic (e.g. clear tokens, navigate to login)
@@ -223,7 +223,7 @@ export default function ChangeMission() {
   };
 
   const handleBackToList = () => {
-    router.push({ pathname: '/UpcomingMissions' });
+    router.push({ pathname: '/UpcomingMissions' as any });
   };
 
   return (
@@ -482,7 +482,7 @@ export default function ChangeMission() {
                     await handleDeleteMission(mission); // ton appel API
                     setDeleting(false);
                     setConfirmVisible(false);
-                    router.push({ pathname: '/UpcomingMissions' });
+                    router.push({ pathname: '/UpcomingMissions' as any });
                   } catch (e) {
                     setDeleting(false);
                     setConfirmVisible(false);
