@@ -11,9 +11,10 @@ import AlertToast from '@/components/AlertToast';
 import { Mission, MissionEditable } from '@/types/Mission';
 import { Benevole } from '@/types/ProfileUser';
 import Sidebar from '@/components/SideBar';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export default function ChangeMission() {
+  const router = useRouter();
   const [alertModal, setAlertModal] = useState({ 
     visible: false, 
     title: '', 
@@ -139,6 +140,11 @@ export default function ChangeMission() {
    const startDate = parseDate(missionToSave.dateStart);
    const endDate = parseDate(missionToSave.dateEnd);
    
+   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+    showAlert('Erreur', 'Date invalide détectée');
+    return;
+   }
+
    if (startDate >= endDate) {
      showAlert('Erreur', 'La date de début doit être antérieure à la date de fin');
      return;
@@ -200,13 +206,16 @@ export default function ChangeMission() {
   const handleNavigate = (route: string) => {
     switch (route) {
       case 'home':
-        //router.push('/pages/AccountWithoutCo');
+        router.push({ pathname: '/AccountWithoutCo' });
         break;
       case 'upcoming':
-        //router.push('/pages/UpcomingMissions');
+        router.push({ pathname: '/UpcomingMissions' });
+        break;
+      case 'profile':
+        router.push({ pathname: '/Profile' });
         break;
       case 'logout':
-        // Logique de déconnexion
+        // TODO: Implement logout logic (e.g. clear tokens, navigate to login)
         break;
       default:
         console.log('Route non implémentée:', route);
@@ -214,7 +223,7 @@ export default function ChangeMission() {
   };
 
   const handleBackToList = () => {
-    //router.push('/pages/UpcomingMissions');
+    router.push({ pathname: '/UpcomingMissions' });
   };
 
   return (
@@ -473,7 +482,7 @@ export default function ChangeMission() {
                     await handleDeleteMission(mission); // ton appel API
                     setDeleting(false);
                     setConfirmVisible(false);
-                    // TODO : navigation vers la liste + éventuel toast
+                    router.push({ pathname: '/UpcomingMissions' });
                   } catch (e) {
                     setDeleting(false);
                     setConfirmVisible(false);
