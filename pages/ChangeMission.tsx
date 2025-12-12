@@ -10,6 +10,8 @@ import BackButton from '@/components/BackButton';
 import AlertToast from '@/components/AlertToast';
 import { Mission, MissionEditable } from '@/types/Mission';
 import { Benevole } from '@/types/ProfileUser';
+import Sidebar from '@/components/SideBar';
+import { router } from 'expo-router';
 
 export default function ChangeMission() {
   const [alertModal, setAlertModal] = useState({ 
@@ -195,6 +197,26 @@ export default function ChangeMission() {
     {id: "3", lastname: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", firstname: "abcdefghijklmnopqrstuvwxyz"},
   ])
 
+  const handleNavigate = (route: string) => {
+    switch (route) {
+      case 'home':
+        //router.push('/pages/AccountWithoutCo');
+        break;
+      case 'upcoming':
+        //router.push('/pages/UpcomingMissions');
+        break;
+      case 'logout':
+        // Logique de déconnexion
+        break;
+      default:
+        console.log('Route non implémentée:', route);
+    }
+  };
+
+  const handleBackToList = () => {
+    //router.push('/pages/UpcomingMissions');
+  };
+
   return (
     <>
     <AlertToast
@@ -202,6 +224,12 @@ export default function ChangeMission() {
       title={alertModal.title}
       message={alertModal.message}
       onClose={handleAlertClose}
+    />
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+    <Sidebar
+      userType='association'
+      userName='SPA'
+      onNavigate={handleNavigate}
     />
     <ScrollView style={styles.container}>
       {isEditing ? (
@@ -466,6 +494,7 @@ export default function ChangeMission() {
         </View>
       </Modal>
     </ScrollView>
+    </View>
     </>
   );
 }

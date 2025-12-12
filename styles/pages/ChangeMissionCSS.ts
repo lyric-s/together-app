@@ -5,7 +5,8 @@ export const styles =  StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.white,
-        padding: 20,
+        paddingVertical: 20,
+        paddingHorizontal: 50,
     },
     title: {
         fontSize: 30,
