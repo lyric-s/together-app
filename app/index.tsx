@@ -8,7 +8,7 @@ import BackButton from '@/components/BackButton';
 import { View, Text } from 'react-native';
 import MobileSearchBar from '@/components/MobileSearchBar';
 import { useState } from "react";
-import AccountBenevole from '@/pages/AccountBenevole';
+import AccountBenevole from '@/app/AccountBenevole';
 
 /**
  * The Index component serves as the primary view for the home screen.
