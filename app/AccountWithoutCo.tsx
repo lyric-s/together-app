@@ -12,6 +12,8 @@ import {
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCo';
 import { Mission } from '@/types/Mission';
+import Sidebar from '@/components/SideBar';
+import { useRouter } from 'expo-router';
 
 export default function AccountWithoutCo() {
   const { width } = useWindowDimensions();
@@ -74,7 +76,7 @@ export default function AccountWithoutCo() {
   // Mobile version
   if (isMobile) {
     return (
-      <View style={styles.container}>
+        <View style={styles.container}>
         {/* Header Mobile */}
         <View style={styles.headerMobile}>
           <View style={styles.logoContainer}>
@@ -177,6 +179,12 @@ export default function AccountWithoutCo() {
 
   // Web version
   return (
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+    <Sidebar
+      userType='volunteer_guest'
+      userName='Invité'
+      onNavigate={(route: string) => {router.push(('/' + route) as any)}}
+    />
     <View style={styles.container}>
       <ScrollView>
         {/* Section Missions récentes */}
@@ -228,7 +236,7 @@ export default function AccountWithoutCo() {
             <Text style={styles.boldText}>Together</Text> vous met en lien avec des associations proches de chez vous et des missions qui correspondent à vos envies.{'\n'}
             Rejoignez une communauté engagée et passez à l'action en quelques clics.
           </Text>
-          <TouchableOpacity style={styles.ctaButtonWeb} onPress={() => router.push('/pages/ChangeMission' as any)}>
+          <TouchableOpacity style={styles.ctaButtonWeb} onPress={() => router.push('/ChangeMission' as any)}>
             <Text style={styles.ctaButtonTextWeb}>
               REJOINDRE TOGETHER EN TANT QUE BÉNÉVOLE
             </Text>
@@ -251,6 +259,7 @@ export default function AccountWithoutCo() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+    </View>
     </View>
   );
 };
