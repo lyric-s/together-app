@@ -13,6 +13,7 @@ import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCoCSS';
 import { Mission } from '@/types/Mission';
 import AlertToast from '@/components/AlertToast';
+import Sidebar from '@/components/SideBar';
 
 export default function AccountBenevole() {
   const { width } = useWindowDimensions();
@@ -294,6 +295,12 @@ export default function AccountBenevole() {
 
   // Web version
   return (
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+    <Sidebar
+      userType='volunteer'
+      userName='Pascal'
+      onNavigate={(route: string) => {router.push(('/' + route) as any)}}
+    />
     <View style={styles.container}>
       <ScrollView>
         {/* Section Missions récentes */}
@@ -301,35 +308,22 @@ export default function AccountBenevole() {
           <Text style={styles.sectionTitleWeb}>Missions récentes</Text>
 
           <View style={styles.missionsGrid}>
-            {missions.map((mission) => (
-              <View key={mission.id} style={styles.missionCardWeb}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: mission.image }}
-                    style={styles.missionImageWeb}
-                    resizeMode="cover"
-                  />
-                  <View style={styles.categoryBadgeWeb}>
-                    <Text style={styles.categoryTextWeb}>{mission.category}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.cardContent}>
-                  <Text style={styles.missionTitleWeb}>{mission.title}</Text>
-                  <Text style={styles.missionDateWeb}>{mission.date.getDate().toString().padStart(2, '0') + '/' + (mission.date.getMonth() + 1).toString().padStart(2, '0') + '/' + mission.date.getFullYear() + ' - ' + mission.date.getHours().toString().padStart(2, '0') + 'h' + mission.date.getMinutes().toString().padStart(2, '0')}</Text>
-
-                  <View style={styles.cardFooter}>
-                    <View style={styles.participantsContainer}>
-                      <Text style={styles.participantsIcon}>👥</Text>
-                      <Text style={styles.participantsText}>
-                        {mission.number_of_volunteers}/{mission.number_max_volunteers}
-                      </Text>
-                    </View>
-                    <TouchableOpacity>
-                      <Text style={styles.detailLink}>Voir détail →</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
+            {missions.map((missions) => (
+              <View key={missions.id} >
+                <MissionVolunteerCard
+                  mission_title={missions.title}
+                  association_name={missions.association_name}
+                  city={missions.city}
+                  date={missions.date}
+                  number_max_volunteers={missions.number_max_volunteers}
+                  number_of_volunteers={missions.number_of_volunteers}
+                  category_label={missions.category}
+                  category_color={missions.categoryColor}
+                  image={missions.image}
+                  favorite={missions.favorite}
+                  onPressMission={() => handlePressMission(missions.id)}
+                  onPressFavorite={(newValue) => handlePressFavorite(missions.id, newValue)}
+                />
               </View>
             ))}
           </View>
@@ -360,6 +354,7 @@ export default function AccountBenevole() {
             </View>
         </View>
       </ScrollView>
+    </View>
     </View>
   );
 };
