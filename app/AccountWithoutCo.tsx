@@ -193,34 +193,21 @@ export default function AccountWithoutCo() {
 
           <View style={styles.missionsGrid}>
             {missions.map((mission) => (
-              <View key={mission.id} style={styles.missionCardWeb}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: mission.image }}
-                    style={styles.missionImageWeb}
-                    resizeMode="cover"
-                  />
-                  <View style={styles.categoryBadgeWeb}>
-                    <Text style={styles.categoryTextWeb}>{mission.category}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.cardContent}>
-                  <Text style={styles.missionTitleWeb}>{mission.title}</Text>
-                  <Text style={styles.missionDateWeb}>{mission.date.getDate().toString().padStart(2, '0') + '/' + (mission.date.getMonth() + 1).toString().padStart(2, '0') + '/' + mission.date.getFullYear() + ' - ' + mission.date.getHours().toString().padStart(2, '0') + 'h' + mission.date.getMinutes().toString().padStart(2, '0')}</Text>
-
-                  <View style={styles.cardFooter}>
-                    <View style={styles.participantsContainer}>
-                      <Text style={styles.participantsIcon}>👥</Text>
-                      <Text style={styles.participantsText}>
-                        {mission.number_of_volunteers}/{mission.number_max_volunteers}
-                      </Text>
-                    </View>
-                    <TouchableOpacity>
-                      <Text style={styles.detailLink}>Voir détail →</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
+              <View key={mission.id} style={styles.cardWrapper}>
+                <MissionVolunteerCard
+                  mission_title={mission.title}
+                  association_name={mission.association_name}
+                  city={mission.city}
+                  date={mission.date}
+                  number_max_volunteers={mission.number_max_volunteers}
+                  number_of_volunteers={mission.number_of_volunteers}
+                  category_label={mission.category}
+                  category_color={mission.categoryColor}
+                  image={mission.image}
+                  favorite={mission.favorite}
+                  onPressMission={() => handlePressMission(mission.id)}
+                  onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
+                />
               </View>
             ))}
           </View>
