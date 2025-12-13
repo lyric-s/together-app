@@ -203,29 +203,6 @@ export default function ChangeMission() {
     {id: "3", lastname: "ABCDEFGHIJKLMNOPQRSTUVWXYZ", firstname: "abcdefghijklmnopqrstuvwxyz"},
   ])
 
-  const handleNavigate = (route: string) => {
-    switch (route) {
-      case 'home':
-        router.push({ pathname: '/AccountWithoutCo' as any});
-        break;
-      case 'upcoming':
-        router.push({ pathname: '/UpcomingMissions' as any });
-        break;
-      case 'profile':
-        router.push({ pathname: '/Profile' as any });
-        break;
-      case 'logout':
-        // TODO: Implement logout logic (e.g. clear tokens, navigate to login)
-        break;
-      default:
-        console.log('Route non implémentée:', route);
-    }
-  };
-
-  const handleBackToList = () => {
-    router.push({ pathname: '/UpcomingMissions' as any });
-  };
-
   return (
     <>
     <AlertToast
@@ -238,7 +215,7 @@ export default function ChangeMission() {
     <Sidebar
       userType='association'
       userName='SPA'
-      onNavigate={handleNavigate}
+      onNavigate={(route: string) => {router.push(('/' + route) as any)}}
     />
     <ScrollView style={styles.container}>
       {isEditing ? (

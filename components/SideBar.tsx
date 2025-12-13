@@ -114,7 +114,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     association: [
       { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
       { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "mission_creation" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "upcoming" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "ChangeMission" },
       { icon: require("../assets/images/historical.png"), label: "Historiques", route: "history" },
       { icon: require("../assets/images/user.png"), label: "Profil", route: "profile" },
     ],

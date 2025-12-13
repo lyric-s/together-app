@@ -6,7 +6,7 @@
 
 import { View, StyleSheet, Text } from 'react-native';
 import React from 'react';
-import ChangeMission from '@/pages/ChangeMission'
+import ChangeMission from '@/app/ChangeMission'
 
 /**
  * The Index component serves as the primary view for the home screen.
