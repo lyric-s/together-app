@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type TabItem = {
@@ -8,7 +8,7 @@ type TabItem = {
     iconOutline: keyof typeof Ionicons.glyphMap;
 };
 
-export default function BottomNavBar() {
+const BottomNavBar: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>('home');
 
     const tabs: TabItem[] = [
@@ -19,7 +19,7 @@ export default function BottomNavBar() {
     ];
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
 
             <View style={styles.navBar}>
 
@@ -45,12 +45,15 @@ export default function BottomNavBar() {
                 })}
 
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
+export default BottomNavBar;
+
 const styles = StyleSheet.create({
     container: {
+        // La View qui enveloppe tout prend l'espace disponible
         flex: 1,
         justifyContent: 'flex-end',
         backgroundColor: '#E5E5E5',
@@ -58,8 +61,7 @@ const styles = StyleSheet.create({
     navBar: {
         flexDirection: 'row',
         backgroundColor: 'white',
-        height: 80,
-        paddingBottom: 20,
+        height: 60,
         elevation: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: -2 },
