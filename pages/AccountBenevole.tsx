@@ -251,24 +251,24 @@ export default function AccountBenevole() {
             </View>
 
             {/* List of missions */}
-            {missionsFavorite.map((missionsFavorite) => (
-              <View key={missionsFavorite.id} style={styles.cardWrapper}>
-                <MissionVolunteerCard
-                  mission_title={missionsFavorite.title}
-                  association_name={missionsFavorite.association_name}
-                  city={missionsFavorite.city}
-                  date={missionsFavorite.date}
-                  number_max_volunteers={missionsFavorite.number_max_volunteers}
-                  number_of_volunteers={missionsFavorite.number_of_volunteers}
-                  category_label={missionsFavorite.category}
-                  category_color={missionsFavorite.categoryColor}
-                  image={missionsFavorite.image}
-                  favorite={missionsFavorite.favorite}
-                  onPressMission={() => handlePressMission(missionsFavorite.id)}
-                  onPressFavorite={(newValue) => handlePressFavorite(missionsFavorite.id, newValue)}
-                />
-              </View>
-            ))}
+            {missionsFavorite.map((mission) => (
+            <View key={mission.id} >
+              <MissionVolunteerCard
+                mission_title={mission.title}
+                association_name={mission.association_name}
+                city={mission.city}
+                date={mission.date}
+                number_max_volunteers={mission.number_max_volunteers}
+                number_of_volunteers={mission.number_of_volunteers}
+                category_label={mission.category}
+                category_color={mission.categoryColor}
+                image={mission.image}
+                favorite={mission.favorite}
+                onPressMission={() => handlePressMission(mission.id)}
+                onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
+              />
+            </View>
+          ))}
           </View>
         </ScrollView>
 
