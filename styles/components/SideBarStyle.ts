@@ -5,6 +5,24 @@ import { useWindowDimensions } from "react-native";
 export const getStyles = (screenWidth: number) => {
 
   return StyleSheet.create({
+
+    burgerButton: {
+      position: "absolute",
+      top: 20,
+      left: 20,
+      zIndex: 1000,
+      padding: 10,
+      backgroundColor: Colors.purpleBackground,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: Colors.white,
+    },
+
+    burger: {
+      fontSize: 22, 
+      color: Colors.white ,
+    },
+
     sidebar: {
       width: "20%",
       height: "100%",
@@ -13,6 +31,15 @@ export const getStyles = (screenWidth: number) => {
       paddingLeft: 20,
       paddingVertical: 10,
       justifyContent: "space-between",
+    },
+
+    reducedSideBar: {
+      position: "absolute",
+      left: 0,
+      top: 0,
+      bottom: 0,
+      zIndex: 999,
+      elevation: 10,
     },
 
     titleRow: {
