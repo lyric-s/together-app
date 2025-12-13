@@ -1,7 +1,18 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, useWindowDimensions  } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import ProfilePicture from "./ProfilPicture";
-import { getStyles } from "../styles/components/SideBarStyle"
+import { getStyles } from "../styles/components/SideBarStyle";
+import { usePathname } from "expo-router";
+import { Colors } from "@/constants/colors";
+
+const MOBILE_BREAKPOINT = 900;
 
 type SidebarProps = {
   userType: "volunteer" | "volunteer_guest" | "association" | "admin";
@@ -29,6 +40,8 @@ type SidebarButtonProps = {
  */
 function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps) {
   const { width } = useWindowDimensions();
+  const isSmallScreen = width < 900; 
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const styles = getStyles(width);
 
   return (
@@ -43,24 +56,41 @@ function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps
 }
 
 /**
- * Sidebar component for web/desktop.
+ * Sidebar component for web and responsive layouts.
  *
  * @param userType - Type of the user ("volunteer", "volunteer_guest", "association", "admin")
  * @param userName - Display name of the user or association
  * @param onNavigate - Callback to navigate when a button is clicked; receives the route string
- * @param currentRoute - Current active route; used to highlight the active button
+ *
+ * Responsive behavior:
+ * - On large screens (desktop), the sidebar is permanently visible and occupies a fixed space
+ *   on the left side of the layout.
+ * - On small screens, the sidebar is hidden by default and replaced by a burger menu button.
+ * - The burger button toggles the visibility of the sidebar.
+ * - When opened on small screens, the sidebar appears as an overlay (absolute positioned)
+ *   and does NOT push or resize the main content.
+ * - Selecting a navigation item on small screens automatically closes the sidebar.
  *
  * Displays:
  * - App title based on user type
  * - Profile picture and user name
  * - Two sections: GENERAL (main navigation) and SECURITE (logout/settings)
  * - Buttons highlight in bright orange when active
- * - Designed for responsive width; scrollable if content overflows
+ * - Scrollable content when menu height exceeds viewport
  */
-
 export default function Sidebar({ userType, userName, onNavigate }: SidebarProps) {
   const { width } = useWindowDimensions();
+  const isMobile = width < MOBILE_BREAKPOINT;
   const styles = getStyles(width);
+
+  const [open, setOpen] = React.useState(!isMobile);
+
+  // Resize
+  React.useEffect(() => {
+    setOpen(!isMobile);
+  }, [isMobile]);
+
+  const currentRoute = usePathname().replace("/", "");
 
   const appTitle =
     userType === "volunteer" || userType === "volunteer_guest"
@@ -69,7 +99,6 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
       ? "Together Association"
       : "Together Management";
 
-    // to be changed later with the correct values
   const sections = {
     volunteer_connected: [
       { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
@@ -84,7 +113,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     ],
     association: [
       { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
-      { icon: require("../assets/images/plus.png"), label: "Rechercher une mission", route: "search" },
+      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "mission_creation" },
       { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "upcoming" },
       { icon: require("../assets/images/historical.png"), label: "Historiques", route: "history" },
       { icon: require("../assets/images/user.png"), label: "Profil", route: "profile" },
@@ -111,65 +140,79 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     { icon: require("../assets/images/settings.png"), label: "Réglages", route: "settings" },
   ];
 
-  const [currentRoute, setCurrentRoute] = React.useState<string | null>(null);
-
   return (
-    <View style={styles.sidebar}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+    <>
+      {/* BURGER BUTTON */}
+      {isMobile && (
+        <TouchableOpacity
+          onPress={() => setOpen(!open)}
+          style={styles.burgerButton}
+        >
+          <Text style={styles.burger}>☰</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* SIDEBAR */}
+      {open && (
+        <View
+          style={[
+            styles.sidebar,
+            isMobile && styles.reducedSideBar,
+          ]}
+        >
+          <ScrollView showsVerticalScrollIndicator={false}>
             {/* HEADER */}
             <View>
-                <View style={styles.titleRow}>
-                    <Image
-                        source={require("../assets/images/logo.png")}
-                        style={styles.logo}
-                    />
-                    <Text style={styles.title}>{appTitle}</Text>
-                </View>
-
-                {/* PROFIL */}
-                <View style={styles.profileRow}>
-                    <ProfilePicture
-                        source={require("../assets/images/favicon.png")}
-                        size={45}
-                    />
-                    <Text style={styles.userName}>{userName}</Text>
-                </View>
-
-                {/* GENERAL SECTION */}
-                <Text style={styles.sectionTitle}>GENERAL</Text>
-                {generalItems.map((item, i) => (
-                <SidebarButton
-                    key={i}
-                    icon={item.icon}
-                    label={item.label}
-                    active={currentRoute === item.route}
-                    onPress={() => {
-                        onNavigate(item.route);
-                        setCurrentRoute(item.route);
-                    }}
+              <View style={styles.titleRow}>
+                <Image
+                  source={require("../assets/images/logo.png")}
+                  style={styles.logo}
                 />
-                ))}
+                <Text style={styles.title}>{appTitle}</Text>
+              </View>
+
+              {/* PROFIL */}
+              <View style={styles.profileRow}>
+                <ProfilePicture
+                  source={require("../assets/images/favicon.png")}
+                  size={45}
+                />
+                <Text style={styles.userName}>{userName}</Text>
+              </View>
+
+              <Text style={styles.sectionTitle}>GENERAL</Text>
+              {generalItems.map((item, i) => (
+                <SidebarButton
+                  key={i}
+                  icon={item.icon}
+                  label={item.label}
+                  active={currentRoute === item.route}
+                  onPress={() => {
+                    onNavigate(item.route);
+                    if (isMobile) setOpen(false);
+                  }}
+                />
+              ))}
             </View>
 
-            {/* SECURITY SECTION */}
             <View>
-                <Text style={styles.sectionTitle}>SECURITE</Text>
-                {securityItems.map((item, i) => (
+              <Text style={styles.sectionTitle}>SECURITE</Text>
+              {securityItems.map((item, i) => (
                 <SidebarButton
-                    key={i}
-                    icon={item.icon}
-                    label={item.label}
-                    active={currentRoute === item.route}
-                    onPress={() => {
-                        onNavigate(item.route);
-                        setCurrentRoute(item.route);
-                    }}
+                  key={i}
+                  icon={item.icon}
+                  label={item.label}
+                  active={currentRoute === item.route}
+                  onPress={() => {
+                    onNavigate(item.route);
+                    if (isMobile) setOpen(false);
+                  }}
                 />
-                ))}
+              ))}
             </View>
-        </ScrollView>
-      
-    </View>
+          </ScrollView>
+        </View>
+      )}
+    </>
   );
 }
-
