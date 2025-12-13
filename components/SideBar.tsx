@@ -147,10 +147,11 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
         <TouchableOpacity
           onPress={() => setOpen(!open)}
           style={styles.burgerButton}
+          accessibilityRole="button"
+          accessibilityLabel={open ? "Fermer le menu" : "Ouvrir le menu"}
         >
           <Text style={styles.burger}>☰</Text>
-        </TouchableOpacity>
-      )}
+        </TouchableOpacity>      )}
 
       {/* SIDEBAR */}
       {open && (
