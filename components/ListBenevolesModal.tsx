@@ -53,10 +53,10 @@ export default function ListeBenevolesModal({
         >
         <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                 <Text style={styles.title}>{title} - Liste des bénévoles</Text>
                 <TouchableOpacity onPress={onClose}>
-                <Text style={[styles.croixText, { fontSize: 50, color: Colors.red }]}>×</Text>
+                <Text style={[styles.croixText, { fontSize: 50, color: Colors.red, marginBottom: 10 }]}>×</Text>
                 </TouchableOpacity>
             </View>
 
