@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { router } from 'expo-router'
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 import {
@@ -12,14 +12,29 @@ import {
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCoCSS';
 import { Mission } from '@/types/Mission';
+import AlertToast from '@/components/AlertToast';
 
 export default function AccountBenevole() {
   const { width } = useWindowDimensions();
   //const isWeb = Platform.OS === 'web';
   const isMobile = width < 768;
 
+  const [alertModal, setAlertModal] = useState({ 
+    visible: false, 
+    title: '', 
+    message: '' 
+  });
+
+  const showAlert = useCallback((title: string, message: string) => {
+    setAlertModal({ visible: true, title, message });
+  }, []);
+
+  const handleAlertClose = useCallback(() => {
+    setAlertModal({ visible: false, title: '', message: '' })
+  }, []);
+
   //data via API
-  const missions: Mission[] = [
+  const [missions, setMissions] = useState<Mission[]>([
     {
       id: '1',
       title: 'Animation dans un centre',
@@ -59,7 +74,7 @@ export default function AccountBenevole() {
       number_max_volunteers: 10,
       favorite: false,
     },
-  ];
+  ]);
 
   const [missionsFavorite, setMissionsFavorite] = useState<Mission[]>([
     {
@@ -96,7 +111,7 @@ export default function AccountBenevole() {
   };
 
   const saveFavoriteToDatabase = async (missionId: string, isFavorite: boolean) => {
-    try {
+    /*try {
       const response = await fetch(`https://your-api.com/missions/${missionId}/favorite`, {
         method: 'PUT',
         headers: {
@@ -116,54 +131,67 @@ export default function AccountBenevole() {
     } catch (error) {
       console.error('Erreur de sauvegarde:', error);
       return false;
-    }
+    }*/
+   return true
   };
 
   const handlePressFavorite = async (missionId: string, newValue: boolean) => {
     console.log('Favorite toggled:', missionId, newValue);
 
-    // 1. Sauvegarder en base de données
+    // 1. Save in BD
     const saved = await saveFavoriteToDatabase(missionId, newValue);
     
     if (!saved) {
-      // Si la sauvegarde échoue, ne pas mettre à jour l'UI
-      alert('Erreur lors de la mise à jour du favori. Veuillez réessayer.');
-      return;
+        // If saving failed
+        showAlert('Erreur', 'Erreur lors de la mise à jour du favori. Veuillez réessayer.');
+        return;
     }
 
-    // 2. Mettre à jour les états locaux
     if (newValue) {
-      // Ajouter aux favoris
-      // Chercher la mission dans le tableau missions
-      const missionToAdd = missions.find(m => m.id === missionId);
-      
-      if (missionToAdd) {
-        // Ajouter aux favoris si pas déjà présente
-        if (!missionsFavorite.find(m => m.id === missionId)) {
-          setMissionsFavorite(prevFavorites => [
-            ...prevFavorites,
-            { ...missionToAdd, favorite: true }
-          ]);
-        }
-      } else {
-        // La mission vient peut-être déjà des favoris
-        setMissionsFavorite(prevFavorites =>
-          prevFavorites.map(m =>
-            m.id === missionId ? { ...m, favorite: true } : m
-          )
-        );
-      }
-    } else {
-      // Retirer des favoris
-      setMissionsFavorite(prevFavorites =>
-        prevFavorites.filter(m => m.id !== missionId)
+    // On passe en favori
+    const missionFromList = missions.find(m => m.id === missionId);
+    const missionFromFavorites = missionsFavorite.find(m => m.id === missionId);
+    const missionToAdd = missionFromList || missionFromFavorites;
+
+    if (missionToAdd) {
+      setMissions(mis =>
+        mis.map(m =>
+          m.id === missionId ? { ...m, favorite: true } : m
+        )
+      );
+
+      setMissionsFavorite(prev =>
+        prev.some(m => m.id === missionId)
+          ? prev.map(m =>
+              m.id === missionId ? { ...m, favorite: true } : m
+            )
+          : [...prev, { ...missionToAdd, favorite: true }]
       );
     }
+  } else {
+    // On enlève des favoris -> doit être false partout
+    setMissions(mis =>
+      mis.map(m =>
+        m.id === missionId ? { ...m, favorite: false } : m
+      )
+    );
+
+    setMissionsFavorite(prev =>
+      prev.filter(m => m.id !== missionId)
+    );
+  }
   };
 
   // Mobile version
   if (isMobile) {
     return (
+        <>
+        <AlertToast 
+            visible={alertModal.visible}
+            title={alertModal.title}
+            message={alertModal.message}
+            onClose={handleAlertClose}
+        />
       <View style={styles.container}>
         {/* Header Mobile */}
         <View style={styles.headerMobile}>
@@ -260,6 +288,7 @@ export default function AccountBenevole() {
           </TouchableOpacity>
         </View>
       </View>
+    </>
     );
   }
 
