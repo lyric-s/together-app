@@ -49,18 +49,13 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
     marginRight: 30,
   },
+
   notificationText: {
-    fontSize: 14,
+    fontSize: 15,
     color: Colors.black,
   },
 
   notifInfo: {
-    backgroundColor: "#adcbe0ff",
-  },
-  notifSuccess: {
-    backgroundColor: "#a7e3bfff",
-  },
-  notifWarning: {
-    backgroundColor: "#e7cba4ff",
+    backgroundColor: Colors.lavender,
   },
 });

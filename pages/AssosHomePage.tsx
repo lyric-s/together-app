@@ -7,13 +7,6 @@ import {
 import MissionAdminAssosCard from "@/components/MissionAdminAssosCard";
 import { styles } from "@/styles/pages/AssosHomePageStyle"
 
-/**
- * Notification type used to style and categorize notifications.
- * - info: informational message
- * - warning: requires attention
- * - success: positive feedback or confirmation
- */
-type NotificationType = "info" | "warning" | "success";
 
 /**
  * Represents a single notification item.
@@ -26,7 +19,6 @@ type NotificationType = "info" | "warning" | "success";
 type Notification = {
   id: string;
   message: string;
-  type: NotificationType;
   date: Date;
 };
 
@@ -62,25 +54,21 @@ export default function AssosHomePage() {
   {
     id: "1",
     message: "Une nouvelle candidature a été reçue.",
-    type: "info",
     date: new Date(),
   },
   {
     id: "2",
     message: "Mission “Collecte alimentaire” publiée.",
-    type: "success",
     date: new Date(),
   },
   {
     id: "3",
     message: "Attention : mission sans bénévoles.",
-    type: "warning",
     date: new Date("2025-12-12"),
   },
   {
     id: "4",
     message: "Mission terminée avec succès.",
-    type: "success",
     date: new Date("2025-11-12"),
   },
 ];
@@ -134,18 +122,6 @@ export default function AssosHomePage() {
   );
 
 
-  // ---- HELPERS ----
-  const getNotifStyle = (type: NotificationType) => {
-    switch (type) {
-      case "success":
-        return styles.notifSuccess;
-      case "warning":
-        return styles.notifWarning;
-      default:
-        return styles.notifInfo;
-    }
-  };
-
   return (
     <View style={styles.container}>
       
@@ -180,7 +156,7 @@ export default function AssosHomePage() {
               {section.data.map((notif) => (
                 <View
                   key={notif.id}
-                  style={[styles.notificationCard, getNotifStyle(notif.type)]}
+                  style={[styles.notificationCard, styles.notifInfo]}
                 >
                   <Text style={styles.notificationText}>
                     {notif.message}
