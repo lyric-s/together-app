@@ -16,6 +16,6 @@ export default StyleSheet.create({
     icon: {
         width: 24,
         height: 24,
-        tintColor: Colors.violet, // identique à ton design actuel
+        tintColor: Colors.violet,
     },
 });

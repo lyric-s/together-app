@@ -1,6 +1,6 @@
 import React from 'react';
-import LoginMobilePage from '@/pages/LoginMobilePage';
+import LoginWebPage from '@/pages/LoginWebPage';
 
 export default function Index() {
-  return <LoginMobilePage />;
+  return <LoginWebPage />;
 }
