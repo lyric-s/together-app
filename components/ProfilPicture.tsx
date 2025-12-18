@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, StyleSheet, View, ImageSourcePropType } from 'react-native';
-import { Colors } from "../constants/colors";
+import { Colors } from "@/constants/colors";
 
 // ------------- Component C11
 // how to use : <ProfilePicture uri={require('../assets/images/profil-picture.png')} size={120} />
