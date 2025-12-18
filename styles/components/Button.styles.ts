@@ -3,7 +3,7 @@ import { Colors } from '@/constants/colors';
 
 export default StyleSheet.create({
     button: {
-        marginTop: 98,
+        marginTop: 50,
         alignSelf: 'center',
         width: '56%',
         maxWidth: 260,

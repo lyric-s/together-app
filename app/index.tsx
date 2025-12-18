@@ -1,9 +1,3 @@
-/**
- * @file index.tsx
- * @description Root entry point for the application's home screen. 
- * This file defines the layout structure, featuring a centered navigation component.
- */
-
 import { View, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack } from 'expo-router';
