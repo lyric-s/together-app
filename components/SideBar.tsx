@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import ProfilePicture from "./ProfilPicture";
-import { getStyles } from "../styles/components/SideBarStyle";
+import { getStyles } from "@/styles/components/SideBarStyle";
 import { usePathname } from "expo-router";
 import { Colors } from "@/constants/colors";
 
