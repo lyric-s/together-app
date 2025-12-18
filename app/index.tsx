@@ -3,6 +3,8 @@ import BackButton from '@/components/BackButton';
 import { View, Text } from 'react-native';
 import MobileSearchBar from '@/components/MobileSearchBar';
 import { useState } from "react";
+import { useRouter } from "expo-router";
+import ButtonAuth from '@/components/Button';
 
 
 export default function Index() {
@@ -25,6 +27,8 @@ export default function Index() {
 
   };
 
+  const router = useRouter();
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
       
@@ -33,6 +37,8 @@ export default function Index() {
         default_city={defaultCity}   // option
         onSearch={handleSearch}
       />
+
+      <ButtonAuth text="Modifier Profil" onPress={() => router.push("/profil_modification")}/>
 
     </View>
   );
