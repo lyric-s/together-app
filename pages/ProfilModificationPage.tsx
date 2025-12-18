@@ -78,12 +78,13 @@ export default function ProfilModificationPage() {
   };
 
   const handleCancel = () => {
+    setProfileImage(initialValues.profileImage);
     setLastName(initialValues.lastName);
     setFirstName(initialValues.firstName);
     setEmail(initialValues.email);
     setIsEditing(false);
   };
-
+  
   const handleSave = () => {
     // TODO: save profile changes
     setIsEditing(false);
