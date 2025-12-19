@@ -1,0 +1,30 @@
+import { StyleSheet } from 'react-native';
+
+export const styles = StyleSheet.create({
+    navBar: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        height: 60,
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
+    tabButton: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+    },
+    activeIndicator: {
+        position: 'absolute',
+        top: 0,
+        alignSelf: 'center',
+        width: 40,
+        height: 4,
+        backgroundColor: '#F97316',
+        borderBottomLeftRadius: 2,
+        borderBottomRightRadius: 2,
+    },
+});
