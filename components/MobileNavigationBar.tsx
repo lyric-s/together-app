@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type TabItem = {
@@ -19,45 +19,37 @@ const BottomNavBar: React.FC = () => {
     ];
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.navBar}>
+            {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
 
-            <View style={styles.navBar}>
+                return (
+                    <TouchableOpacity
+                        key={tab.id}
+                        style={styles.tabButton}
+                        onPress={() => setActiveTab(tab.id)}
+                        activeOpacity={0.7}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${tab.id} tab`}
+                        accessibilityState={{ selected: isActive }}
+                    >
+                        {isActive && <View style={styles.activeIndicator} />}
 
-                {tabs.map((tab) => {
-                    const isActive = activeTab === tab.id;
-
-                    return (
-                        <TouchableOpacity
-                            key={tab.id}
-                            style={styles.tabButton}
-                            onPress={() => setActiveTab(tab.id)}
-                            activeOpacity={0.7}
-                        >
-                            {isActive && <View style={styles.activeIndicator} />}
-
-                            <Ionicons
-                                name={isActive ? tab.iconName : tab.iconOutline}
-                                size={28}
-                                color="#F97316"
-                            />
-                        </TouchableOpacity>
-                    );
-                })}
-
-            </View>
-        </SafeAreaView>
+                        <Ionicons
+                            name={isActive ? tab.iconName : tab.iconOutline}
+                            size={28}
+                            color="#F97316"
+                        />
+                    </TouchableOpacity>
+                );
+            })}
+        </View>
     );
 }
 
 export default BottomNavBar;
 
 const styles = StyleSheet.create({
-    container: {
-        // La View qui enveloppe tout prend l'espace disponible
-        flex: 1,
-        justifyContent: 'flex-end',
-        backgroundColor: '#E5E5E5',
-    },
     navBar: {
         flexDirection: 'row',
         backgroundColor: 'white',
