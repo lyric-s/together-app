@@ -1,24 +1,16 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavBar from '@/components/MobileNavigationBar';
 
-
 export default function Index() {
-    const categoryList = [
-        "Environnement",
-        "Social",
-        "Éducation",
-        "Culture",
-        "Animaux",
-    ];
-
-    const defaultCity = "Paris";
 
     return (
-        // Le conteneur principal empile le contenu et la barre de navigation.
         <View style={styles.mainContainer}>
-            {/* La barre de navigation est fixée au bas de l'écran */}
+
+            <SafeAreaView style={styles.contentContainer}>
+            </SafeAreaView>
+
             <BottomNavBar />
 
         </View>
