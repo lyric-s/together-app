@@ -15,21 +15,9 @@ export default function Index() {
 
     const defaultCity = "Paris";
 
-    const handleSearch = (searchText: string, filters: any) => {
-        console.log("Recherche lancée !");
-        console.log("Texte :", searchText);
-        console.log("Filtres :", filters);
-    };
-
     return (
         // Le conteneur principal empile le contenu et la barre de navigation.
         <View style={styles.mainContainer}>
-
-            {/* Le contenu utilise SafeAreaView pour gérer les zones sécurisées (notch) */}
-            <SafeAreaView style={styles.contentContainer}>
-
-            </SafeAreaView>
-
             {/* La barre de navigation est fixée au bas de l'écran */}
             <BottomNavBar />
 
