@@ -1,7 +1,8 @@
 import React from 'react';
-import BackButton from '@/components/BackButton';
-import { View, Text } from 'react-native';
-import MobileSearchBar from '@/components/MobileNavigationBar';
+import { View, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import BottomNavBar from '@/components/MobileNavigationBar';
+
 
 export default function Index() {
     const categoryList = [
@@ -21,12 +22,34 @@ export default function Index() {
     };
 
     return (
-        <View style={{ flex: 1, padding: 20 }}>
-            <MobileSearchBar
-                category_list={categoryList}
-                default_city={defaultCity}   // option
-                onSearch={handleSearch}
-            />
+        // Le conteneur principal empile le contenu et la barre de navigation.
+        <View style={styles.mainContainer}>
+
+            {/* Le contenu utilise SafeAreaView pour gérer les zones sécurisées (notch) */}
+            <SafeAreaView style={styles.contentContainer}>
+
+            </SafeAreaView>
+
+            {/* La barre de navigation est fixée au bas de l'écran */}
+            <BottomNavBar />
+
         </View>
     );
 }
+
+(Index as any).options = {
+    headerShown: false,
+};
+
+const styles = StyleSheet.create({
+    mainContainer: {
+        flex: 1,
+        backgroundColor: '#E5E5E5',
+    },
+    contentContainer: {
+        flex: 1,
+        paddingHorizontal: 20,
+        paddingTop: 20,
+        paddingBottom: 80,
+    }
+});
