@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';import { Ionicons } from '@expo/vector-icons';
+import { View, TouchableOpacity, StyleSheet, } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { styles } from '@/styles/components/MobileNavigationBarStyles';
 
 type TabItem = {
