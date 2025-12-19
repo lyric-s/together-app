@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, TouchableOpacity, Text, StyleProp, ViewStyle } from 'react-native';
 import { styles} from '@/styles/components/SwitchProject.styles';
 
 type ActiveTab = 'Mission' | 'Association';
