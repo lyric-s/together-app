@@ -93,7 +93,12 @@ export default function JoinMissionPage() {
       ]}
     >
       <View style={isWeb ? styles.webTopSection : undefined}>
-        <Image source={mission.image} style={styles.missionImage} />
+        <Image 
+          source={mission.image} 
+          style={styles.missionImage}
+          accessible={true}
+          accessibilityLabel={`Image de la mission ${mission.title}`}
+        />
 
         <View style={isWeb ? styles.webInfoColumn : undefined}>
             {/* CATEGORY */}
@@ -151,7 +156,12 @@ export default function JoinMissionPage() {
           onPress={handleJoinMission}
         />
 
-        <TouchableOpacity onPress={toggleFavorite}>
+        <TouchableOpacity 
+          onPress={toggleFavorite}
+          accessible={true}
+          accessibilityLabel={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+          accessibilityRole="button"
+        >
           <Image
             source={
               isFavorite
@@ -159,6 +169,7 @@ export default function JoinMissionPage() {
                 : require("@/assets/images/gray_heart.png")
             }
             style={styles.heartIcon}
+            accessible={false}
           />
         </TouchableOpacity>
       </View>

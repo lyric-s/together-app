@@ -16,5 +16,6 @@ export default function Page() {
         />
       )}
         <JoinMissionPage />
+        {/* TODO: add navigation bar for mobile */}
     </View>;
 }
