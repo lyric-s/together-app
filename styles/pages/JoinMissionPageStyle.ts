@@ -1,5 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform, Dimensions } from "react-native";
 import { Colors } from "@/constants/colors";
+
+const isWeb = Platform.OS === "web";
+
 
 export const styles = StyleSheet.create({
   container: {
@@ -8,6 +11,27 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
 
+  scrollContent: {
+    paddingBottom: 40,
+  },
+
+  // WEB
+  scrollContentWeb: {
+    width: "80%",
+  },
+
+  webTopSection: {
+  flexDirection: "row",
+  alignItems: "flex-start",
+  gap: 32,
+},
+
+webInfoColumn: {
+  flex: 1,
+  justifyContent: "flex-start",
+},
+
+
   /* HEADER */
   header: {
     flexDirection: "row",
@@ -15,29 +39,34 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
     gap: 12,
   },
+
   headerTitle: {
     fontSize: 20,
     fontWeight: "600",
     color: Colors.black,
+    flexShrink: 1,
   },
 
   /* IMAGE */
   missionImage: {
-    width: "100%",
-    height: 220,
+    width: isWeb ? "60%" : "100%",
+    height: 240,
     borderRadius: 14,
     marginBottom: 20,
   },
 
   /* ROWS */
   row: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    gap: 10,
-  },
+  flexDirection: "row",
+  alignItems: "center",
+  marginBottom: 12,
+  gap: 10,
+  flexWrap: Platform.OS === "web" ? "wrap" : "nowrap",
+},
+
+
   label: {
-    fontSize: 14,
+    fontSize: isWeb ? 19 : 16,
     fontWeight: "500",
     color: Colors.black,
   },
@@ -46,56 +75,56 @@ export const styles = StyleSheet.create({
   volunteerRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-  },
-  volunteerText: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  peopleIcon: {
-    width: 20,
-    height: 20,
-    resizeMode: "contain",
   },
 
-  /* BOTTOM CARD */
+  volunteerText: {
+    fontSize: isWeb ? 19 : 16,
+    fontWeight: "500",
+  },
+
+  peopleIcon: {
+    width: isWeb ? 32 : 24,
+    height: isWeb ? 32 : 24,
+    marginLeft: isWeb ? 15 : 6,
+  },
+
+  /* CARD */
   bottomCard: {
     marginTop: 20,
     backgroundColor: Colors.bottomBackground,
     borderRadius: 16,
     padding: 16,
-    gap: 10,
+    gap: 8,
   },
-  associationName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.black,
-  },
-  date: {
-    fontSize: 14,
-    color: Colors.black,
-  },
-  location: {
-    fontSize: 14,
-    fontStyle: "italic",
-    color: Colors.black,
-  },
+
   description: {
-    fontSize: 14,
+    fontSize: isWeb ? 19 : 15,
+    lineHeight: 22,
     color: Colors.black,
-    marginTop: 6,
   },
 
   /* ACTIONS */
   actionsRow: {
-    marginTop: 16,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    gap: 16,
+    marginTop: -24,
   },
+
   heartIcon: {
-    width: 28,
-    height: 28,
-    resizeMode: "contain",
+    width: 42,
+    height: 42,
+    marginTop: 98,
+  },
+
+  infoLine: {
+    fontSize: isWeb ? 19 : 15,
+    color: Colors.black,
+  },
+
+  infoLabel: {
+    fontWeight: "600",
+    fontSize : isWeb ? 19 : 15
   },
 });

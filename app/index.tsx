@@ -1,10 +1,5 @@
-/**
- * @file index.tsx
- * @description Root entry point for the application's home screen. 
- * This file defines the layout structure, featuring a centered navigation component.
- */
 
-import { View, StyleSheet, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 
@@ -66,3 +61,18 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
     }
 });
+
+{/* <View style={{ flex: 1, padding: 20 }}>
+      
+      <MobileSearchBar
+        category_list={categoryList}
+        default_city={defaultCity}   // option
+        onSearch={handleSearch}
+      />
+      <ButtonAuth
+        text="Rejoindre la mission"
+        onPress={() => router.push("/join_mission")}
+      />
+
+
+    </View> */}
