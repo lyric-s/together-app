@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { Platform, TouchableOpacity, Text, View } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Colors } from "../constants/colors";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+
+
+
 
 interface Props {
   date: Date | null;
@@ -44,26 +48,58 @@ export default function DatePickerField({
 }: Props) {
   const [showPicker, setShowPicker] = useState(false);
 
-  // Format YYYY-MM-DD
-  const formatISODate = (d: Date) => d.toISOString().split("T")[0];
+  // Format YYYY-MM-DD HH:mm
+  const formatDateTimeLocal = (d: Date) => {
+    const pad = (n: number) => String(n).padStart(2, "0");
+
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+
+  const showPickerMobile = () => {
+    if (Platform.OS === "android") {
+      // d'abord la date
+      DateTimePickerAndroid.open({
+        value: date ?? new Date(),
+        onChange: (event, selectedDate) => {
+          if (event.type === "set" && selectedDate) {
+            const newDate = new Date(selectedDate);
+
+            DateTimePickerAndroid.open({
+              value: newDate,
+              onChange: (timeEvent, selectedTime) => {
+                if (timeEvent.type === "set" && selectedTime) {
+                  newDate.setHours(selectedTime.getHours());
+                  newDate.setMinutes(selectedTime.getMinutes());
+                  onChange(newDate);
+                }
+              },
+              mode: "time",
+            });
+          }
+        },
+        mode: "date",
+        minimumDate: minimumDate,
+      });
+    } else {
+      setShowPicker(true); // iOS
+    }
+  };
+
+
 
   if (Platform.OS === "web") {
-    // -------- Web Version ----------
     return (
       <input
-        type="date"
+        type="datetime-local"
         style={{
           padding: 10,
           borderRadius: 8,
           borderWidth: 0,
-          width: "10%",
-          minWidth: 100,
-          marginBottom: 10,
-          marginTop: 10,
+          width: 200,
           backgroundColor: Colors.darkerWhite,
         }}
-        min={formatISODate(minimumDate)}
-        value={date ? formatISODate(date) : ""}
+        min={formatDateTimeLocal(minimumDate)}
+        value={date ? formatDateTimeLocal(date) : ""}
         onChange={(e) => {
           if (!e.target.value) return onChange(null);
           onChange(new Date(e.target.value));
@@ -76,7 +112,7 @@ export default function DatePickerField({
   return (
     <View>
       <TouchableOpacity
-        onPress={() => setShowPicker(true)}
+        onPress={showPickerMobile}
         style={{
           padding: 10,
           backgroundColor: Colors.darkerWhite,
@@ -85,22 +121,35 @@ export default function DatePickerField({
         }}
       >
         <Text>
-          {date ? date.toLocaleDateString("fr-FR") : "Choisir une date"}
+          {date
+            ? date.toLocaleString("fr-FR", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Choisir une date"}
         </Text>
       </TouchableOpacity>
 
-      {showPicker && (
+
+      {Platform.OS === "ios" && showPicker && (
         <DateTimePicker
           value={date ?? new Date()}
-          mode="date"
+          mode="datetime"
           display="spinner"
           minimumDate={minimumDate}
-          onChange={(event, selected) => {
-            setShowPicker(false);
-            if (selected) onChange(selected);
+          onChange={(event, selectedDate) => {
+            if (selectedDate) {
+              onChange(selectedDate);
+              setShowPicker(false);
+            }
           }}
         />
       )}
-    </View>
+
+
+    </View> 
   );
 }
