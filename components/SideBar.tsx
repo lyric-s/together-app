@@ -122,7 +122,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
       { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "dashboard" },
       { icon: require("../assets/images/search.png"), label: "Recherche", route: "search" },
       { icon: require("../assets/images/report.png"), label: "Signalement", route: "report" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "profile" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "ProfilAdmin" },
     ],
   };
 
