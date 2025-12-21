@@ -4,9 +4,7 @@ import {
   View,
   Text,
   ScrollView,
-  TouchableOpacity,
   useWindowDimensions,
-  Image,
 } from 'react-native';
 import { router } from 'expo-router';
 import Sidebar from '@/components/SideBar';
