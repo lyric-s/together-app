@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleProp, ViewStyle } from 'react-native';
-import { styles} from '@/styles/components/SwitchProject.styles';
+import { View, TouchableOpacity, Text, StyleProp, ViewStyle, Alert } from 'react-native';
+import { useRouter } from 'expo-router'; // Import du router
+import { styles } from '@/styles/components/SwitchProject.styles';
 
 type ActiveTab = 'Mission' | 'Association';
 
-/**
- * @interface SwitchProjectProps
- * Définit les props pour le composant SwitchProject, permettant
- * un comportement contrôlé ou non contrôlé (value/defaultValue).
- */
 export interface SwitchProjectProps {
     value?: ActiveTab;
     defaultValue?: ActiveTab;
@@ -18,18 +14,35 @@ export interface SwitchProjectProps {
 
 /**
  * @component SwitchProject
- * Switch à deux onglets (Mission/Association).
+ * Switch à deux onglets (Mission/Association) avec navigation intégrée.
  */
 export default function SwitchProject({ value, defaultValue = 'Mission', onChange, style }: SwitchProjectProps) {
     const [internalActiveTab, setInternalActiveTab] = useState<ActiveTab>(defaultValue);
+    const router = useRouter();
 
     const activeTab = value ?? internalActiveTab;
 
     const handlePress = (tab: ActiveTab) => {
+        // 1. Mise à jour de l'état (visuel)
         if (value === undefined) {
             setInternalActiveTab(tab);
         }
         onChange?.(tab);
+
+        // 2. Gestion de la navigation (Redirections)
+        switch (tab) {
+            case 'Mission':
+                router.push('/mission');
+               
+                break;
+            
+            case 'Association':
+                router.push('/association');
+                break;
+
+            default:
+                break;
+        }
     };
 
     return (
