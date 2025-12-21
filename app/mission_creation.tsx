@@ -8,12 +8,12 @@ export default function Page() {
   
   return <View style={{ flex: 1, flexDirection: "row" }}>
 
-    <Sidebar 
+    {/* <Sidebar 
     userType="association"
      userName="Fred" 
      onNavigate={(route) => router.push(('/' + route) as any)} 
      
-       />
+       /> */}
     <MissionCreation />
     </View>;
 }

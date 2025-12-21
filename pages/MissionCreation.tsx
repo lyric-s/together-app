@@ -19,7 +19,7 @@ export default function MissionCreation() {
   const [category, setCategory] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null); 
   const [location, setLocation] = useState("");
   const [minVolunteers, setMinVolunteers] = useState("");
   const [maxVolunteers, setMaxVolunteers] = useState("");
