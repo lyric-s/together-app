@@ -11,7 +11,19 @@ interface SearchBarProps {
   onSearch: (text: string, filter1: string, filter2?: string) => void;
 }
 
-export default function SearchBar({
+/**
+   * Renders a search bar with a text input, two optional filter pickers, a reset button, and a search trigger.
+   *
+   * The component initializes picker selections from the first entries of `filters_1` and `filters_2` (or "-" if absent).
+   * Pressing the reset button clears the text, restores both pickers to their defaults, and invokes `onSearch` with an empty text and the default filters.
+   * Pressing the search icon invokes `onSearch` with the current text and selected filter values.
+   *
+   * @param filters_1 - Optional list of values for the first picker; the first item is used as the default selection when present.
+   * @param filters_2 - Optional list of values for the second picker; the first item is used as the default selection when present.
+   * @param onSearch - Callback invoked to perform a search with signature `(text, filter1, filter2?)`. `filter2` may be `"-"` when no selection is made.
+   * @returns The rendered search bar React element.
+   */
+  export default function SearchBar({
     filters_1 = [],    
     filters_2 = [],    
     onSearch,
@@ -90,6 +102,5 @@ return (
 );
 
   }
-
 
 
