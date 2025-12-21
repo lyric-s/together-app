@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import Sidebar from '@/components/SideBar';
 import { FormData } from '@/types/ProfileUser';
 import AlertToast from '@/components/AlertToast';
@@ -56,6 +57,12 @@ export default function ProfilAdmin() {
 
     return (
         <>
+            <LinearGradient
+                colors={[Colors.white, Colors.orangeVeryLight]} // Violet → Pourpre (personnalise !)
+                style={{ flex: 1 }}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+            >
             <AlertToast
                 visible={alertModal.visible}
                 title={alertModal.title}
@@ -100,6 +107,7 @@ export default function ProfilAdmin() {
                     )}
                 </View>
             </View>
+            </LinearGradient>
         </>
     );
 }
