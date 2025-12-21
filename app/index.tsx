@@ -4,11 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavBar from '@/components/MobileNavigationBar';
 
 /**
- * Écran principal de l'application (Index).
- * * Ce composant sert de layout racine pour la page d'accueil. Il organise l'écran en deux parties :
- * 1. Une zone de contenu sécurisée (`SafeAreaView`) qui évite les encoches et barres système.
- * 2. Une barre de navigation persistante en bas de l'écran.
- * * @returns Le composant de structure de l'écran Home.
+ * Render the root layout for the app's home screen.
+ *
+ * The layout provides a SafeAreaView content area that avoids device notches and system bars, and a persistent bottom navigation bar.
+ *
+ * @returns The root React element for the home screen layout containing a SafeAreaView content area and a bottom navigation bar.
  */
 export default function Index() {
 
