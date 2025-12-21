@@ -13,8 +13,13 @@ export interface SwitchProjectProps {
 }
 
 /**
- * @component SwitchProject
- * Switch à deux onglets (Mission/Association) avec navigation intégrée.
+ * Renders a two-option segmented switch allowing selection between "Mission" and "Association" and navigates to the corresponding route when a tab is selected.
+ *
+ * @param value - Controlled active tab; when provided, component state is controlled externally.
+ * @param defaultValue - Initial active tab used when `value` is not provided; defaults to `'Mission'`.
+ * @param onChange - Optional callback invoked with the newly selected tab.
+ * @param style - Optional container style override.
+ * @returns A React element displaying the segmented control that updates the active tab and triggers navigation to the matching screen.
  */
 export default function SwitchProject({ value, defaultValue = 'Mission', onChange, style }: SwitchProjectProps) {
     const [internalActiveTab, setInternalActiveTab] = useState<ActiveTab>(defaultValue);
