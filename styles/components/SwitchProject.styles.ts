@@ -1,16 +1,22 @@
+/**
+ * @file SwitchProject.styles.ts
+ * @description Définition des styles stylisés pour le sélecteur de projet.
+ * Ce module utilise le système de design de l'application basé sur la palette de couleurs centralisée.
+ */
+
 import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
 
 /**
  * Définition des styles pour le composant SwitchProject.
  * * @constant styles
- * @property container - Conteneur global centré.
- * @property segmentedControl - Le fond de la barre de sélection (forme pillule, couleur orange clair).
- * @property button - Style de base des deux options cliquables.
- * @property activeButton - Style appliqué à l'option sélectionnée (fond blanc pour le contraste).
- * @property text - Style de police partagé pour les labels.
- * @property activeText - Couleur du texte pour l'onglet actif.
- * @property inactiveText - Opacité réduite pour le texte de l'onglet non sélectionné.
+ * @property {ViewStyle} container - Conteneur global centré pour aligner le switch dans son parent.
+ * @property {ViewStyle} segmentedControl - Fond de la barre de sélection. Utilise un `borderRadius` élevé pour l'aspect "pilule".
+ * @property {ViewStyle} button - Style de base des deux options. Utilise `flex: 1` pour occuper 50% de l'espace chacune.
+ * @property {ViewStyle} activeButton - Style de surbrillance pour l'onglet actif, créant un contraste avec le fond orange.
+ * @property {TextStyle} text - Configuration de la typographie de base pour les labels des boutons.
+ * @property {TextStyle} activeText - Couleur noire pleine pour une lisibilité maximale sur fond blanc.
+ * @property {TextStyle} inactiveText - Applique une opacité de 70% pour signifier visuellement l'état non-sélectionné.
  */
 export const styles = StyleSheet.create({
     container: {
