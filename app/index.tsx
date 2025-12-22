@@ -1,8 +1,8 @@
 /**
  * @file index.tsx
- * @description Page d'accueil racine de l'application.
- * Ce fichier définit la structure de base (Layout) de l'écran principal,
- * intégrant la zone de sécurité système et la barre de navigation.
+ * @description Root home page of the application.
+ * This file defines the base structure (Layout) of the main screen,
+ * integrating the system safe area and the navigation bar.
  */
 
 import { View, StyleSheet} from 'react-native';
@@ -10,29 +10,29 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavBar from '@/components/MobileNavigationBar';
 
 /**
- * Écran principal de l'application (Index).
+ * Application Main Screen (Index).
  * * @description
- * Ce composant agit comme une "coquille" (Shell). Il utilise `SafeAreaView` pour 
- * s'assurer que le contenu ne soit pas masqué par les encoches (notches) sur iPhone
- * ou les barres de statut sur Android.
+ * This component acts as a "shell". It uses `SafeAreaView` to 
+ * ensure that content is not hidden by notches on iPhone
+ * or status bars on Android.
  * * @component
- * @returns {JSX.Element} La vue principale de l'application.
+ * @returns {JSX.Element} The main view of the application.
  */
 export default function Index() {
 
     return (
         <View style={styles.mainContainer}>
 
-            {/* SafeAreaView est crucial ici pour que le padding haut 
-                soit géré automatiquement selon l'appareil.
+            {/* SafeAreaView is crucial here so that the top padding 
+                is automatically managed according to the device.
             */}
             <SafeAreaView style={styles.contentContainer}>
-                {/* NOTE: Les composants de contenu spécifique à l'accueil 
-                    devront être importés et placés ici. 
+                {/* NOTE: Home-specific content components 
+                    should be imported and placed here. 
                 */}
             </SafeAreaView>
 
-            {/* Positionnement fixe en bas de l'écran grâce à la structure Flex du mainContainer */}
+            {/* Fixed positioning at the bottom of the screen thanks to the mainContainer Flex structure */}
             <BottomNavBar />
 
         </View>
@@ -40,23 +40,23 @@ export default function Index() {
 }
 
 /**
- * Configuration des options de navigation statiques.
+ * Static navigation options configuration.
  * * @constant options
  * @description 
- * Ces options sont lues par Expo Router pour configurer le Stack Navigator parent.
- * - `headerShown: false` permet d'utiliser notre propre design d'en-tête ou de s'en passer.
+ * These options are read by Expo Router to configure the parent Stack Navigator.
+ * - `headerShown: false` allows using our own header design or omitting it.
  */
 (Index as any).options = {
     headerShown: false,
 };
 
 /**
- * Styles locaux à l'écran Index.
+ * Local styles for the Index screen.
  * * @constant styles
- * @property {ViewStyle} mainContainer - Conteneur racine occupant 100% de la hauteur.
- * @property {ViewStyle} contentContainer - Espace dédié au contenu défilable ou interactif.
- * Le `paddingBottom: 80` garantit que même le contenu tout en bas ne soit pas 
- * recouvert par la BottomNavBar (qui fait 60px).
+ * @property {ViewStyle} mainContainer - Root container occupying 100% of the height.
+ * @property {ViewStyle} contentContainer - Dedicated space for scrollable or interactive content.
+ * The `paddingBottom: 80` ensures that even content at the very bottom is not 
+ * covered by the BottomNavBar (which is 60px high).
  */
 const styles = StyleSheet.create({
     mainContainer: {
@@ -67,6 +67,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         paddingTop: 20,
-        paddingBottom: 80, // Marge de sécurité pour éviter le chevauchement avec la barre
+        paddingBottom: 80, // Safety margin to avoid overlapping with the bar
     }
 });

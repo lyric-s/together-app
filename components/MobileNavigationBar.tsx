@@ -1,7 +1,7 @@
 /**
  * @file MobileNavigationBar.tsx
- * @description Composant fonctionnel gérant la navigation principale en bas de l'écran.
- * Utilise Expo Router pour les transitions de pages et Ionicons pour l'aspect visuel.
+ * @description Functional component managing the main navigation at the bottom of the screen.
+ * Uses Expo Router for page transitions and Ionicons for the visual aspect.
  */
 
 import React, { useState } from 'react';
@@ -11,11 +11,11 @@ import { useRouter } from 'expo-router';
 import { styles } from '@/styles/components/MobileNavigationBarStyles';
 
 /**
- * Interface définissant la structure d'un onglet de la barre de navigation.
+ * Interface defining the structure of a navigation bar tab.
  * * @interface TabItem
- * @property {string} id - Identifiant technique unique servant de clé et de référence d'état.
- * @property {keyof typeof Ionicons.glyphMap} iconName - Version "remplie" de l'icône (état actif).
- * @property {keyof typeof Ionicons.glyphMap} iconOutline - Version "contour" de l'icône (état inactif).
+ * @property {string} id - Unique technical identifier serving as a key and state reference.
+ * @property {keyof typeof Ionicons.glyphMap} iconName - "Filled" version of the icon (active state).
+ * @property {keyof typeof Ionicons.glyphMap} iconOutline - "Outline" version of the icon (inactive state).
  */
 type TabItem = {
     id: string;
@@ -24,31 +24,31 @@ type TabItem = {
 };
 
 /**
- * Composant de barre de navigation inférieure (Bottom Tab Bar).
- * * Ce composant centralise la logique de navigation globale. Il permet à l'utilisateur
- * de basculer entre les sections principales de l'application.
+ * Bottom Navigation Bar component (Bottom Tab Bar).
+ * * This component centralizes global navigation logic. It allows the user
+ * to switch between the main sections of the application.
  * * @component
  * @example
  * return (
  * <BottomNavBar />
  * )
- * * @returns {JSX.Element} Un conteneur View structuré en lignes avec des boutons tactiles.
+ * * @returns {JSX.Element} A View container structured in rows with tactile buttons.
  */
 const BottomNavBar: React.FC = () => {
     /** * @state activeTab
      * @type {string}
-     * Détermine quel onglet reçoit le style "actif" et l'indicateur visuel supérieur.
-     * Initialisé par défaut sur 'home'.
+     * Determines which tab receives the "active" style and the top visual indicator.
+     * Default initialized to 'home'.
      */
     const [activeTab, setActiveTab] = useState<string>('home');
     
     /** * @hook useRouter
-     * Fourni par expo-router pour effectuer des push de routes de manière impérative.
+     * Provided by expo-router to perform imperative route pushes.
      */
     const router = useRouter();
 
-    /** * Configuration des onglets de navigation.
-     * Chaque objet définit les icônes associées selon l'état de sélection.
+    /** * Navigation tabs configuration.
+     * Each object defines the associated icons according to the selection state.
      * @constant {TabItem[]} tabs
      */
     const tabs: TabItem[] = [
@@ -59,17 +59,17 @@ const BottomNavBar: React.FC = () => {
     ];
 
     /**
-     * Gère l'événement de pression (onPress) sur un onglet.
-     * * Cette fonction orchestre deux actions :
-     * 1. Mise à jour de l'UI locale via `setActiveTab`.
-     * 2. Navigation physique vers le fichier correspondant dans le répertoire `/app`.
+     * Handles the press event (onPress) on a tab.
+     * * This function orchestrates two actions:
+     * 1. Updating the local UI via `setActiveTab`.
+     * 2. Physical navigation to the corresponding file in the `/app` directory.
      * * @function handlePress
-     * @param {string} tabId - L'ID correspondant à l'élément cliqué dans le tableau `tabs`.
+     * @param {string} tabId - The ID corresponding to the element clicked in the `tabs` array.
      */
     const handlePress = (tabId: string) => {
         setActiveTab(tabId);
 
-        // Logique de redirection basée sur l'ID de l'onglet
+        // Redirection logic based on tab ID
         switch (tabId) {
             case 'home':
                 router.push('/');
@@ -91,7 +91,7 @@ const BottomNavBar: React.FC = () => {
     return (
         <View style={styles.navBar}>
             {tabs.map((tab) => {
-                /** @constant {boolean} isActive - Calcule si l'onglet itéré est l'onglet sélectionné. */
+                /** @constant {boolean} isActive - Calculates if the iterated tab is the selected tab. */
                 const isActive = activeTab === tab.id;
 
                 return (
@@ -100,18 +100,18 @@ const BottomNavBar: React.FC = () => {
                         style={styles.tabButton}
                         onPress={() => handlePress(tab.id)}
                         activeOpacity={0.7}
-                        // Propriétés d'accessibilité pour les lecteurs d'écran (TalkBack / VoiceOver)
+                        // Accessibility properties for screen readers (TalkBack / VoiceOver)
                         accessibilityRole="button"
-                        accessibilityLabel={`Aller à l'onglet ${tab.id}`}
+                        accessibilityLabel={`Go to tab ${tab.id}`}
                         accessibilityState={{ selected: isActive }}
                     >
-                        {/* Barre de soulignement active (conditionnelle) */}
+                        {/* Active underline bar (conditional) */}
                         {isActive && <View style={styles.activeIndicator} />}
 
                         <Ionicons
                             name={isActive ? tab.iconName : tab.iconOutline}
                             size={28}
-                            color="#F97316" // Orange identitaire de l'application
+                            color="#F97316" // Application identity orange
                         />
                     </TouchableOpacity>
                 );
