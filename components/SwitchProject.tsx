@@ -1,7 +1,7 @@
 /**
  * @file SwitchProject.tsx
- * @description Composant de navigation segmentée permettant de basculer entre les vues Mission et Association.
- * Intègre la logique de routage Expo Router.
+ * @description Segmented navigation component allowing to toggle between Mission and Association views.
+ * Integrates Expo Router routing logic.
  */
 
 import React, { useState } from 'react';
@@ -10,18 +10,18 @@ import { useRouter } from 'expo-router';
 import { styles } from '@/styles/components/SwitchProject.styles';
 
 /**
- * Union type définissant les valeurs possibles pour l'onglet actif.
- * 'Mission' correspond généralement aux annonces, 'Association' au profil/recherche asso.
+ * Union type defining the possible values for the active tab.
+ * 'Mission' generally corresponds to ads, 'Association' to profile/association search.
  */
 type ActiveTab = 'Mission' | 'Association';
 
 /**
- * Propriétés du composant SwitchProject.
+ * Properties of the SwitchProject component.
  * @interface SwitchProjectProps
- * @property {ActiveTab} [value] - L'onglet actif actuel (pour un contrôle externe du composant).
- * @property {ActiveTab} [defaultValue] - L'onglet actif par défaut si `value` n'est pas défini (par défaut: 'Mission').
- * @property {function} [onChange] - Fonction de rappel (callback) appelée lors du changement d'onglet.
- * @property {StyleProp<ViewStyle>} [style] - Permet d'appliquer des styles personnalisés (marges, positionnement) au conteneur externe.
+ * @property {ActiveTab} [value] - The current active tab (for external component control).
+ * @property {ActiveTab} [defaultValue] - The default active tab if `value` is not defined (default: 'Mission').
+ * @property {function} [onChange] - Callback function called when the tab changes.
+ * @property {StyleProp<ViewStyle>} [style] - Allows applying custom styles (margins, positioning) to the external container.
  */
 export interface SwitchProjectProps {
     value?: ActiveTab;
@@ -31,44 +31,44 @@ export interface SwitchProjectProps {
 }
 
 /**
- * Composant `SwitchProject`.
+ * `SwitchProject` component.
  * * @description 
- * Ce composant affiche une barre de sélection horizontale. Il supporte deux modes :
- * 1. **Contrôlé** : Si `value` est fourni, le composant dépend du parent pour son état.
- * 2. **Non-contrôlé** : Utilise un état interne via `internalActiveTab`.
- * * @param {SwitchProjectProps} props - Propriétés de configuration du switch.
- * @returns {JSX.Element} Le composant de navigation segmentée rendu.
+ * This component displays a horizontal selection bar. It supports two modes:
+ * 1. **Controlled**: If `value` is provided, the component relies on the parent for its state.
+ * 2. **Uncontrolled**: Uses an internal state via `internalActiveTab`.
+ * * @param {SwitchProjectProps} props - Switch configuration properties.
+ * @returns {JSX.Element} The rendered segmented navigation component.
  */
 export default function SwitchProject({ value, defaultValue = 'Mission', onChange, style }: SwitchProjectProps) {
     /** * @state internalActiveTab 
-     * Gère l'état local si aucune prop 'value' n'est passée par le parent. 
+     * Manages local state if no 'value' prop is passed by the parent. 
      */
     const [internalActiveTab, setInternalActiveTab] = useState<ActiveTab>(defaultValue);
     
-    /** Hook Expo Router pour gérer la navigation programmatique. */
+    /** Expo Router hook to handle programmatic navigation. */
     const router = useRouter();
 
-    /** * Logique de sélection de l'état : priorise la prop 'value' (mode contrôlé), 
-     * sinon utilise l'état interne (mode non-contrôlé).
+    /** * State selection logic: prioritizes the 'value' prop (controlled mode), 
+     * otherwise uses internal state (uncontrolled mode).
      */
     const activeTab = value ?? internalActiveTab;
 
     /**
-     * Gère l'événement de clic sur un segment.
-     * * @async (Optionnel si redirection lourde)
-     * @param {ActiveTab} tab - Le nom de l'onglet cible.
+     * Handles the click event on a segment.
+     * * @async (Optional if heavy redirection)
+     * @param {ActiveTab} tab - The target tab name.
      * @description
-     * 1. Met à jour l'état visuel (interne ou via callback).
-     * 2. Navigue vers le chemin correspondant défini dans le dossier /app.
+     * 1. Updates the visual state (internal or via callback).
+     * 2. Navigates to the corresponding path defined in the /app folder.
      */
     const handlePress = (tab: ActiveTab) => {
-        // Mise à jour de l'état visuel
+        // Updating the visual state
         if (value === undefined) {
             setInternalActiveTab(tab);
         }
         onChange?.(tab);
 
-        // Navigation vers les routes définies dans Expo Router
+        // Navigation to routes defined in Expo Router
         switch (tab) {
             case 'Mission':
                 router.push('/mission');
@@ -84,7 +84,7 @@ export default function SwitchProject({ value, defaultValue = 'Mission', onChang
     return (
         <View style={[styles.container, style]}>
             <View style={styles.segmentedControl}>
-                {/* Section Bouton : Mission */}
+                {/* Button Section: Mission */}
                 <TouchableOpacity
                     style={[
                         styles.button,
@@ -98,7 +98,7 @@ export default function SwitchProject({ value, defaultValue = 'Mission', onChang
                     </Text>
                 </TouchableOpacity>
 
-                {/* Section Bouton : Association */}
+                {/* Button Section: Association */}
                 <TouchableOpacity
                     style={[
                         styles.button,

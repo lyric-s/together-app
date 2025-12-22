@@ -1,7 +1,7 @@
 /**
  * @file index.tsx
- * @description Point d'entrée de l'écran de démonstration du Segmented Control.
- * Ce fichier illustre comment intégrer le composant SwitchProject dans une vue parente.
+ * @description Entry point for the Segmented Control demonstration screen.
+ * This file illustrates how to integrate the SwitchProject component into a parent view.
  */
 
 import React, { useState } from 'react';
@@ -9,29 +9,29 @@ import { View, StyleSheet } from 'react-native';
 import SwitchProject from '@/components/SwitchProject'; 
 
 /**
- * Type local utilisé pour typer l'état de l'écran. 
- * Assure la cohérence avec les types attendus par le composant SwitchProject.
+ * Local type used to type the screen state. 
+ * Ensures consistency with the types expected by the SwitchProject component.
  */
 type ActiveTab = 'Mission' | 'Association';
 
 /**
- * Composant d'écran `SegmentedControlScreen`.
+ * `SegmentedControlScreen` screen component.
  * * @description
- * Cet écran agit comme un "Wrapper". Il maintient l'état de vérité (`activeTab`) 
- * et le transmet au composant `SwitchProject`. C'est un exemple typique de "Lifting State Up".
+ * This screen acts as a "Wrapper". It maintains the source of truth (`activeTab`) 
+ * and passes it to the `SwitchProject` component. This is a typical example of "Lifting State Up".
  * * @component
- * @returns {JSX.Element} Une vue centrée affichant le sélecteur.
+ * @returns {JSX.Element} A centered view displaying the selector.
  */
 export default function SegmentedControlScreen() {
     /** * @state activeTab
-     * État source de l'écran, synchronisé avec le Switch.
+     * Screen source state, synchronized with the Switch.
      */
     const [activeTab, setActiveTab] = useState<ActiveTab>('Mission');
 
     return (
         <View style={styles.screenContainer}>
-            {/* Injection du composant SwitchProject.
-                On lui passe la valeur actuelle et la fonction de mise à jour.
+            {/* Injection of the SwitchProject component.
+                We pass it the current value and the update function.
             */}
             <SwitchProject 
                 value={activeTab} 
@@ -42,16 +42,16 @@ export default function SegmentedControlScreen() {
 }
 
 /**
- * Styles de mise en page pour l'écran de contrôle.
+ * Layout styles for the control screen.
  * * @constant styles
- * @property {ViewStyle} screenContainer - Utilise Flexbox pour occuper tout l'écran 
- * et placer le switch exactement au centre.
+ * @property {ViewStyle} screenContainer - Uses Flexbox to occupy the entire screen 
+ * and place the switch exactly in the center.
  */
 const styles = StyleSheet.create({
     screenContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#E5E5E5', // Couleur de fond neutre pour faire ressortir le composant orange.
+        backgroundColor: '#E5E5E5', // Neutral background color to make the orange component stand out.
     },
 });
