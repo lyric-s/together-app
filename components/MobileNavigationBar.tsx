@@ -78,7 +78,7 @@ const BottomNavBar: React.FC = () => {
                 router.push('/recherche');
                 break;
             case 'library':
-                router.push('annonces'); 
+                router.push('/annonces'); 
                 break;
             case 'profile':
                 router.push('/profil');
