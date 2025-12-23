@@ -33,9 +33,7 @@ export default function Index() {
                     is automatically managed according to the device.
                 */}
                 <SafeAreaView style={styles.contentContainer}>
-                    {/* NOTE: Home-specific content components 
-                        should be imported and placed here. 
-                    */}
+                    <BottomNavBar />
                 </SafeAreaView>
 
                 {/* Fixed positioning at the bottom of the screen thanks to the mainContainer Flex structure */}
