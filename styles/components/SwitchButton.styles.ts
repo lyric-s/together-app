@@ -9,7 +9,7 @@ import { Colors } from '@/constants/colors';
 
 /**
  * Style definitions for the SwitchProject component.
- * * @constant styles
+ * @constant styles
  * @property {ViewStyle} container - Centered global container to align the switch within its parent.
  * @property {ViewStyle} segmentedControl - Background of the selection bar. Uses a high `borderRadius` for the "pill" look.
  * @property {ViewStyle} button - Base style of the two options. Uses `flex: 1` to occupy 50% of the space each.
