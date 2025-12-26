@@ -1,5 +1,5 @@
 /**
- * @file SwitchProject.styles.ts
+ * @file SwitchButton.styles.ts
  * @description Definition of stylized styles for the project selector.
  * This module uses the application's design system based on the centralized color palette.
  */
