@@ -7,13 +7,13 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleProp, ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
-import { styles } from '@/styles/components/SwitchProject.styles';
+import { styles } from '@/styles/components/SwitchButton.styles';
 
 /**
  * Union type defining the possible values for the active tab.
  * 'Mission' generally corresponds to ads, 'Association' to profile/association search.
  */
-type ActiveTab = 'Mission' | 'Association';
+export type ActiveTab = 'Mission' | 'Association';
 
 /**
  * Properties of the SwitchProject component.
