@@ -1,5 +1,5 @@
 /**
- * @file SwitchProject.tsx
+ * @file SwitchButton.tsx
  * @description Segmented navigation component allowing to toggle between Mission and Association views.
  * Integrates Expo Router routing logic.
  */
@@ -16,14 +16,14 @@ import { styles } from '@/styles/components/SwitchButton.styles';
 export type ActiveTab = 'Mission' | 'Association';
 
 /**
- * Properties of the SwitchProject component.
- * @interface SwitchProjectProps
+ * Properties of the SwitchButton component.
+ * @interface SwitchButtonProps
  * @property {ActiveTab} [value] - The current active tab (for external component control).
  * @property {ActiveTab} [defaultValue] - The default active tab if `value` is not defined (default: 'Mission').
  * @property {function} [onChange] - Callback function called when the tab changes.
  * @property {StyleProp<ViewStyle>} [style] - Allows applying custom styles (margins, positioning) to the external container.
  */
-export interface SwitchProjectProps {
+export interface SwitchButtonProps {
     value?: ActiveTab;
     defaultValue?: ActiveTab;
     onChange?: (tab: ActiveTab) => void;
@@ -31,15 +31,15 @@ export interface SwitchProjectProps {
 }
 
 /**
- * `SwitchProject` component.
+ * `SwitchButton` component.
  * * @description 
  * This component displays a horizontal selection bar. It supports two modes:
  * 1. **Controlled**: If `value` is provided, the component relies on the parent for its state.
  * 2. **Uncontrolled**: Uses an internal state via `internalActiveTab`.
- * * @param {SwitchProjectProps} props - Switch configuration properties.
+ * * @param {SwitchButtonProps} props - Switch configuration properties.
  * @returns {JSX.Element} The rendered segmented navigation component.
  */
-export default function SwitchProject({ value, defaultValue = 'Mission', onChange, style }: SwitchProjectProps) {
+export default function SwitchButton({ value, defaultValue = 'Mission', onChange, style }: SwitchButtonProps) {
     /** * @state internalActiveTab 
      * Manages local state if no 'value' prop is passed by the parent. 
      */
