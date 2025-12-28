@@ -16,10 +16,10 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
+        elevation: 4,
         maxWidth: '100%',
         flex: 1,
-    },
-    calendarHeader: {
+    },    calendarHeader: {
         alignItems: 'center',
         justifyContent: "center",
         marginBottom: 16,

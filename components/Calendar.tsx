@@ -105,13 +105,8 @@ export default function Calendar() {
   ).getDay();
 
   const getDateKeyFromDatetime = (datetime: string) => {
-    const d = new Date(datetime);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`; // YYYY-MM-DD
+    return formatDateKey(new Date(datetime));
   };
-
     const getTimeFromDatetime = (datetime: string) => {
     const d = new Date(datetime);
     return d.toLocaleTimeString('fr-FR', {
