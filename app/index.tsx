@@ -4,10 +4,11 @@
  * This file defines the layout structure, featuring a centered navigation component.
  */
 
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import BottomNavBar from '@/components/MobileNavigationBar';
+import ButtonAuth from '@/components/Button';
 
 /**
  * The Index component serves as the primary view for the home screen.
@@ -24,18 +25,18 @@ export default function Index() {
             {/* Main container wrapped in SafeAreaView to handle device notches/safe areas */}
             <SafeAreaView style={styles.mainContainer}>
                 
-                {/* Top expandable section providing vertical spacing */}
-                <View style={styles.topSection}>
-                </View>
+               
 
                 {/* Central section where the navigation component is positioned */}
                 <View style={styles.centerSection}>
-                    <BottomNavBar />
+                    <ButtonAuth
+                        text='Calendar'
+                        onPress={() => router.push(('/calendar') as any)}
+                    />
+                    
                 </View>
 
-                {/* Bottom expandable section providing vertical spacing */}
-                <View style={styles.bottomSection}>
-                </View>
+                <BottomNavBar />
 
             </SafeAreaView>
         </>
