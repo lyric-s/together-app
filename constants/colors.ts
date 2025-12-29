@@ -21,4 +21,10 @@ export const Colors = {
     lavender: '#A99DD9',
     brightOrange: '#FF7630',
     darkerWhite: '#EEEEEE',
+    fondHaut: '#FFF7F3',
+    fondBas: '#FFE5CF',
+    texteViolet: '#544FB3',
+    texteGris: '#6B6475',
+    champFond: '#6A66B8',
+    lightViolet: '#A9A7ED',
 };

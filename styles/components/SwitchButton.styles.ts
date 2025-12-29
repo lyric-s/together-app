@@ -15,14 +15,14 @@ import { Colors } from '@/constants/colors';
  */
 export const THEMES = {
     mission: {
-        background: '#FF7630', // Track background color
-        activeButton: '#FF9A66',        // Selected button color
+        background: Colors.brightOrange,
+        activeButton: Colors.lightOrange,        // Selected button color
         activeText: Colors.white,
         inactiveText: Colors.white,
     },
     auth: {
-        background: '#6A66B8', // Track background color
-        activeButton: '#A9A7ED',        // Specific violet color for Auth
+        background: Colors.inputBackground, // Track background color
+        activeButton: Colors.lightViolet,  // Specific violet color for Auth
         activeText: Colors.white,
         inactiveText: Colors.white,
     }
