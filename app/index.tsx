@@ -1,7 +1,13 @@
+/**
+ * @file index.tsx
+ * @description Main entry point or playground for testing components.
+ * Displays different variations of the SwitchButton and the SearchBar.
+ */
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import MobileSearchBar from '@/components/MobileSearchBar';
-// Assure-toi que le chemin d'import est correct selon ta structure
+// Ensure the import path is correct based on your project structure
 import SwitchButton from '@/components/SwitchButton'; 
 
 export default function Index() {
@@ -21,7 +27,7 @@ export default function Index() {
       
       <Text style={styles.headerTitle}>Zone de Test Composants</Text>
 
-      {/* TEST 1 : Variante Mission (Défaut) */}
+      {/* TEST 1: Mission Variant (Default) */}
       <View style={styles.testSection}>
         <Text style={styles.label}>Variante 1 : Mission (Default)</Text>
         <SwitchButton 
@@ -30,7 +36,7 @@ export default function Index() {
         />
       </View>
 
-      {/* TEST 2 : Variante Auth (Nouvelle) */}
+      {/* TEST 2: Auth Variant (New) */}
       <View style={styles.testSection}>
         <Text style={styles.label}>Variante 2 : Auth (Inscription/Connexion)</Text>
         <SwitchButton 
@@ -39,7 +45,7 @@ export default function Index() {
         />
       </View>
 
-      {/* Ton composant existant */}
+      {/* Existing SearchBar Component */}
       <View style={styles.testSection}>
         <Text style={styles.label}>Composant SearchBar</Text>
         <MobileSearchBar
@@ -59,7 +65,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#F5F5F5',
         alignItems: 'center',
-        paddingTop: 60, // Marge pour éviter la barre de statut
+        paddingTop: 60, // Margin to avoid status bar overlap
     },
     headerTitle: {
         fontSize: 24,
