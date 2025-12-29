@@ -1,23 +1,24 @@
 /**
  * @file SwitchButton.styles.ts
- * @description Definition of stylized styles for the project selector.
- * This module uses the application's design system based on the centralized color palette.
  */
 
 import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
 
-/**
- * Style definitions for the SwitchProject component.
- * @constant styles
- * @property {ViewStyle} container - Centered global container to align the switch within its parent.
- * @property {ViewStyle} segmentedControl - Background of the selection bar. Uses a high `borderRadius` for the "pill" look.
- * @property {ViewStyle} button - Base style of the two options. Uses `flex: 1` to occupy 50% of the space each.
- * @property {ViewStyle} activeButton - Highlight style for the active tab, creating a contrast with the orange background.
- * @property {TextStyle} text - Base typography configuration for button labels.
- * @property {TextStyle} activeText - Full black color for maximum readability on a white background.
- * @property {TextStyle} inactiveText - Applies 70% opacity to visually signify the unselected state.
- */
+// Définition des palettes de couleurs pour chaque variante
+export const THEMES = {
+    mission: {
+        background: Colors.lightOrange || '#FFD8B1', // Fallback si Colors.lightOrange n'est pas chargé
+        activeText: Colors.black,
+        inactiveText: Colors.black,
+    },
+    auth: {
+        background: '#E9E4F0', // Un violet très clair (exemple)
+        activeText: '#4A0072', // Un violet foncé
+        inactiveText: '#4A0072',
+    }
+};
+
 export const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
@@ -25,31 +26,29 @@ export const styles = StyleSheet.create({
     },
     segmentedControl: {
         flexDirection: 'row',
-        backgroundColor: Colors.lightOrange, // Uses the global color constant
-        borderRadius: 100, // Rounded "pill" shape
+        borderRadius: 100,
         padding: 4,
         width: 300,
         height: 50,
+        // La couleur de background est maintenant gérée dynamiquement
     },
     button: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 100,
-        backgroundColor: Colors.lightOrange,
+        // La couleur de background est héritée ou transparente
     },
     activeButton: {
         backgroundColor: 'white',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
+        elevation: 2,
     },
     text: {
         fontSize: 16,
         fontWeight: '600',
-    },
-    activeText: {
-        color: Colors.black,
-    },
-    inactiveText: {
-        color: Colors.black,
-        opacity: 0.7, // Visual deactivation effect
     }
 });

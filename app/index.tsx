@@ -1,57 +1,81 @@
-/**
- * @file index.tsx
- * @description Entry point for the Segmented Control demonstration screen.
- * This file illustrates how to integrate the SwitchProject component into a parent view.
- */
-
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import SwitchProject from '@/components/SwitchProject'; 
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import MobileSearchBar from '@/components/MobileSearchBar';
+// Assure-toi que le chemin d'import est correct selon ta structure
+import SwitchButton from '@/components/SwitchButton'; 
 
-/**
- * Local type used to type the screen state. 
- * Ensures consistency with the types expected by the SwitchProject component.
- */
-type ActiveTab = 'Mission' | 'Association';
+export default function Index() {
+  const [results, setResults] = useState([]);
+  
+  const categoryList = [
+    "Environnement", "Social", "Éducation", "Culture", "Animaux",
+  ];
+  const defaultCity = "Paris";
 
-/**
- * `SegmentedControlScreen` screen component.
- * * @description
- * This screen acts as a "Wrapper". It maintains the source of truth (`activeTab`) 
- * and passes it to the `SwitchProject` component. This is a typical example of "Lifting State Up".
- * * @component
- * @returns {JSX.Element} A centered view displaying the selector.
- */
-export default function SegmentedControlScreen() {
-    /** * @state activeTab
-     * Screen source state, synchronized with the Switch.
-     */
-    const [activeTab, setActiveTab] = useState<ActiveTab>('Mission');
+  const handleSearch = (searchText: string, filters: any) => {
+    console.log("Recherche :", searchText, filters);
+  };
 
-    return (
-        <View style={styles.screenContainer}>
-            {/* Injection of the SwitchProject component.
-                We pass it the current value and the update function.
-            */}
-            <SwitchProject 
-                value={activeTab} 
-                onChange={setActiveTab} 
-            />
-        </View>
-    );
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      
+      <Text style={styles.headerTitle}>Zone de Test Composants</Text>
+
+      {/* TEST 1 : Variante Mission (Défaut) */}
+      <View style={styles.testSection}>
+        <Text style={styles.label}>Variante 1 : Mission (Default)</Text>
+        <SwitchButton 
+            variant="mission" 
+            onChange={(tab) => console.log("Switch Mission ->", tab)}
+        />
+      </View>
+
+      {/* TEST 2 : Variante Auth (Nouvelle) */}
+      <View style={styles.testSection}>
+        <Text style={styles.label}>Variante 2 : Auth (Inscription/Connexion)</Text>
+        <SwitchButton 
+            variant="auth" 
+            onChange={(tab) => console.log("Switch Auth ->", tab)}
+        />
+      </View>
+
+      {/* Ton composant existant */}
+      <View style={styles.testSection}>
+        <Text style={styles.label}>Composant SearchBar</Text>
+        <MobileSearchBar
+            category_list={categoryList}
+            default_city={defaultCity}
+            onSearch={handleSearch}
+        />
+      </View>
+
+    </ScrollView>
+  );
 }
 
-/**
- * Layout styles for the control screen.
- * * @constant styles
- * @property {ViewStyle} screenContainer - Uses Flexbox to occupy the entire screen 
- * and place the switch exactly in the center.
- */
 const styles = StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        justifyContent: 'center',
+    scrollContainer: {
+        flexGrow: 1,
+        padding: 20,
+        backgroundColor: '#F5F5F5',
         alignItems: 'center',
-        backgroundColor: '#E5E5E5', // Neutral background color to make the orange component stand out.
+        paddingTop: 60, // Marge pour éviter la barre de statut
     },
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 30,
+        color: '#333',
+    },
+    testSection: {
+        marginBottom: 40,
+        width: '100%',
+        alignItems: 'center',
+    },
+    label: {
+        fontSize: 16,
+        color: '#666',
+        marginBottom: 10,
+        fontWeight: '600',
+    }
 });
