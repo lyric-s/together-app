@@ -1,77 +1,81 @@
 /**
  * @file index.tsx
- * @description Root home page of the application.
- * This file defines the base structure (Layout) of the main screen,
- * integrating the system safe area and the navigation bar.
+ * @description Root entry point for the application's home screen. 
+ * This file defines the layout structure, featuring a centered navigation component.
  */
 
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router'; // Added to manage screen-specific options
+import { Stack } from 'expo-router';
 import BottomNavBar from '@/components/MobileNavigationBar';
 
 /**
- * Application Main Screen (Index).
- * @description
- * This component acts as a "shell". It uses `SafeAreaView` to 
- * ensure that content is not hidden by notches on iPhone
- * or status bars on Android.
- * @component
- * @returns {JSX.Element} The main view of the application.
+ * The Index component serves as the primary view for the home screen.
+ * It utilizes a flexbox layout to vertically center the navigation bar
+ * between two empty expandable sections.
+ * * @returns {JSX.Element} The rendered Home Screen component.
  */
 export default function Index() {
     return (
         <>
-            {/* Stack.Screen allows declarative configuration of the navigation header.
-                Setting headerShown to false hides the default top navigation bar.
-            */}
+            {/* Configure screen options to hide the default header */}
             <Stack.Screen options={{ headerShown: false }} />
 
-            <View style={styles.mainContainer}>
+            {/* Main container wrapped in SafeAreaView to handle device notches/safe areas */}
+            <SafeAreaView style={styles.mainContainer}>
+                
+                {/* Top expandable section providing vertical spacing */}
+                <View style={styles.topSection}>
+                </View>
 
-                {/* SafeAreaView is crucial here so that the top padding 
-                    is automatically managed according to the device.
-                */}
-                <SafeAreaView style={styles.contentContainer}>
+                {/* Central section where the navigation component is positioned */}
+                <View style={styles.centerSection}>
                     <BottomNavBar />
-                </SafeAreaView>
+                </View>
 
-                {/* Fixed positioning at the bottom of the screen thanks to the mainContainer Flex structure */}
-                <BottomNavBar />
+                {/* Bottom expandable section providing vertical spacing */}
+                <View style={styles.bottomSection}>
+                </View>
 
-            </View>
+            </SafeAreaView>
         </>
     );
 }
 
 /**
- * Static navigation options configuration.
- * @constant options
- * @description 
- * These options are read by Expo Router to configure the parent Stack Navigator.
- * - `headerShown: false` allows using our own header design or omitting it.
+ * Static navigation options for the Index route.
  */
 (Index as any).options = {
     headerShown: false,
 };
 
 /**
- * Local styles for the Index screen.
- * @constant styles
- * @property {ViewStyle} mainContainer - Root container occupying 100% of the height.
- * @property {ViewStyle} contentContainer - Dedicated space for scrollable or interactive content.
- * The `paddingBottom: 80` ensures that even content at the very bottom is not 
- * covered by the BottomNavBar (which is 60px high).
+ * StyleSheet for the Index component.
+ * Uses Flexbox to distribute space and center the UI elements.
  */
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         backgroundColor: '#E5E5E5',
     },
-    contentContainer: {
-        flex: 1,
-        paddingHorizontal: 20,
-        paddingTop: 20,
-        paddingBottom: 80, // Safety margin to avoid overlapping with the bar
+    topSection: {
+        flex: 1, // Occupies the top half of the available space
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    centerSection: {
+        // Wraps the component without flexible expansion to maintain its natural height
+        width: '100%',
+        alignItems: 'center', 
+    },
+    bottomSection: {
+        flex: 1, // Occupies the bottom half of the available space
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    text: {
+        fontSize: 16,
+        color: '#666',
+        fontStyle: 'italic',
     }
 });
