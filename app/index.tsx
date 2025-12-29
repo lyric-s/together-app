@@ -1,92 +1,81 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import MobileSearchBar from '@/components/MobileSearchBar';
+// Assure-toi que le chemin d'import est correct selon ta structure
+import SwitchButton from '@/components/SwitchButton'; 
 
-const ORANGE_LIGHT = '#FFE4C4';
-const ORANGE_DARK = 'black';
+export default function Index() {
+  const [results, setResults] = useState([]);
+  
+  const categoryList = [
+    "Environnement", "Social", "Éducation", "Culture", "Animaux",
+  ];
+  const defaultCity = "Paris";
 
-type ActiveTab = 'Mission' | 'Association';
+  const handleSearch = (searchText: string, filters: any) => {
+    console.log("Recherche :", searchText, filters);
+  };
 
-export default function SegmentedControl() {
-    const [activeTab, setActiveTab] = useState<ActiveTab>('Mission');
+  return (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      
+      <Text style={styles.headerTitle}>Zone de Test Composants</Text>
 
-    return (
-        <View style={styles.container}>
-            <View style={styles.segmentedControl}>
+      {/* TEST 1 : Variante Mission (Défaut) */}
+      <View style={styles.testSection}>
+        <Text style={styles.label}>Variante 1 : Mission (Default)</Text>
+        <SwitchButton 
+            variant="mission" 
+            onChange={(tab) => console.log("Switch Mission ->", tab)}
+        />
+      </View>
 
-                <TouchableOpacity
-                    style={[
-                        styles.button,
-                        activeTab === 'Mission' && styles.activeButton
-                    ]}
-                    onPress={() => setActiveTab('Mission')}
-                    activeOpacity={0.8}
-                >
-                    <Text
-                        style={[
-                            styles.text,
-                            activeTab === 'Mission' ? styles.activeText : styles.inactiveText
-                        ]}
-                    >
-                        Mission
-                    </Text>
-                </TouchableOpacity>
+      {/* TEST 2 : Variante Auth (Nouvelle) */}
+      <View style={styles.testSection}>
+        <Text style={styles.label}>Variante 2 : Auth (Inscription/Connexion)</Text>
+        <SwitchButton 
+            variant="auth" 
+            onChange={(tab) => console.log("Switch Auth ->", tab)}
+        />
+      </View>
 
-                <TouchableOpacity
-                    style={[
-                        styles.button,
-                        activeTab === 'Association' && styles.activeButton
-                    ]}
-                    onPress={() => setActiveTab('Association')}
-                    activeOpacity={0.8}
-                >
-                    <Text
-                        style={[
-                            styles.text,
-                            activeTab === 'Association' ? styles.activeText : styles.inactiveText
-                        ]}
-                    >
-                        Association
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
+      {/* Ton composant existant */}
+      <View style={styles.testSection}>
+        <Text style={styles.label}>Composant SearchBar</Text>
+        <MobileSearchBar
+            category_list={categoryList}
+            default_city={defaultCity}
+            onSearch={handleSearch}
+        />
+      </View>
+
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
+    scrollContainer: {
+        flexGrow: 1,
+        padding: 20,
+        backgroundColor: '#F5F5F5',
         alignItems: 'center',
-        backgroundColor: '#E5E5E5',
+        paddingTop: 60, // Marge pour éviter la barre de statut
     },
-    segmentedControl: {
-        flexDirection: 'row',
-        backgroundColor: ORANGE_LIGHT,
-        borderRadius: 100,
-        padding: 4,
-        width: 300,
-        height: 50,
+    headerTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 30,
+        color: '#333',
     },
-    button: {
-        flex: 1,
-        justifyContent: 'center',
+    testSection: {
+        marginBottom: 40,
+        width: '100%',
         alignItems: 'center',
-        borderRadius: 100,
-        backgroundColor: ORANGE_LIGHT,
     },
-    activeButton: {
-        backgroundColor: 'white',
-    },
-    text: {
+    label: {
         fontSize: 16,
+        color: '#666',
+        marginBottom: 10,
         fontWeight: '600',
-    },
-    activeText: {
-        color: ORANGE_DARK,
-    },
-    inactiveText: {
-        color: ORANGE_DARK,
-        opacity: 0.7,
     }
 });
