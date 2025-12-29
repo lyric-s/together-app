@@ -1,21 +1,24 @@
-/**
- * @file SwitchButton.styles.ts
- */
-
 import { StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
 
-// Définition des palettes de couleurs pour chaque variante
+/**
+ * Configuration des thèmes de couleurs.
+ * - Mission : Bouton actif Orange (#FF9A66)
+ * - Auth : Bouton actif Violet (#A9A7ED)
+ * - Le fond (track) reste Orange pour les deux.
+ */
 export const THEMES = {
     mission: {
-        background: Colors.lightOrange || '#FFD8B1', // Fallback si Colors.lightOrange n'est pas chargé
-        activeText: Colors.black,
-        inactiveText: Colors.black,
+        background: '#FF7630', // Couleur du fond de la barre
+        activeButton: '#FF9A66',        // Couleur du bouton sélectionné
+        activeText: Colors.white,
+        inactiveText: Colors.white,
     },
     auth: {
-        background: '#E9E4F0', // Un violet très clair (exemple)
-        activeText: '#4A0072', // Un violet foncé
-        inactiveText: '#4A0072',
+        background: '#6A66B8', // Même fond que mission
+        activeButton: '#A9A7ED',        // Couleur violette spécifique
+        activeText: Colors.white,
+        inactiveText: Colors.white,
     }
 };
 
@@ -30,17 +33,17 @@ export const styles = StyleSheet.create({
         padding: 4,
         width: 300,
         height: 50,
-        // La couleur de background est maintenant gérée dynamiquement
+        // backgroundColor est géré dynamiquement par le composant
     },
     button: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 100,
-        // La couleur de background est héritée ou transparente
     },
     activeButton: {
-        backgroundColor: 'white',
+        // backgroundColor est surchargé dynamiquement par le composant
+        backgroundColor: 'white', 
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,

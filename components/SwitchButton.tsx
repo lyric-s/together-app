@@ -1,28 +1,15 @@
-/**
- * @file SwitchButton.tsx
- * @description Composant de navigation segmenté supportant plusieurs variantes visuelles (Mission/Auth).
- */
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleProp, ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles, THEMES } from '@/styles/components/SwitchButton.styles';
 
-/**
- * Types de variantes disponibles.
- */
 export type SwitchVariant = 'mission' | 'auth';
 
 export interface SwitchButtonProps {
-    /** La variante visuelle et contextuelle (défaut: 'mission') */
     variant?: SwitchVariant;
-    /** Valeur active actuelle (mode contrôlé) */
     value?: string;
-    /** Valeur par défaut si non contrôlé */
     defaultValue?: string;
-    /** Callback au changement d'onglet */
     onChange?: (tab: string) => void;
-    /** Style conteneur optionnel */
     style?: StyleProp<ViewStyle>;
 }
 
@@ -34,7 +21,7 @@ export default function SwitchButton({
     style 
 }: SwitchButtonProps) {
     
-    // Configuration des labels et routes selon la variante
+    // Configuration : Textes, Routes et Thèmes
     const config = {
         mission: {
             left: 'Mission',
@@ -45,16 +32,13 @@ export default function SwitchButton({
         auth: {
             left: 'Inscription',
             right: 'Connexion',
-            routes: { left: '/signup', right: '/login' }, // Routes hypothétiques
+            routes: { left: '/signup', right: '/login' },
             theme: THEMES.auth
         }
     };
 
     const currentConfig = config[variant];
-    
-    // Définir la valeur par défaut basée sur la config si non fournie
     const initialTab = defaultValue || currentConfig.left;
-
     const [internalActiveTab, setInternalActiveTab] = useState<string>(initialTab);
     const router = useRouter();
 
@@ -65,22 +49,29 @@ export default function SwitchButton({
             setInternalActiveTab(tabName);
         }
         
-        // Appelle le callback parent s'il existe
         if (onChange) {
             onChange(tabName);
         } else {
-            // Comportement par défaut : navigation automatique si pas de onChange fourni
-            const route = currentConfig.routes[side];
-            // @ts-ignore : router.push attend des chaînes typées spécifiques selon la config Expo, ici on reste générique
-            router.push(route);
+            // @ts-ignore
+            router.push(currentConfig.routes[side]);
         }
     };
 
-    // Helper pour le rendu du style conditionnel
+    // Helper pour la couleur du texte
     const getTextStyle = (isActive: boolean) => ({
         color: isActive ? currentConfig.theme.activeText : currentConfig.theme.inactiveText,
         opacity: isActive ? 1 : 0.7,
     });
+
+    // Helper pour le style du bouton actif (couleur dynamique)
+    const getButtonStyle = (isActive: boolean) => {
+        if (!isActive) return styles.button;
+        return [
+            styles.button,
+            styles.activeButton,
+            { backgroundColor: currentConfig.theme.activeButton }
+        ];
+    };
 
     return (
         <View style={[styles.container, style]}>
@@ -88,10 +79,7 @@ export default function SwitchButton({
                 
                 {/* Bouton Gauche */}
                 <TouchableOpacity
-                    style={[
-                        styles.button,
-                        activeTab === currentConfig.left && styles.activeButton
-                    ]}
+                    style={getButtonStyle(activeTab === currentConfig.left)}
                     onPress={() => handlePress(currentConfig.left, 'left')}
                     activeOpacity={0.8}
                 >
@@ -102,10 +90,7 @@ export default function SwitchButton({
 
                 {/* Bouton Droit */}
                 <TouchableOpacity
-                    style={[
-                        styles.button,
-                        activeTab === currentConfig.right && styles.activeButton
-                    ]}
+                    style={getButtonStyle(activeTab === currentConfig.right)}
                     onPress={() => handlePress(currentConfig.right, 'right')}
                     activeOpacity={0.8}
                 >
