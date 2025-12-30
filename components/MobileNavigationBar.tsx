@@ -55,6 +55,7 @@ const BottomNavBar: React.FC = () => {
             onPress={() => router.push(tab.route as RelativePathString)}
             activeOpacity={0.7}
             accessibilityRole="button"
+            accessibilityLabel={ "Go to ${tab.id}"} 
             accessibilityState={{ selected: isActive }}
           >
             {isActive && <View style={styles.activeIndicator} />}
