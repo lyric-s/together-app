@@ -1,6 +1,8 @@
-
 import { View, Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router, Stack } from 'expo-router';
+import BottomNavBar from '@/components/MobileNavigationBar';
+import ButtonAuth from '@/components/Button';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 
 /**
@@ -33,6 +35,11 @@ export default function Index() {
                         
                     />
                 </View>
+                <ButtonAuth
+                    text="Rejoindre la mission"
+                    onPress={() => router.push(("/join_mission") as any )}
+                  />
+                <BottomNavBar />
 
             </SafeAreaView>
         </>
@@ -51,7 +58,7 @@ const styles = StyleSheet.create({
   
     centerSection: {
         // Wraps the component without flexible expansion to maintain its natural height
-        width: '100%',
+        flex: 1,
         alignItems: 'center', 
     },
    
@@ -61,18 +68,3 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
     }
 });
-
-{/* <View style={{ flex: 1, padding: 20 }}>
-      
-      <MobileSearchBar
-        category_list={categoryList}
-        default_city={defaultCity}   // option
-        onSearch={handleSearch}
-      />
-      <ButtonAuth
-        text="Rejoindre la mission"
-        onPress={() => router.push("/join_mission")}
-      />
-
-
-    </View> */}
