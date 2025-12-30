@@ -1,123 +1,73 @@
-/**
- * @file MobileNavigationBar.tsx
- * @description Functional component managing the main navigation at the bottom of the screen.
- * Uses Expo Router for page transitions and Ionicons for the visual aspect.
- */
-
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, usePathname } from 'expo-router';
 import { styles } from '@/styles/components/MobileNavigationBarStyles';
+import {Colors} from "@/constants/colors"
 
 /**
- * Interface defining the structure of a navigation bar tab.
- * * @interface TabItem
- * @property {string} id - Unique technical identifier serving as a key and state reference.
- * @property {keyof typeof Ionicons.glyphMap} iconName - "Filled" version of the icon (active state).
- * @property {keyof typeof Ionicons.glyphMap} iconOutline - "Outline" version of the icon (inactive state).
+ * Type definition for a bottom navigation tab.
+ *
+ * @typedef TabItem
+ * @property {string} id - Unique identifier for the tab.
+ * @property {string} route - Route path associated with the tab.
+ * @property {keyof typeof Ionicons.glyphMap} iconName - Icon displayed when the tab is active.
+ * @property {keyof typeof Ionicons.glyphMap} iconOutline - Icon displayed when the tab is inactive.
  */
 type TabItem = {
-    id: string;
-    iconName: keyof typeof Ionicons.glyphMap;
-    iconOutline: keyof typeof Ionicons.glyphMap;
+  id: string;
+  route: string;
+  iconName: keyof typeof Ionicons.glyphMap;
+  iconOutline: keyof typeof Ionicons.glyphMap;
 };
 
 /**
- * Bottom Navigation Bar component (Bottom Tab Bar).
- * * This component centralizes global navigation logic. It allows the user
- * to switch between the main sections of the application.
- * * @component
- * @example
- * return (
- * <BottomNavBar />
- * )
- * * @returns {JSX.Element} A View container structured in rows with tactile buttons.
+ * BottomNavBar component.
+ *
+ * Displays a fixed bottom navigation bar with multiple tabs.
+ * The active tab is automatically highlighted based on the current route.
+ * Pressing a tab triggers navigation to the associated route.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered bottom navigation bar.
  */
 const BottomNavBar: React.FC = () => {
-    /** * @state activeTab
-     * @type {string}
-     * Determines which tab receives the "active" style and the top visual indicator.
-     * Default initialized to 'home'.
-     */
-    const [activeTab, setActiveTab] = useState<string>('home');
-    
-    /** * @hook useRouter
-     * Provided by expo-router to perform imperative route pushes.
-     */
-    const router = useRouter();
+  const router = useRouter();
+  const pathname = usePathname();
 
-    /** * Navigation tabs configuration.
-     * Each object defines the associated icons according to the selection state.
-     * @constant {TabItem[]} tabs
-     */
-    const tabs: TabItem[] = [
-        { id: 'home', iconName: 'home', iconOutline: 'home-outline' },
-        { id: 'search', iconName: 'search', iconOutline: 'search-outline' },
-        { id: 'library', iconName: 'book', iconOutline: 'book-outline' },
-        { id: 'profile', iconName: 'person', iconOutline: 'person-outline' },
-    ];
+  const tabs: TabItem[] = [
+    { id: 'home', route: '/', iconName: 'home', iconOutline: 'home-outline' },
+    { id: 'search', route: '/join_mission', iconName: 'search', iconOutline: 'search-outline' },
+    { id: 'library', route: '/annonces', iconName: 'book', iconOutline: 'book-outline' },
+    { id: 'profile', route: '/profil', iconName: 'person', iconOutline: 'person-outline' },
+  ];
 
-    /**
-     * Handles the press event (onPress) on a tab.
-     * * This function orchestrates two actions:
-     * 1. Updating the local UI via `setActiveTab`.
-     * 2. Physical navigation to the corresponding file in the `/app` directory.
-     * * @function handlePress
-     * @param {string} tabId - The ID corresponding to the element clicked in the `tabs` array.
-     */
-    const handlePress = (tabId: string) => {
-        setActiveTab(tabId);
+  return (
+    <View style={styles.navBar}>
+      {tabs.map((tab) => {
+        const isActive = pathname === tab.route;
 
-        // Redirection logic based on tab ID
-        switch (tabId) {
-            case 'home':
-                router.push('/');
-                break;
-            case 'search':
-                router.push('/recherche');
-                break;
-            case 'library':
-                router.push('/annonces'); 
-                break;
-            case 'profile':
-                router.push('/profil');
-                break;
-            default:
-                break;
-        }
-    };
+        return (
+          <TouchableOpacity
+            key={tab.id}
+            style={styles.tabButton}
+            onPress={() => router.push((tab.route)as any)}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityState={{ selected: isActive }}
+          >
+            {isActive && <View style={styles.activeIndicator} />}
 
-    return (
-        <View style={styles.navBar}>
-            {tabs.map((tab) => {
-                /** @constant {boolean} isActive - Calculates if the iterated tab is the selected tab. */
-                const isActive = activeTab === tab.id;
-
-                return (
-                    <TouchableOpacity
-                        key={tab.id}
-                        style={styles.tabButton}
-                        onPress={() => handlePress(tab.id)}
-                        activeOpacity={0.7}
-                        // Accessibility properties for screen readers (TalkBack / VoiceOver)
-                        accessibilityRole="button"
-                        accessibilityLabel={`Go to tab ${tab.id}`}
-                        accessibilityState={{ selected: isActive }}
-                    >
-                        {/* Active underline bar (conditional) */}
-                        {isActive && <View style={styles.activeIndicator} />}
-
-                        <Ionicons
-                            name={isActive ? tab.iconName : tab.iconOutline}
-                            size={28}
-                            color="#F97316" // Application identity orange
-                        />
-                    </TouchableOpacity>
-                );
-            })}
-        </View>
-    );
-}
+            <Ionicons
+              name={isActive ? tab.iconName : tab.iconOutline}
+              size={28}
+              color={isActive ? Colors.brightOrange : Colors.black}
+            />
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+};
 
 export default BottomNavBar;
