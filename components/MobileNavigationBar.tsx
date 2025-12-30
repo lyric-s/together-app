@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, usePathname } from 'expo-router';
+import { useRouter, usePathname, RelativePathString } from 'expo-router';
 import { styles } from '@/styles/components/MobileNavigationBarStyles';
 import {Colors} from "@/constants/colors"
 
@@ -45,13 +45,14 @@ const BottomNavBar: React.FC = () => {
   return (
     <View style={styles.navBar}>
       {tabs.map((tab) => {
-        const isActive = pathname === tab.route;
-
+        const isActive = tab.route === '/' 
+          ? pathname === '/' 
+          : pathname.startsWith(tab.route);
         return (
           <TouchableOpacity
             key={tab.id}
             style={styles.tabButton}
-            onPress={() => router.push((tab.route)as any)}
+            onPress={() => router.push(tab.route as RelativePathString)}
             activeOpacity={0.7}
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
