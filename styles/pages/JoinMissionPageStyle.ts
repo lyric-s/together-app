@@ -109,7 +109,6 @@ webInfoColumn: {
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
-    marginTop: -24,
   },
 
   heartIcon: {
