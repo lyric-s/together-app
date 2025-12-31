@@ -12,7 +12,8 @@ export const styles = StyleSheet.create({
   mainText: {
     textAlign: 'center',
     fontSize: 18,
-    marginTop: 24,
+    marginTop: 100,
+    marginBottom: 20,
     color: Colors.black,
   },
 });

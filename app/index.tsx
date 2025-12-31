@@ -59,8 +59,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#E5E5E5',
     },
     centerSection: {
-        // Wraps the component without flexible expansion to maintain its natural height
-        width: '100%',
+        flex: 1,
         alignItems: 'center', 
     },
 
