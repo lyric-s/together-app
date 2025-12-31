@@ -6,7 +6,6 @@
 
 import { View, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
 import BottomNavBar from '@/components/MobileNavigationBar';
 
 /**
@@ -18,8 +17,6 @@ import BottomNavBar from '@/components/MobileNavigationBar';
 export default function Index() {
     return (
         <>
-            {/* Configure screen options to hide the default header */}
-            <Stack.Screen options={{ headerShown: false }} />
 
             {/* Main container wrapped in SafeAreaView to handle device notches/safe areas */}
             <SafeAreaView style={styles.mainContainer}>
@@ -41,13 +38,6 @@ export default function Index() {
         </>
     );
 }
-
-/**
- * Static navigation options for the Index route.
- */
-(Index as any).options = {
-    headerShown: false,
-};
 
 /**
  * StyleSheet for the Index component.
