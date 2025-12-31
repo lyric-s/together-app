@@ -23,7 +23,7 @@ export default function Index() {
                 {/* Central section where the navigation component is positioned */}
                 <View style={styles.centerSection}>
                     <ButtonAuth text="Modifier Profil" onPress={
-                        () => router.push("/profil_modification" as RelativePathString)}/>
+                        () => router.push("/profil/profil_modification" as RelativePathString)}/>
                 </View>
 
                 <BottomNavBar />
