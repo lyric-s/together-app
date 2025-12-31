@@ -1,31 +1,17 @@
 /**
  * DashboardAdmin
  *
- * This page renders the main administration dashboard of the Together platform.
- * It provides administrators with a global overview of the application's activity
- * and key performance indicators.
+ * Cette page affiche le tableau de bord administrateur de la plateforme Together.
+ * Elle donne une vision globale de l'activité de l'application via :
+ * - des indicateurs clés (KPI) en haut de la page ;
+ * - deux graphiques mensuels (nouveaux bénévoles / missions terminées) ;
+ * - deux cartes résumant les actions en attente (signalements / associations).
  *
- * The dashboard includes:
- * - A role-based sidebar for navigation.
- * - Key performance indicators (KPIs) displaying:
- *   - Total number of associations.
- *   - Total number of completed missions.
- *   - Total number of users.
- * - Two line charts showing monthly statistics:
- *   - New volunteers per month.
- *   - Missions completed per month.
- * - Two summary cards highlighting pending administrative actions:
- *   - Reports awaiting review.
- *   - Associations awaiting validation.
- *
- * The layout is responsive and adapts to screen size:
- * - On desktop screens, content is displayed in rows.
- * - On smaller screens (width < 900px), content stacks vertically.
- *
- * This component is intended for administrator use only.
+ * Pour l'instant, les données sont mockées (locales). Le code est déjà structuré
+ * pour être branché facilement sur le back-end plus tard.
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -34,18 +20,129 @@ import {
     ScrollView,
     useWindowDimensions,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 import Sidebar from "@/components/SideBar";
 import AdminLineChart from "@/components/AdminLineChart";
 import styles from "@/styles/pages/DashboardAdminStyles";
 
+/**
+ * Type des données attendues pour alimenter le dashboard.
+ * L'idée est que le back renvoie exactement ce format.
+ */
+type DashboardStats = {
+    associationsCount: number;
+    completedMissionsCount: number;
+    usersCount: number;
+    volunteersPerMonth: { month: string; value: number }[];
+    missionsPerMonth: { month: string; value: number }[];
+    pendingReportsCount: number;
+    pendingAssociationsCount: number;
+};
+
+/**
+ * Fonction de récupération des stats.
+ *
+ * Pour l’instant, on renvoie des données mockées en dur.
+ * TODO: plus tard, remplacer le contenu de cette fonction par un appel HTTP
+ * vers l’API back.
+ */
+async function fetchDashboardStats(): Promise<DashboardStats> {
+    // pause pour simuler un appel réseau
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    return {
+        associationsCount: 216,
+        completedMissionsCount: 1251,
+        usersCount: 20465,
+        volunteersPerMonth: [
+            { month: "Jui", value: 20 },
+            { month: "Ao", value: 35 },
+            { month: "Se", value: 30 },
+            { month: "Oc", value: 70 },
+            { month: "No", value: 25 },
+            { month: "De", value: 55 },
+            { month: "Ja", value: 60 },
+        ],
+        missionsPerMonth: [
+            { month: "Jui", value: 15 },
+            { month: "Ao", value: 28 },
+            { month: "Se", value: 40 },
+            { month: "Oc", value: 78 },
+            { month: "No", value: 22 },
+            { month: "De", value: 50 },
+            { month: "Ja", value: 58 },
+        ],
+        pendingReportsCount: 16,
+        pendingAssociationsCount: 3,
+    };
+}
+
 export default function DashboardAdmin() {
     const { width } = useWindowDimensions();
     const isMobile = width < 900;
+    const router = useRouter();
 
-    const months = ["Jui", "Ao", "Se", "Oc", "No", "De", "Ja"];
-    const volunteers = [20, 35, 30, 70, 25, 55, 60];
-    const missions = [15, 28, 40, 78, 22, 50, 58];
+    // State qui contient toutes les stats du dashboard
+    const [stats, setStats] = useState<DashboardStats | null>(null);
+    const [loading, setLoading] = useState(true); // permet d'afficher un état de chargement si besoin
+    const [error, setError] = useState<string | null>(null); // en cas d'erreur d'appel API
+
+    useEffect(() => {
+        // Au montage de la page, on va chercher les données du dashboard
+        fetchDashboardStats()
+            .then((data) => {
+                setStats(data);
+            })
+            .catch(() => {
+                // TODO: gérer le message d'erreur de façon plus propre (toast, composant dédié)
+                setError("Impossible de charger les statistiques du tableau de bord.");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    // Navigation vers les pages de vérificationassoetreport / traitement
+    const handleNavigateToReports = () => {
+        router.push("/reportsverification");
+    };
+
+    const handleNavigateToAssociations = () => {
+        router.push("/associationverification");
+    };
+
+    // Si les données ne sont pas encore chargées, on peut afficher un message
+    if (loading || !stats) {
+        return (
+            <View style={styles.page}>
+                <Sidebar
+                    userType="admin"
+                    userName="Bonjour, Mohamed"
+                    onNavigate={() => {}}
+                />
+                <View
+                    style={[
+                        styles.mainBackground,
+                        { justifyContent: "center", alignItems: "center" },
+                    ]}
+                >
+                    {error ? (
+                        <Text style={{ color: "red" }}>{error}</Text>
+                    ) : (
+                        <Text>Chargement du tableau de bord...</Text>
+                    )}
+                </View>
+            </View>
+        );
+    }
+
+    // On extrait les labels et valeurs à partir des tableaux renvoyés par l'api back
+    const volunteerMonths = stats.volunteersPerMonth.map((p) => p.month);
+    const volunteerValues = stats.volunteersPerMonth.map((p) => p.value);
+
+    const missionMonths = stats.missionsPerMonth.map((p) => p.month);
+    const missionValues = stats.missionsPerMonth.map((p) => p.value);
 
     return (
         <View style={styles.page}>
@@ -68,24 +165,26 @@ export default function DashboardAdmin() {
                             Vision globale sur les performances de l’application
                         </Text>
 
+                        {/* KPIs du haut : chaque carte lit maintenant les valeurs depuis "stats" */}
                         <View style={[styles.kpiRow, isMobile && styles.column]}>
                             <KpiCard
-                                icon={require("@/assets/images/gray_heart.png")}
+                                icon={require("@/assets/images/hearticondahboard.png")}
                                 label="Nombre d'association"
-                                value="216"
+                                value={stats.associationsCount.toString()}
                             />
                             <KpiCard
-                                icon={require("@/assets/images/validate.png")}
+                                icon={require("@/assets/images/CheckIconDashboard.png")}
                                 label="Missions accomplies"
-                                value="1,251"
+                                value={stats.completedMissionsCount.toLocaleString("fr-FR")}
                             />
                             <KpiCard
-                                icon={require("@/assets/images/user2.png")}
+                                icon={require("@/assets/images/PersoniconDashboard.png")}
                                 label="Nombre d'utilisateurs"
-                                value="20465"
+                                value={stats.usersCount.toLocaleString("fr-FR")}
                             />
                         </View>
 
+                        {/* Graphiques mensuels : on passe les mois et valeurs calculés à partir des données du state */}
                         <View style={[styles.chartsRow, isMobile && styles.column]}>
                             <View style={styles.block}>
                                 <Text style={styles.blockTitle}>
@@ -93,8 +192,8 @@ export default function DashboardAdmin() {
                                 </Text>
                                 <View style={[styles.chartCard, styles.chartOrange]}>
                                     <AdminLineChart
-                                        labels={months}
-                                        values={volunteers}
+                                        labels={volunteerMonths}
+                                        values={volunteerValues}
                                         lineColor="#FF7630"
                                     />
                                 </View>
@@ -106,23 +205,25 @@ export default function DashboardAdmin() {
                                 </Text>
                                 <View style={[styles.chartCard, styles.chartPurple]}>
                                     <AdminLineChart
-                                        labels={months}
-                                        values={missions}
+                                        labels={missionMonths}
+                                        values={missionValues}
                                         lineColor="#3B5BFF"
                                     />
                                 </View>
                             </View>
                         </View>
 
+                        {/* Cartes du bas : les nombres viennent aussi du state (pendingReportsCount / pendingAssociationsCount) */}
                         <View style={[styles.bottomRow, isMobile && styles.column]}>
                             <View style={styles.block}>
                                 <Text style={styles.blockTitle}>
                                     Signalements en attentes
                                 </Text>
                                 <PendingCard
-                                    value="16"
+                                    value={stats.pendingReportsCount.toString()}
                                     cardStyle={styles.pendingOrange}
                                     buttonStyle={styles.btnOrange}
+                                    onPress={handleNavigateToReports}
                                 />
                             </View>
 
@@ -131,9 +232,10 @@ export default function DashboardAdmin() {
                                     Associations en attente de validation
                                 </Text>
                                 <PendingCard
-                                    value="3"
+                                    value={stats.pendingAssociationsCount.toString()}
                                     cardStyle={styles.pendingPurple}
                                     buttonStyle={styles.btnPurple}
+                                    onPress={handleNavigateToAssociations}
                                 />
                             </View>
                         </View>
@@ -144,6 +246,10 @@ export default function DashboardAdmin() {
     );
 }
 
+/**
+ * Composant réutilisable pour afficher une carte KPI.
+ * Il reçoit l'icône, le label et la valeur à afficher.
+ */
 function KpiCard({
                      icon,
                      label,
@@ -166,20 +272,29 @@ function KpiCard({
     );
 }
 
+/**
+ * Composant pour les cartes du bas (signalements / associations).
+ * Il affiche une grande valeur et un bouton "traiter" qui déclenche une navigation.
+ */
 function PendingCard({
                          value,
                          cardStyle,
                          buttonStyle,
+                         onPress,
                      }: {
     value: string;
     cardStyle: any;
     buttonStyle: any;
+    onPress: () => void;
 }) {
     return (
         <View style={[styles.pendingCard, cardStyle]}>
             <Text style={styles.pendingValue}>{value}</Text>
 
-            <TouchableOpacity style={[styles.pendingBtn, buttonStyle]}>
+            <TouchableOpacity
+                style={[styles.pendingBtn, buttonStyle]}
+                onPress={onPress}
+            >
                 <Text style={styles.pendingBtnText}>traiter</Text>
             </TouchableOpacity>
         </View>
