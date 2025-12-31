@@ -31,7 +31,7 @@ export default function Index() {
                 <View style={styles.centerSection}>
                     <ButtonAuth
                         text='Calendar'
-                        onPress={() => router.push(('/calendar') as any)}
+                        onPress={() => router.push(('/profil/calendar') as any)}
                     />
                     
                 </View>
@@ -59,21 +59,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#E5E5E5',
     },
-    topSection: {
-        flex: 1, // Occupies the top half of the available space
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+   
     centerSection: {
         // Wraps the component without flexible expansion to maintain its natural height
-        width: '100%',
+        flex: 1, // Occupies the top half of the available space
         alignItems: 'center', 
     },
-    bottomSection: {
-        flex: 1, // Occupies the bottom half of the available space
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    
     text: {
         fontSize: 16,
         color: '#666',

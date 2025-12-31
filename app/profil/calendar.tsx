@@ -1,9 +1,10 @@
 import { View, Platform  } from "react-native";
-import Calendar from "../components/Calendar";
+import Calendar from "../../components/Calendar";
 import Sidebar from "@/components/SideBar";
 import { useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
 import { Colors } from "@/constants/colors";
+import BottomNavBar from "@/components/MobileNavigationBar";
 
 export default function Page() {
   const router = useRouter();
@@ -26,9 +27,9 @@ export default function Page() {
     </View>
     
 
-    {/* {isMobile && 
-        //TODO
-    } */}
+    {isMobile && 
+        <BottomNavBar />
+    }
 
     </View>;
 }
