@@ -35,8 +35,7 @@ export default function RootLayout() {
 
   // Routes where the navbar should be hidden
   const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos', '/ProfilAdmin'];
-  const shouldShowNavbar = !hideNavbarRoutes.some(route => pathname.startsWith(route));
-  
+  const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);  
   const isMobile = width < 768;
 
   return (
