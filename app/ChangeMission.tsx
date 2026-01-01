@@ -3,7 +3,7 @@ import ListeBenevolesModal from '@/components/ListBenevolesModal';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
 import { handleSaveMission, updateMissionField, handleDeleteMission } from '@/utils/ChangeMissionTS';
 import { useState, useCallback } from 'react';
-import { Modal, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, useWindowDimensions, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Colors } from '@/constants/colors';
 import BackButton from '@/components/BackButton';
@@ -14,6 +14,8 @@ import Sidebar from '@/components/SideBar';
 import { useRouter } from 'expo-router';
 
 export default function ChangeMission() {
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 900;
   const router = useRouter();
   const [alertModal, setAlertModal] = useState({ 
     visible: false, 
@@ -330,10 +332,12 @@ export default function ChangeMission() {
         </>
         ) : (
         <>
-          <BackButton
-            name_page='Mission à venir'
-          />
-          <Text style={styles.title}>{mission.title}</Text>
+          <View style={{ paddingLeft: isSmallScreen ? 30 : 0 }}>
+            <BackButton
+              name_page='Mission à venir'
+            />
+            <Text style={styles.title}>{mission.title}</Text>
+          </View>
 
           <Text style={styles.label}>Image</Text>
           <Image
