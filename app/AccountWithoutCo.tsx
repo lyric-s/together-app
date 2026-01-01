@@ -19,6 +19,7 @@ export default function AccountWithoutCo() {
   const { width } = useWindowDimensions();
   //const isWeb = Platform.OS === 'web';
   const isMobile = width < 768;
+  const isSmallScreen = width < 900;
 
   //data via API
   const missions: Mission[] = [
@@ -158,21 +159,6 @@ export default function AccountWithoutCo() {
           </View>
         </ScrollView>
 
-        {/* Bottom Navigation */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIconActive}>🏠</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>🔍</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>📚</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>👤</Text>
-          </TouchableOpacity>
-        </View>
       </View>
     );
   }
@@ -189,7 +175,7 @@ export default function AccountWithoutCo() {
       <ScrollView>
         {/* Section Missions récentes */}
         <View style={styles.sectionWeb}>
-          <Text style={styles.sectionTitleWeb}>Missions récentes</Text>
+          <Text style={[styles.sectionTitleWeb, isSmallScreen && {paddingLeft: 35}]}>Missions récentes</Text>
 
           <View style={styles.missionsGrid}>
             {missions.map((mission) => (
