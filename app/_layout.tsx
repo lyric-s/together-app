@@ -14,6 +14,7 @@ import { Stack } from 'expo-router';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { usePathname } from 'expo-router';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -28,6 +29,14 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const pathname = usePathname();
+  const { width } = useWindowDimensions();
+
+  // Routes where the navbar should be hidden
+  const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos', '/ProfilAdmin'];
+  const shouldShowNavbar = !hideNavbarRoutes.some(route => pathname.startsWith(route));
+  
+  const isMobile = width < 768;
 
   return (
     <SafeAreaProvider>
