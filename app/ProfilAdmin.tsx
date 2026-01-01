@@ -19,7 +19,7 @@ export default function ProfilAdmin() {
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 900;
 
-    const [profileUser, setProfilUSer] = useState<any>({
+    const [profileUser, setProfileUser] = useState<FormData>({
         lastname: 'Xavier',
         firstname: 'Paul',
         email: 'paul.xavier@gmail.com',
@@ -28,7 +28,6 @@ export default function ProfilAdmin() {
         password: '********',
         confirmPassword: '********',
     });
-
     const [alertModal, setAlertModal] = useState({ 
         visible: false, 
         title: '', 
@@ -48,7 +47,7 @@ export default function ProfilAdmin() {
         // For this example, we'll just update the local state
         try {
             // await saveToBackend(data); // Décommente quand backend prêt
-            setProfilUSer(data);
+            setProfileUser(data);
             showAlert('Succès', 'Les informations du profil ont été mises à jour avec succès.');
         } catch (error) {
             showAlert('Erreur', 'Échec de la mise à jour du profil.');
@@ -58,8 +57,7 @@ export default function ProfilAdmin() {
     return (
         <>
             <LinearGradient
-                colors={[Colors.white, Colors.orangeVeryLight]} // Violet → Pourpre (personnalise !)
-                style={{ flex: 1 }}
+                colors={[Colors.white, Colors.orangeVeryLight]}                style={{ flex: 1 }}
                 start={{ x: 0.5, y: 0 }}
                 end={{ x: 0.5, y: 1 }}
             >
@@ -77,34 +75,18 @@ export default function ProfilAdmin() {
                 />
 
                 <View style={{ flex: 1 }}>
-                    {isSmallScreen ? (
-                        <ScrollView style={styles.content}>
-                            <Text style={[styles.pageTitle, {paddingLeft : 40}]}>Mon profil</Text>
-                            <Text style={[styles.text, {paddingLeft : 40}]}>Toutes les données vous concernant</Text>
-                            <View>
-                                <ProfilCard
-                                    userType = 'admin'
-                                    userData = {profileUser}
-                                    onSave={handleSave}
-                                    showAlert={showAlert}
-                                />
-                            </View>
-                        </ScrollView>
-                    ) : (
-
-                        <ScrollView style={styles.content}>
-                            <Text style={styles.pageTitle}>Mon profil</Text>
-                            <Text style={styles.text}>Toutes les données vous concernant</Text>
-                            <View>
-                                <ProfilCard
-                                    userType = 'admin'
-                                    userData = {profileUser}
-                                    onSave={handleSave}
-                                    showAlert={showAlert}
-                                />
-                            </View>
-                        </ScrollView>
-                    )}
+                    <ScrollView style={styles.content}>
+                        <Text style={[styles.pageTitle, isSmallScreen && {paddingLeft: 40}]}>Mon profil</Text>
+                        <Text style={[styles.text, isSmallScreen && {paddingLeft: 40}]}>Toutes les données vous concernant</Text>
+                        <View>
+                            <ProfilCard
+                                userType = 'admin'
+                                userData = {profileUser}
+                                onSave={handleSave}
+                                showAlert={showAlert}
+                            />
+                        </View>
+                    </ScrollView>
                 </View>
             </View>
             </LinearGradient>
