@@ -1,4 +1,4 @@
-// UpcomingMissionsPage.tsx
+// ActivityAssos.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -96,13 +96,15 @@ export default function ActivityAssos() {
     ]);
     const [loading, setLoading] = useState(false);
 
+    /*
     const handleViewMission = (missionId: string) => {
         console.log('Voir mission:', missionId);
         router.push({
-        pathname: '/ChangeMission' as any,
+        pathname: '/ChangeMission',
         params: { missionId }
         });
     };
+    */
 
     // Charge volunteer according to clicked mission
     const loadBenevoles = async (missionId: string) => {
@@ -156,7 +158,7 @@ export default function ActivityAssos() {
             <View style={styles.buttonsContainer}>
                 <TouchableOpacity
                 style={[styles.button, {backgroundColor: '#E8D5FF'}]}
-                onPress={() => handleViewMission(mission.id)}
+                //onPress={() => handleViewMission(mission.id)}
                 >
                 <Text style={[styles.buttonText, {color: '#7C3AED'}]}>Voir la mission</Text>
                 </TouchableOpacity>
@@ -190,22 +192,14 @@ export default function ActivityAssos() {
             />
 
             <View style={{ flex: 1 }}>
-                {isSmallScreen ? (
-                    <ScrollView style={styles.content}>
-                        <Text style={[styles.pageTitle, {paddingLeft : 55}]}>Mission à venir</Text>
-                        <View style={styles.missionsList}>
+                <ScrollView style={styles.content}>
+                    <Text style={[styles.pageTitle, isSmallScreen && {paddingLeft: 55}]}>
+                        Mission à venir
+                    </Text>
+                    <View style={styles.missionsList}>
                         {missions.map((mission) => renderMissionCard(mission))}
-                        </View>
-                    </ScrollView>
-                ) : (
-
-                    <ScrollView style={styles.content}>
-                        <Text style={styles.pageTitle}>Mission à venir</Text>
-                        <View style={styles.missionsList}>
-                        {missions.map((mission) => renderMissionCard(mission))}
-                        </View>
-                    </ScrollView>
-                )}
+                    </View>
+                </ScrollView>
             </View>
             <ListeBenevolesModal
                 visible = {modalVisible}

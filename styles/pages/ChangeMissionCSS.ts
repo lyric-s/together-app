@@ -5,13 +5,19 @@ export const styles =  StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.white,
-        padding: 20,
+        paddingVertical: 20,
+        paddingHorizontal: 50,
     },
     title: {
-        fontSize: 20,
+        fontSize: 30,
         fontWeight: "bold",
         color: Colors.black,
         marginBottom: 10,
+    },
+    titleBackButton: {
+        fontSize: 15,
+        fontWeight: "bold",
+        color: Colors.black,
     },
     label: {
         fontWeight: "600",
@@ -42,7 +48,7 @@ export const styles =  StyleSheet.create({
         width: '100%',
     },
     dropDownStyle: {
-        backgroundColor: Colors.white,  // fond gris clair pour la liste déroulante
+        backgroundColor: Colors.white,
         borderRadius: 8,
     },
     placeholderStyle: {
@@ -77,7 +83,7 @@ export const styles =  StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparentBlack,
     },
     modalContainer: {
         backgroundColor: "white",
