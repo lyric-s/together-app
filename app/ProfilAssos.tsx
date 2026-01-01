@@ -332,7 +332,8 @@ export default function ProfilAssos() {
 
             {addressCard()}
         </>
-    )};
+        );
+    };
     
     if(isVerySmallScreen){
         return (
