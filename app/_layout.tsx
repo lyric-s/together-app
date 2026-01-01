@@ -22,16 +22,16 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
 
         {shouldShowNavbar && isMobile && (
-            <View>
               <BottomNavBar />
-            </View>
           )}
+        </View>
         <StatusBar style="auto" />
       </ThemeProvider>
     </SafeAreaProvider>
