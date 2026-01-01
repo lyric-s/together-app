@@ -37,7 +37,7 @@ interface MissionCardProps {
  * @param onPressFavorite - Optional callback invoked with the new favorite value when the heart is toggled
  * @param category_label - Text shown inside the category badge
  * @param category_color - Background color passed to the category badge component
- * @param image - Image source displayed at the top of the card (optionnal)
+ * @param image - Image source displayed at the top of the card (optional)
  * @returns The rendered mission card component
  */
 export default function MissionVolunteerCard({
