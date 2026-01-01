@@ -41,8 +41,8 @@ export default function ActivityAssos() {
         {
             id: '1',
             title: 'Promenade de chiens',
-            dateStart: '12/11/2025 de 15h à 17h',
-            dateEnd: '12/11/2025 17h',
+            dateStart: '12/11/2025 - 15h',
+            dateEnd: '12/11/2025 - 17h',
             city: 'Bordeaux',
             category: 'Animaux',
             categoryColor: Colors.brightOrange,
@@ -52,8 +52,8 @@ export default function ActivityAssos() {
         {
             id: '2',
             title: 'Promenade de chiens',
-            dateStart: '12/11/2025 de 15h à 17h',
-            dateEnd: '12/11/2025 17h',
+            dateStart: '12/11/2025 - 15h',
+            dateEnd: '12/11/2025 - 17h',
             city: 'Bordeaux',
             category: 'Animaux',
             categoryColor: Colors.brightOrange,
@@ -63,8 +63,8 @@ export default function ActivityAssos() {
         {
             id: '3',
             title: 'Promenade de chiens',
-            dateStart: '12/11/2025 de 15h à 17h',
-            dateEnd: '12/11/2025 17h',
+            dateStart: '12/11/2025 - 15h',
+            dateEnd: '12/11/2025 - 17h',
             city: 'Bordeaux',
             category: 'Animaux',
             categoryColor: Colors.brightOrange,
@@ -74,8 +74,8 @@ export default function ActivityAssos() {
         {
             id: '4',
             title: 'Promenade de chiens',
-            dateStart: '12/11/2025 de 15h à 17h',
-            dateEnd: '12/11/2025 17h',
+            dateStart: '12/11/2025 - 15h',
+            dateEnd: '12/11/2025 - 17h',
             city: 'Bordeaux',
             category: 'Animaux',
             categoryColor: Colors.brightOrange,
@@ -142,7 +142,7 @@ export default function ActivityAssos() {
         {/* Left Section - Mission Info */}
         <View style={styles.missionInfo}>
             <Text style={styles.missionTitle}>{mission.title}</Text>
-            <Text style={styles.missionDetail}>{mission.dateStart}</Text>
+            <Text style={styles.missionDetail}>{mission.dateStart} au {mission.dateEnd}</Text>
             <Text style={styles.missionDetail}>{mission.city}</Text>
             <View style={[styles.categoryContainer, { marginVertical: -2, marginLeft: -10 }]}>
             <CategoryLabel
