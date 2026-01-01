@@ -12,13 +12,7 @@ services:
       - EXPO_PUBLIC_API_URL=${API_URL}
     networks:
       - coolify
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    labels:
+    labels: 
       - "traefik.enable=true"
       - "traefik.http.routers.together.rule=Host(`together.app.com`)"
       - "traefik.http.routers.together.entrypoints=websecure"
