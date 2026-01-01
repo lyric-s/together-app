@@ -19,7 +19,7 @@ import { styles } from '@/styles/pages/ProfilCSS';
 import ProfilCard from '@/components/ProfilCard';
 import * as DocumentPicker from 'expo-document-picker';
 
-export default function ProfilVolunteer() {
+export default function ProfilAssos() {
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 900;
     const isVerySmallScreen = width < 610;
@@ -171,9 +171,9 @@ export default function ProfilVolunteer() {
         setEditingJustificationFile(null);
     };
 
-    const rightColumnContent = () => {
+    const descriptionCard = () => {
         return (
-        <>
+            <>
             {/* Description Card */}
             <View style={styles.card}>
                 <Text style={[styles.cardTitle, {marginBottom: 16}]}>Description</Text>
@@ -211,7 +211,13 @@ export default function ProfilVolunteer() {
                     </TouchableOpacity>
                 )}
             </View>
+            </>
+        );
+    }
 
+    const addressCard = () => {
+        return (
+            <>
             {/* Address Card */}
             <View style={styles.card}>
                 <View style={styles.cardHeader}>
@@ -315,6 +321,16 @@ export default function ProfilVolunteer() {
                 </TouchableOpacity>
                 )}
             </View>
+            </>
+        );
+    }
+
+    const rightColumnContent = () => {
+        return (
+        <>
+            {descriptionCard()}
+
+            {addressCard()}
         </>
     )};
     
@@ -351,147 +367,9 @@ export default function ProfilVolunteer() {
                             />
                         </View>
                         <View>
-                            {/* Description Card */}
-                            <View style={[styles.card, { marginBottom: 20 }]}>
-                                <Text style={[styles.cardTitle, {marginBottom: 16}]}>Description</Text>
-                                <TextInput
-                                    style={styles.textArea}
-                                    value={profileUser.description}
-                                    multiline
-                                    numberOfLines={6}
-                                    editable={isEditingDescription}
-                                    onChangeText={(text) =>
-                                        setProfileUser({ ...profileUser, description: text })
-                                    }
-                                />
-                                {isEditingDescription ? (
-                                    <View style={styles.buttonRow}>
-                                        <TouchableOpacity
-                                            style={[styles.smallButton, styles.cancelButton]}
-                                            onPress={handleCancelDescription}
-                                        >
-                                            <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/return.png')} />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            style={[styles.smallButton, styles.saveButton]}
-                                            onPress={handleSaveDescription}
-                                        >
-                                            <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/validate.png')} />
-                                        </TouchableOpacity>
-                                    </View>
-                                ) : (
-                                    <TouchableOpacity
-                                        style={[styles.smallButton, styles.editButton]}
-                                        onPress={() => setIsEditingDescription(true)}
-                                    >
-                                        <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/edit.png')} />
-                                    </TouchableOpacity>
-                                )}
-                            </View>
+                            {descriptionCard()}
 
-                            {/* Address Card */}
-                            <View style={styles.card}>
-                                <View style={styles.cardHeader}>
-                                    <Text style={styles.cardTitle}>Adresse</Text>
-                                    <TouchableOpacity
-                                        style={[styles.infoIcon, { opacity: savedAddress.piece ? 1 : 0.5 }]}
-                                        onPress={handleOpenAttachment}
-                                        disabled={!savedAddress.piece}
-                                    >
-                                        <Image source={require('@/assets/images/attachment-file.png')} style={styles.infoIconImage} />
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={styles.formGroup}>
-                                <Text style={styles.label}>Adresse</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={profileUser.adresse}
-                                    editable={isEditingAddress}
-                                    onChangeText={(text) => {
-                                        setProfileUser({ ...profileUser, adresse: text });
-                                    }}
-                                />
-                                </View>
-
-                                <View style={styles.formRow}>
-                                <View style={[styles.formGroup, { flex: 1, marginRight: 10 }]}>
-                                    <Text style={styles.label}>Code Postal</Text>
-                                    <TextInput
-                                    style={styles.input}
-                                    value={profileUser.codePostal}
-                                    editable={isEditingAddress}
-                                    keyboardType="numeric"
-                                    onChangeText={(text) => {
-                                        setProfileUser({
-                                        ...profileUser,
-                                        codePostal: text,
-                                        });
-                                    }}
-                                    />
-                                </View>
-
-                                <View style={[styles.formGroup, { flex: 1, marginLeft: 10 }]}>
-                                    <Text style={styles.label}>Commune</Text>
-                                    <TextInput
-                                    style={styles.input}
-                                    value={profileUser.commune}
-                                    editable={isEditingAddress}
-                                    onChangeText={(text) => {
-                                        setProfileUser({
-                                        ...profileUser,
-                                        commune: text,
-                                        });
-                                    }}
-                                    />
-                                </View>
-                                </View>
-
-                                {isEditingAddress && addressChanged && (
-                                <View style={styles.fileSection}>
-                                    <Text style={styles.warningText}>
-                                        ⚠️ Modification d'adresse - Justificatif obligatoire
-                                    </Text>
-                                    <TouchableOpacity
-                                        style={styles.uploadButton}
-                                        onPress={handlePickDocument}
-                                    >
-                                    <Text style={styles.uploadButtonText}>
-                                        {editingJustificationFile
-                                        ? '✓ Fichier ajouté'
-                                        : '📎 Joindre un justificatif'}
-                                    </Text>
-                                    </TouchableOpacity>
-                                    {editingJustificationFile && (
-                                        <Text style={styles.fileName}>{editingJustificationFile.name}</Text>
-                                    )}
-                                </View>
-                                )}
-
-                                {isEditingAddress ? (
-                                <View style={styles.buttonRow}>
-                                    <TouchableOpacity
-                                        style={[styles.smallButton, styles.cancelButton]}
-                                        onPress={handleCancelAddress}
-                                    >
-                                        <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/return.png')} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={[styles.smallButton, styles.saveButton]}
-                                        onPress={handleSaveAddress}
-                                    >
-                                        <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/validate.png')} />
-                                    </TouchableOpacity>
-                                </View>
-                                ) : (
-                                <TouchableOpacity
-                                    style={[styles.smallButton, styles.editButton]}
-                                    onPress={handleStartEditAddress}
-                                >
-                                    <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/edit.png')} />
-                                </TouchableOpacity>
-                                )}
-                            </View>
+                            {addressCard()}
                         </View>
                 </ScrollView>
             </View>       
