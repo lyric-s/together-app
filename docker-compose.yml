@@ -7,17 +7,27 @@ services:
       dockerfile: Dockerfile
     container_name: together-frontend
     restart: unless-stopped
-    ports:
-      - "3000:80" #3000 port on server mapped to 80 internal port in container NGINX
     environment:
       - NODE_ENV=production
       - EXPO_PUBLIC_API_URL=${API_URL}
     networks:
       - coolify
-      - npm-network #Connect to NPM Proxy network
+    labels:
+      # Activate Traefik for this container
+      - "traefik.enable=true"
+      
+      # Define the router for the domain together.app.com
+      - "traefik.http.routers.together.rule=Host(`together.app.com`)"
+      
+      # Use the websecure entrypoint (HTTPS)
+      - "traefik.http.routers.together.entrypoints=websecure"
+      
+      # Generate automatic a SSL Let's Encrypt certificate
+      - "traefik.http.routers.together.tls.certresolver=letsencrypt"
+      
+      # Container Nginx listens on port 80
+      - "traefik.http.services.together.loadbalancer.server.port=80"
 
 networks:
   coolify:
-    external: true
-  npm-network:
     external: true
