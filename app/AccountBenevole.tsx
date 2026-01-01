@@ -253,7 +253,7 @@ export default function AccountBenevole() {
 
             {/* List of missions */}
             {missionsFavorite.map((mission) => (
-            <View key={mission.id} >
+            <View key={mission.id} style={styles.cardWrapper}>
               <MissionVolunteerCard
                 mission_title={mission.title}
                 association_name={mission.association_name}
@@ -279,6 +279,13 @@ export default function AccountBenevole() {
 
   // Web version
   return (
+    <>
+    <AlertToast 
+        visible={alertModal.visible}
+        title={alertModal.title}
+        message={alertModal.message}
+        onClose={handleAlertClose}
+    />
     <View style={{ flex: 1, flexDirection: 'row' }}>
     <Sidebar
       userType='volunteer'
@@ -292,21 +299,21 @@ export default function AccountBenevole() {
           <Text style={styles.sectionTitleWeb}>Missions récentes</Text>
 
           <View style={styles.missionsGrid}>
-            {missions.map((missions) => (
-              <View key={missions.id} >
+            {missions.map((mission) => (
+              <View key={mission.id} >
                 <MissionVolunteerCard
-                  mission_title={missions.title}
-                  association_name={missions.association_name}
-                  city={missions.city}
-                  date={missions.date}
-                  number_max_volunteers={missions.number_max_volunteers}
-                  number_of_volunteers={missions.number_of_volunteers}
-                  category_label={missions.category}
-                  category_color={missions.categoryColor}
-                  image={missions.image}
-                  favorite={missions.favorite}
-                  onPressMission={() => handlePressMission(missions.id)}
-                  onPressFavorite={(newValue) => handlePressFavorite(missions.id, newValue)}
+                  mission_title={mission.title}
+                  association_name={mission.association_name}
+                  city={mission.city}
+                  date={mission.date}
+                  number_max_volunteers={mission.number_max_volunteers}
+                  number_of_volunteers={mission.number_of_volunteers}
+                  category_label={mission.category}
+                  category_color={mission.categoryColor}
+                  image={mission.image}
+                  favorite={mission.favorite}
+                  onPressMission={() => handlePressMission(mission.id)}
+                  onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
                 />
               </View>
             ))}
@@ -317,21 +324,21 @@ export default function AccountBenevole() {
           <Text style={styles.sectionTitleWeb}>Missions favorites</Text>
 
             <View style={styles.missionsGrid}>
-          {missionsFavorite.map((missionsFavorite) => (
-              <View key={missionsFavorite.id} >
+          {missionsFavorite.map((mission) => (
+              <View key={mission.id} >
                 <MissionVolunteerCard
-                  mission_title={missionsFavorite.title}
-                  association_name={missionsFavorite.association_name}
-                  city={missionsFavorite.city}
-                  date={missionsFavorite.date}
-                  number_max_volunteers={missionsFavorite.number_max_volunteers}
-                  number_of_volunteers={missionsFavorite.number_of_volunteers}
-                  category_label={missionsFavorite.category}
-                  category_color={missionsFavorite.categoryColor}
-                  image={missionsFavorite.image}
-                  favorite={missionsFavorite.favorite}
-                  onPressMission={() => handlePressMission(missionsFavorite.id)}
-                  onPressFavorite={(newValue) => handlePressFavorite(missionsFavorite.id, newValue)}
+                  mission_title={mission.title}
+                  association_name={mission.association_name}
+                  city={mission.city}
+                  date={mission.date}
+                  number_max_volunteers={mission.number_max_volunteers}
+                  number_of_volunteers={mission.number_of_volunteers}
+                  category_label={mission.category}
+                  category_color={mission.categoryColor}
+                  image={mission.image}
+                  favorite={mission.favorite}
+                  onPressMission={() => handlePressMission(mission.id)}
+                  onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
                 />
               </View>
             ))}
@@ -340,5 +347,6 @@ export default function AccountBenevole() {
       </ScrollView>
     </View>
     </View>
+    </>
   );
 };
