@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   together-frontend:
     build:
@@ -12,9 +10,3 @@ services:
     environment:
       - NODE_ENV=production
       - EXPO_PUBLIC_API_URL=${API_URL}
-    networks:
-      - npm-network #where network where NPM is connected
-
-networks:
-  npm-network:
-    external: true

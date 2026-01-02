@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Build for the web with Expo
-RUN npx expo export --platform web
+RUN npm run build:web
 
 # Production stage
 FROM nginx:alpine
