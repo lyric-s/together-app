@@ -17,7 +17,8 @@
     "docker:compose:build": "docker compose up -d --build",
     "docker:logs": "docker compose logs -f",
     "docker:stop": "docker compose down",
-    "clean": "rimraf dist web-build node_modules/.cache"
+    "clean": "rimraf dist web-build node_modules/.cache",
+    "export": "npm run build:web"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
