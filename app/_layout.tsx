@@ -35,7 +35,7 @@ export default function RootLayout() {
   // Routes where the navbar should be hidden
   const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos', '/ProfilAdmin', '/ActivityAssos', '/ChangeMission'];
   const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);
-  const isMobile = width < 768;
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

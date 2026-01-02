@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCo';
@@ -17,8 +18,7 @@ import { useRouter } from 'expo-router';
 
 export default function AccountWithoutCo() {
   const { width } = useWindowDimensions();
-  //const isWeb = Platform.OS === 'web';
-  const isMobile = width < 768;
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   const isSmallScreen = width < 900;
 
   //data via API
