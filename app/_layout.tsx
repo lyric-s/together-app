@@ -4,6 +4,15 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+/**
+ * Root layout component that provides the app theme and navigation stack.
+ *
+ * Selects and applies the current color scheme theme, renders a navigation stack
+ * containing the "index" and "modal" routes (with the modal presented modally),
+ * hides screen headers globally, and renders the status bar.
+ *
+ * @returns The root React element that supplies theme and navigation for the app.
+ */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
