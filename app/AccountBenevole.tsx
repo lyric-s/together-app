@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCoCSS';
@@ -17,8 +18,8 @@ import Sidebar from '@/components/SideBar';
 
 export default function AccountBenevole() {
   const { width } = useWindowDimensions();
-  //const isWeb = Platform.OS === 'web';
-  const isMobile = width < 768;
+  const isSmallScreen = width < 900;
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
   const [alertModal, setAlertModal] = useState({ 
     visible: false, 
@@ -149,7 +150,7 @@ export default function AccountBenevole() {
     }
 
     if (newValue) {
-    // On passe en favori
+    // Pass in favorite
     const missionFromList = missions.find(m => m.id === missionId);
     const missionFromFavorites = missionsFavorite.find(m => m.id === missionId);
     const missionToAdd = missionFromList || missionFromFavorites;
@@ -170,7 +171,7 @@ export default function AccountBenevole() {
       );
     }
   } else {
-    // On enlève des favoris -> doit être false partout
+    // Remove favorite
     setMissions(mis =>
       mis.map(m =>
         m.id === missionId ? { ...m, favorite: false } : m
@@ -243,6 +244,7 @@ export default function AccountBenevole() {
 
           </View>
           {/* Section Favorite */}
+          {missionsFavorite.length > 0 && (
           <View style={styles.sectionMobile}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Favoris</Text>
@@ -271,6 +273,7 @@ export default function AccountBenevole() {
             </View>
           ))}
           </View>
+        )}
         </ScrollView>
       </View>
     </>
@@ -296,7 +299,7 @@ export default function AccountBenevole() {
       <ScrollView>
         {/* Section Missions récentes */}
         <View style={styles.sectionWeb}>
-          <Text style={styles.sectionTitleWeb}>Missions récentes</Text>
+          <Text style={[styles.sectionTitleWeb, isSmallScreen && {paddingLeft:35}]}>Missions récentes</Text>
 
           <View style={styles.missionsGrid}>
             {missions.map((mission) => (
@@ -320,8 +323,9 @@ export default function AccountBenevole() {
           </View>
         </View>
         {/* Section Missions favorites */}
+        {missionsFavorite.length > 0 && (
         <View style={styles.sectionWeb}>
-          <Text style={styles.sectionTitleWeb}>Missions favorites</Text>
+          <Text style={[styles.sectionTitleWeb, isSmallScreen && {paddingLeft:35}]}>Missions favorites</Text>
 
             <View style={styles.missionsGrid}>
           {missionsFavorite.map((mission) => (
@@ -344,6 +348,7 @@ export default function AccountBenevole() {
             ))}
             </View>
         </View>
+        )}
       </ScrollView>
     </View>
     </View>

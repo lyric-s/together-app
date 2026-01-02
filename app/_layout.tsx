@@ -35,7 +35,7 @@ export default function RootLayout() {
   const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos'];
   const shouldShowNavbar = !hideNavbarRoutes.some(route => pathname.startsWith(route));
   
-  const isMobile = width < 768;
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
   return (
     <SafeAreaProvider>
