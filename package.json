@@ -10,7 +10,7 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "build:web": "expo export --platform web",
-    "serve": "npx serve dist -s -p 8080",
+    "serve": "npx serve dist -s -p 3000",
     "docker:build": "docker build -t together-app .",
     "docker:run": "docker run -p 8080:80 together-app",
     "docker:compose": "docker compose up -d",
