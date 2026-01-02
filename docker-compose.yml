@@ -2,7 +2,6 @@ services:
   together-frontend:
     build:
       context: .
-      dockerfile: Dockerfile
     container_name: together-frontend
     restart: unless-stopped
     ports:
