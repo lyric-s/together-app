@@ -1,12 +1,20 @@
 /**
  * @file splash.tsx
- * @description Mobile splash screen displayed on app launch.
- * Shows the splash artwork with a simple fade-in animation,
- * then automatically redirects to the main app.
+ * @description Splash screen displayed at application startup on mobile devices.
+ *
+ * This screen shows the application splash artwork centered on the screen
+ * with a simple fade-in animation. After a short delay, the user is
+ * automatically redirected to the main entry point of the application (`/`).
+ *
+ * On web platforms, the splash screen is skipped entirely and the user is
+ * immediately redirected to the home page.
+ *
+ * @component Splash
+ * @returns {JSX.Element} A full-screen view containing the animated splash image.
  */
 
-import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
+import { View, Image, Animated, Platform, StyleSheet } from 'react-native';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
 
 export default function Splash() {
@@ -14,26 +22,30 @@ export default function Splash() {
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Fade-in animation
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 600,
-      useNativeDriver: true,
-    }).start();
+  if (Platform.OS === 'web') {
+    router.replace('/');
+    return;
+  }
 
-    // Redirect to home
-    const timeout = setTimeout(() => {
-      router.replace('/');
-    }, 1200);
+  Animated.timing(opacity, {
+    toValue: 1,
+    duration: 600,
+    useNativeDriver: true,
+  }).start();
 
-    return () => clearTimeout(timeout);
-  }, []);
+  const timeout = setTimeout(() => {
+    router.replace('/');
+  }, 1200);
+
+  return () => clearTimeout(timeout);
+}, []);
+
 
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
       <Animated.Image
         source={require('@/assets/images/splash_art.png')}
-        style={[styles.image, { opacity }]}
+        style={{ width: 180, height: 180, opacity }}
         resizeMode="contain"
       />
     </View>
