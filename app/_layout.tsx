@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { View, useWindowDimensions } from 'react-native';
+import { Platform, View, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import BottomNavBar from '@/components/MobileNavigationBar';
 import { StatusBar } from 'expo-status-bar';
@@ -26,7 +26,7 @@ export default function RootLayout() {
   const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos'];
   const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);
   
-  const isMobile = width < 768;
+  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
   return (
     <SafeAreaProvider>
