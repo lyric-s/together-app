@@ -54,8 +54,7 @@
         {
           "photosPermission": "L'application a besoin d'accéder à vos photos pour mettre à jour votre photo de profil."
         }
-      ],
-      "expo-web-browser"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
