@@ -30,13 +30,6 @@ import { AuthProvider } from '@/context';
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const pathname = usePathname();
-  const { width } = useWindowDimensions();
-
-  // Routes where the navbar should be hidden
-  const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos', '/ProfilAdmin'];
-  const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);  
-  const isMobile = width < 768;
 
   return (
     <SafeAreaProvider>
