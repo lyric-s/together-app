@@ -9,10 +9,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavBar from '@/components/MobileNavigationBar';
 
 /**
- * The Index component serves as the primary view for the home screen.
- * It utilizes a flexbox layout to vertically center the navigation bar
- * between two empty expandable sections.
- * * @returns {JSX.Element} The rendered Home Screen component.
+ * Renders the home screen layout that vertically centers the bottom navigation bar between two flexible spacer sections.
+ *
+ * The layout is wrapped in a SafeAreaView so content respects device safe areas.
+ *
+ * @returns The JSX element for the home screen layout.
  */
 export default function Index() {
     return (
