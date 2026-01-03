@@ -6,7 +6,6 @@
 
 import { View, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import BottomNavBar from '@/components/MobileNavigationBar';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 
 /**
