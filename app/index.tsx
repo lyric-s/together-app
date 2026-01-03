@@ -7,6 +7,7 @@
 import { View, StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BottomNavBar from '@/components/MobileNavigationBar';
+import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 
 /**
  * Renders the home screen layout that vertically centers the bottom navigation bar between two flexible spacer sections.
@@ -21,18 +22,22 @@ export default function Index() {
 
             {/* Main container wrapped in SafeAreaView to handle device notches/safe areas */}
             <SafeAreaView style={styles.mainContainer}>
-                
-                {/* Top expandable section providing vertical spacing */}
-                <View style={styles.topSection}>
-                </View>
 
                 {/* Central section where the navigation component is positioned */}
                 <View style={styles.centerSection}>
-                    <BottomNavBar />
-                </View>
-
-                {/* Bottom expandable section providing vertical spacing */}
-                <View style={styles.bottomSection}>
+                    <MissionVolunteerCard
+                        mission_title="Donner des repas"
+                        association_name="Croix Rouge"
+                        date={new Date()}
+                        number_of_volunteers={3}
+                        number_max_volunteers={10}
+                        category_label="Social"
+                        category_color="orange"
+                        favorite={false}
+                        onPressMission={() => console.log("MISSION")}
+                        onPressFavorite={(fav) => console.log("Favorite :", fav)}
+                        
+                    />
                 </View>
 
             </SafeAreaView>
@@ -49,21 +54,13 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#E5E5E5',
     },
-    topSection: {
-        flex: 1, // Occupies the top half of the available space
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+  
     centerSection: {
         // Wraps the component without flexible expansion to maintain its natural height
         width: '100%',
         alignItems: 'center', 
     },
-    bottomSection: {
-        flex: 1, // Occupies the bottom half of the available space
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+   
     text: {
         fontSize: 16,
         color: '#666',

@@ -17,7 +17,8 @@ interface MissionCardProps {
   onPressFavorite?: (newFavoriteValue: boolean) => void;
   category_label: string;
   category_color: string;
-  image: any; // require(...)
+  image?: any | null;
+
 }
 
 /**
@@ -36,7 +37,7 @@ interface MissionCardProps {
  * @param onPressFavorite - Optional callback invoked with the new favorite value when the heart is toggled
  * @param category_label - Text shown inside the category badge
  * @param category_color - Background color passed to the category badge component
- * @param image - Image source displayed at the top of the card
+ * @param image - Image source displayed at the top of the card (optionnal)
  * @returns The rendered mission card component
  */
 export default function MissionVolunteerCard({
@@ -51,9 +52,12 @@ export default function MissionVolunteerCard({
   onPressFavorite,
   category_label,
   category_color,
-  image,
+  image = null,
 }: MissionCardProps) {
-  
+
+  const defaultImage = require("../assets/images/volunteering_img.jpg");
+  const imageSource = image ?? defaultImage;
+
   const [isFavorite, setIsFavorite] = useState(favorite);
 
   useEffect(() => {
@@ -80,7 +84,7 @@ export default function MissionVolunteerCard({
       
       {/* Image */}
       <View style={styles.imageContainer}>
-        <Image source={image} style={styles.image} />
+        <Image source={imageSource} style={styles.image} />
 
         {/* Category label */}
         <TouchableOpacity style={styles.categoryLabel}>
