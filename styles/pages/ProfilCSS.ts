@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
-import { Colors } from '@/constants/colors'
+import { Colors } from '@/constants/colors';
+import {Platform} from 'react-native'
 
 export const styles = StyleSheet.create({
     container: {
@@ -235,10 +236,15 @@ export const styles = StyleSheet.create({
         borderColor: Colors.whiteLittleGray,
         borderRadius: 8,
         padding: 12,
+        paddingTop: 12,
         fontSize: 14,
         color: Colors.black,
-        height: 120,
-        textAlignVertical: 'top',
+        minHeight: 120,
+        textAlignVertical: Platform.select({
+            ios: undefined,
+            android: 'top' as const,
+        }),
+        includeFontPadding: false,
         marginBottom: 12,
     },
     addressCard: {
