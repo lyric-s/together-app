@@ -8,6 +8,13 @@ import { usePathname } from 'expo-router';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+/**
+ * Provides the app's root layout: theme and safe-area wrappers, a stack navigator for the main and modal screens, and a mobile bottom navigation bar shown conditionally.
+ *
+ * The layout applies DarkTheme when the system color scheme is dark and DefaultTheme otherwise, wraps content with SafeAreaProvider, and renders a Stack navigator with "index" and "modal" screens (modal presented). It displays the BottomNavBar only on iOS/Android devices and only when the current pathname does not start with `/login`, `/signup`, or `/ProfilAssos`. The StatusBar is rendered with automatic styling.
+ *
+ * @returns The root JSX element containing theme provider, navigation stack, optional bottom navigation, and status bar.
+ */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const pathname = usePathname();

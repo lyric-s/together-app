@@ -11,10 +11,9 @@ import { useState } from "react";
 import AccountBenevole from '@/app/AccountBenevole';
 
 /**
- * The Index component serves as the primary view for the home screen.
- * It utilizes a flexbox layout to vertically center the navigation bar
- * between two empty expandable sections.
- * * @returns {JSX.Element} The rendered Home Screen component.
+ * Root component for the application's home screen that renders the AccountBenevole view.
+ *
+ * @returns The rendered AccountBenevole React element.
  */
 export default function Index() {
    return <AccountBenevole />;
