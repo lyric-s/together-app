@@ -18,6 +18,15 @@ import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ProfilCSS';
 import ProfilCard from '@/components/ProfilCard';
 import * as DocumentPicker from 'expo-document-picker';
+import {FormData} from '@/types/ProfileUser'
+
+interface ProfileUser extends FormData {
+    description: string;
+    adresse: string;
+    codePostal: string;
+    commune: string;
+    piece: DocumentPicker.DocumentPickerAsset | null;
+}
 
 /**
  * Renders the association profile screen with editable description and address sections.
@@ -34,7 +43,12 @@ export default function ProfilAssos() {
     const isSmallScreen = width < 900;
     const isVerySmallScreen = width < 610;
 
-    const [profileUser, setProfileUser] = useState<any>({
+    const [profileUser, setProfileUser] = useState<ProfileUser>({
+        picture: null,
+        firstname: '',
+        email: '',
+        mobile: '',
+        role: '',
         lastname: 'SPA',
         codeRNA: 'LMF5',
         recepisse: '0fkmel54fe',
