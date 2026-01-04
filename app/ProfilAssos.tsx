@@ -98,7 +98,7 @@ export default function ProfilAssos() {
         setAlertModal({ visible: true, title, message });
     }, []);
 
-    const handleSaveProfile = async (data: any) => {
+    const handleSaveProfile = async (data: Partial<ProfileUser>) => {
         try {
             // save to API
             setProfileUser({ ...profileUser, ...data });
