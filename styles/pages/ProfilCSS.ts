@@ -1,6 +1,5 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { Colors } from '@/constants/colors';
-import {Platform} from 'react-native'
 
 export const styles = StyleSheet.create({
     container: {
@@ -70,12 +69,6 @@ export const styles = StyleSheet.create({
         fontWeight: '600',
         color: Colors.black,
         textAlign: 'center',
-    },
-    linkText: {
-        fontSize: 14,
-        color: '#4A90E2',
-        textDecorationLine: 'underline',
-        marginBottom: 24,
     },
     leftColumn: {
         flex: 1,
@@ -261,14 +254,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         marginBottom: 12,
     },
-    infoIconAddress: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#4A90E2',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     formRow: {
         flexDirection: 'row',
     },
@@ -293,12 +278,6 @@ export const styles = StyleSheet.create({
         height: '50%',
         resizeMode: 'contain',
         marginBottom: 10,
-    },
-    menuLabel: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#333',
-        textAlign: 'center',
     },
     statsCardMobile: {
         marginBottom: 30,
@@ -423,4 +402,9 @@ export const styles = StyleSheet.create({
         marginTop: 8,
         fontStyle: 'italic',
     },
+    imageBtn: {
+        width:15,
+        height:15,
+        resizeMode: 'contain',
+    }
 });

@@ -81,11 +81,10 @@ export default function ProfilAssos() {
     const [editingJustificationFile, setEditingJustificationFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
     const [addressChanged, setAddressChanged] = useState(false);
 
-    //const [description, setDescription] = useState('La SPA (Société Protectrice des Animaux) de Bordeaux et du Sud-Ouest est une association indépendante, reconnue d’utilité publique depuis 1965, qui existe depuis 1928 et est entièrement dédiée à la protection et au bien-être des animaux dans la région bordelaise.');
-
     const handleOpenAttachment = () => {
         if (savedAddress.piece) {
             Linking.openURL(savedAddress.piece.uri).catch((err) => {
+                console.error('Failed to open attachment:', err);
                 showAlert('Erreur', 'Impossible d\'ouvrir le fichier');
             });
         }
@@ -217,13 +216,13 @@ export default function ProfilAssos() {
                             style={[styles.smallButton, styles.cancelButton]}
                             onPress={handleCancelDescription}
                         >
-                            <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/return.png')} />
+                            <Image style={styles.imageBtn} source={require('@/assets/images/return.png')} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={[styles.smallButton, styles.saveButton]}
                             onPress={handleSaveDescription}
                         >
-                            <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/validate.png')} />
+                            <Image style={styles.imageBtn} source={require('@/assets/images/validate.png')} />
                         </TouchableOpacity>
                     </View>
                 ) : (
@@ -231,7 +230,7 @@ export default function ProfilAssos() {
                         style={[styles.smallButton, styles.editButton]}
                         onPress={() => setIsEditingDescription(true)}
                     >
-                        <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/edit.png')} />
+                        <Image style={styles.imageBtn} source={require('@/assets/images/edit.png')} />
                     </TouchableOpacity>
                 )}
             </View>
@@ -327,13 +326,13 @@ export default function ProfilAssos() {
                     style={[styles.smallButton, styles.cancelButton]}
                     onPress={handleCancelAddress}
                     >
-                        <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/return.png')} />
+                        <Image style={styles.imageBtn} source={require('@/assets/images/return.png')} />
                     </TouchableOpacity>
                     <TouchableOpacity
                     style={[styles.smallButton, styles.saveButton]}
                     onPress={handleSaveAddress}
                     >
-                        <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/validate.png')} />
+                        <Image style={styles.imageBtn} source={require('@/assets/images/validate.png')} />
                     </TouchableOpacity>
                 </View>
                 ) : (
@@ -341,7 +340,7 @@ export default function ProfilAssos() {
                     style={[styles.smallButton, styles.editButton]}
                     onPress={handleStartEditAddress}
                 >
-                    <Image style={{width:15, height:15, resizeMode: 'contain'}} source={require('@/assets/images/edit.png')} />
+                    <Image style={styles.imageBtn} source={require('@/assets/images/edit.png')} />
                 </TouchableOpacity>
                 )}
             </View>
@@ -358,50 +357,6 @@ export default function ProfilAssos() {
         </>
         );
     };
-    
-    if(isVerySmallScreen){
-        return (
-        <>
-            <LinearGradient
-                colors={[Colors.white, Colors.orangeVeryLight]}
-                style={{ flex: 1 }}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1 }}
-            >
-            <AlertToast
-                visible={alertModal.visible}
-                title={alertModal.title}
-                message={alertModal.message}
-                onClose={handleAlertClose}
-            />
-            <View style={{ flex: 1, flexDirection: 'row' }}>
-                <Sidebar
-                    userType='association'
-                    userName='SPA'
-                    onNavigate={(route: string) => {router.push(('/' + route) as any)}}
-                />
-                <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                    <Text style={[styles.pageTitle, {paddingLeft : 40}]}>Mon profil</Text>
-                    <Text style={[styles.text, {paddingLeft : 40}]}>Toutes les données vous concernant</Text>
-                        <View style={{ marginBottom: -60 }}>
-                            <ProfilCard
-                                userType = 'asso'
-                                userData = {profileUser}
-                                onSave={handleSaveProfile}
-                                showAlert={showAlert}
-                            />
-                        </View>
-                        <View>
-                            {descriptionCard()}
-
-                            {addressCard()}
-                        </View>
-                </ScrollView>
-            </View>       
-        </LinearGradient>
-        </>
-    )};
-    
 
     return (
         <>
@@ -425,43 +380,39 @@ export default function ProfilAssos() {
                 />
 
                 <View style={{ flex: 1}}>
-                    {isSmallScreen ? (
-                        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                            <Text style={[styles.pageTitle, {paddingLeft : 40}]}>Mon profil</Text>
-                            <Text style={[styles.text, {paddingLeft : 40}]}>Toutes les données vous concernant</Text>
-                            <View style={styles.desktopLayout}>
-                                <View style={styles.leftColumn}>
-                                    <ProfilCard
-                                        userType = 'asso'
-                                        userData = {profileUser}
-                                        onSave={handleSaveProfile}
-                                        showAlert={showAlert}
-                                    />
-                                </View>
-                                <View style={styles.rightColumn}>
-                                    {rightColumnContent()}
-                                </View>
+                    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                        <Text style={[styles.pageTitle, isSmallScreen && {paddingLeft: 40}]}>Mon profil</Text>
+                        <Text style={[styles.text, isSmallScreen && {paddingLeft: 40}]}>Toutes les données vous concernant</Text>
+                        {isVerySmallScreen ? (
+                        <>
+                        <View style={{ marginBottom: -60 }}>
+                            <ProfilCard
+                                userType = 'asso'
+                                userData = {profileUser}
+                                onSave={handleSaveProfile}
+                                showAlert={showAlert}
+                            />
+                        </View>
+                        <View>
+                            {rightColumnContent()}
+                        </View>
+                        </>
+                        ) : (
+                        <View style={styles.desktopLayout}>
+                            <View style={styles.leftColumn}>
+                                <ProfilCard
+                                    userType = 'asso'
+                                    userData = {profileUser}
+                                    onSave={handleSaveProfile}
+                                    showAlert={showAlert}
+                                />
                             </View>
-                        </ScrollView>
-                    ) : (
-                        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-                            <Text style={styles.pageTitle}>Mon profil</Text>
-                            <Text style={styles.text}>Toutes les données vous concernant</Text>
-                            <View style={styles.desktopLayout}>
-                                <View style={styles.leftColumn}>
-                                    <ProfilCard
-                                        userType = 'asso'
-                                        userData = {profileUser}
-                                        onSave={handleSaveProfile}
-                                        showAlert={showAlert}
-                                    />
-                                </View>
-                                <View style={styles.rightColumn}>
-                                    {rightColumnContent()}
-                                </View>
+                            <View style={styles.rightColumn}>
+                                {rightColumnContent()}
                             </View>
-                        </ScrollView>
-                    )}
+                        </View>
+                        )}
+                    </ScrollView>
                 </View>
             </View>
             </LinearGradient>
