@@ -6,10 +6,9 @@ import { useState } from "react";
 import ProfilAssos from './ProfilAssos';
 
 /**
- * The Index component serves as the primary view for the home screen.
- * It utilizes a flexbox layout to vertically center the navigation bar
- * between two empty expandable sections.
- * * @returns {JSX.Element} The rendered Home Screen component.
+ * Renders the ProfilAssos component as the app's home screen.
+ *
+ * @returns The JSX element representing the home screen (ProfilAssos).
  */
 export default function Index() {
   return <ProfilAssos />;

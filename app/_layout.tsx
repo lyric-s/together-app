@@ -8,6 +8,13 @@ import { usePathname } from 'expo-router';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
+/**
+ * Root-level layout component that provides safe-area handling, theme selection, and the app navigation stack; it also conditionally shows a bottom navigation bar on mobile devices.
+ *
+ * The bottom navigation bar is hidden for the routes `/login`, `/signup`, and `/ProfilAssos`.
+ *
+ * @returns A React element containing the SafeAreaProvider, ThemeProvider (selected from the current color scheme), the navigation Stack, and the BottomNavBar when running on iOS/Android and the current route allows it.
+ */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const pathname = usePathname();

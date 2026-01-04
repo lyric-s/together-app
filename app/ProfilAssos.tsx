@@ -19,6 +19,15 @@ import { styles } from '@/styles/pages/ProfilCSS';
 import ProfilCard from '@/components/ProfilCard';
 import * as DocumentPicker from 'expo-document-picker';
 
+/**
+ * Renders the association profile screen with editable description and address sections.
+ *
+ * Displays a responsive layout (single or two-column) containing a profile card, description card, and address card.
+ * Provides local editing workflows for description and address, including save/cancel controls, address-change detection,
+ * required justification file attachment when the address changes, document picking, and user feedback via alert toasts.
+ *
+ * @returns The rendered component tree for the association profile screen.
+ */
 export default function ProfilAssos() {
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 900;
