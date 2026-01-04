@@ -5,7 +5,6 @@ const { width: screenWidth } = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
     card: {
-        flexDirection: 'row',
         backgroundColor: Colors.white,
         margin: 20,
         borderRadius: 8,
@@ -13,12 +12,12 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
-        maxHeight: 530,
+        maxHeight: '80%',
         width: Math.min(screenWidth - 60, 420),
-        maxWidth: 420,
+        maxWidth: '100%',
     },
     scrollContent: {
-        margin: 40,
+        padding: 20,
         alignItems: 'center',
         flexGrow: 1,
     },
@@ -30,7 +29,7 @@ export const styles = StyleSheet.create({
     },
 
     inputWrapper: {
-        width: '65%',
+        flex: 1,
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -51,7 +50,7 @@ export const styles = StyleSheet.create({
     labelContainer: {
         width: '35%',
         alignItems: 'flex-start',
-        paddingRight: 15,
+        paddingRight: 10,
     },
     label: {
         fontWeight: "500",
