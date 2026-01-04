@@ -6,7 +6,7 @@ export type Mission = {
   category: string;
   categoryColor: string;
   date: Date;
-  image: string | File;
+  image: string;
   number_max_volunteers: number;
   number_of_volunteers: number;
   favorite?: boolean;

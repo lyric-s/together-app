@@ -16,6 +16,15 @@ import { Mission } from '@/types/Mission';
 import AlertToast from '@/components/AlertToast';
 import Sidebar from '@/components/SideBar';
 
+/**
+ * Render the volunteer account screen with responsive layouts for mobile and web.
+ *
+ * Displays recent missions and favorited missions, manages local state for missions and favorites,
+ * and exposes handlers for opening mission details, toggling favorites (with backend save), and showing alerts.
+ *
+ * @returns The rendered JSX element for the volunteer account screen.
+ */
+
 export default function AccountBenevole() {
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 900;
