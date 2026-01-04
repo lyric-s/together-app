@@ -19,6 +19,16 @@ import { styles } from '@/styles/pages/ProfilCSS';
 import ProfilCard from '@/components/ProfilCard';
 import * as DocumentPicker from 'expo-document-picker';
 
+/**
+ * Renders the association profile screen with editable description and address sections.
+ *
+ * Displays a responsive layout (single or two-column) containing a profile card, description card, and address card.
+ * Provides local editing workflows for description and address, including save/cancel controls, address-change detection,
+ * required justification file attachment when the address changes, document picking, and user feedback via alert toasts.
+ *
+ * @returns The rendered component tree for the association profile screen.
+ */
+
 export default function ProfilAssos() {
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 900;
@@ -54,7 +64,7 @@ export default function ProfilAssos() {
 
     const [isEditingDescription, setIsEditingDescription] = useState(false);
     const [isEditingAddress, setIsEditingAddress] = useState(false);
-    const [editingJustificationFile, setEditingJustificationFile] = useState<any>(null);
+    const [editingJustificationFile, setEditingJustificationFile] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
     const [addressChanged, setAddressChanged] = useState(false);
 
     //const [description, setDescription] = useState('La SPA (Société Protectrice des Animaux) de Bordeaux et du Sud-Ouest est une association indépendante, reconnue d’utilité publique depuis 1965, qui existe depuis 1928 et est entièrement dédiée à la protection et au bien-être des animaux dans la région bordelaise.');
