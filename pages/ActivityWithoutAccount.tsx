@@ -10,6 +10,16 @@ import { useRouter } from 'expo-router';
 import ButtonAuth from '@/components/Button';
 import { styles } from '@/styles/pages/ActivityWithoutAccountStyle';
 
+/**
+ *
+ * Screen displayed when the user is not authenticated.
+ * It informs the user that they must be logged in to access their activity
+ * and provides navigation buttons to:
+ * - Log in
+ * - Create a new account (sign up)
+ *
+ * Uses the router to redirect the user to the appropriate authentication screens.
+ */
 export default function ActivityWithoutAccount() {
   const router = useRouter();
 

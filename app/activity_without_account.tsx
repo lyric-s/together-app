@@ -1,6 +1,6 @@
 import { Platform, View } from "react-native";
 import ActivityWithoutAccount from "@/pages/ActivityWithoutAccount";
-import { useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import BottomNavBar from "@/components/MobileNavigationBar";
 import Sidebar from "@/components/SideBar";
 
@@ -16,7 +16,7 @@ export default function Page() {
         <Sidebar 
         userType="volunteer_guest"
         userName="Fred" 
-        onNavigate={(route) => router.push(('/' + route) as any)} />
+        onNavigate={(route) => router.push(('/' + route) as RelativePathString)} />
     }
 
     <ActivityWithoutAccount />
