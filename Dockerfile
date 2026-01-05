@@ -18,6 +18,8 @@ RUN npm run build:web
 # Production stage
 FROM nginx:alpine
 
+RUN apk add --no-cache wget
+
 # Copy builded files (Expo generates in dist/)
 COPY --from=builder /app/dist /usr/share/nginx/html
 
