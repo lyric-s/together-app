@@ -15,12 +15,12 @@ COPY . .
 # Build for the web with Expo
 RUN npm run build:web
 
-# Production stage
-FROM nginx:alpine
+FROM node:20-alpine
+WORKDIR /app
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+RUN npm ci --only=production --legacy-peer-deps && npm install -g serve
 
-# Copy builded files (Expo generates in dist/)
-COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 3000
 
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["serve", "-s", "dist", "-l", "3000"]
