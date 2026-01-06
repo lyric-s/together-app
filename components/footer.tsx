@@ -49,8 +49,7 @@ const HoverLink = ({ children, onPress }: HoverLinkProps) => {
  * general information pages, and account-related actions depending
  * on the authentication state of the user.
  */
-export default function Footer({
-}) {
+export default function Footer() {
   const router = useRouter();
   const isWeb = Platform.OS === 'web';
 

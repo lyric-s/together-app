@@ -101,9 +101,7 @@ export default function Index() {
                     />
                 </View>
 
-                <Footer 
-                    isAuthenticated={true}
-                />
+                <Footer />
 
             </ScrollView>
             
