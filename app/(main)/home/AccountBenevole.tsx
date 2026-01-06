@@ -243,7 +243,7 @@ export default function AccountBenevole() {
                   number_of_volunteers={mission.number_of_volunteers}
                   category_label={mission.category}
                   category_color={mission.categoryColor}
-                  image={mission.image}
+                  image={{ uri: mission.image }}
                   favorite={mission.favorite}
                   onPressMission={() => handlePressMission(mission.id)}
                   onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
@@ -274,7 +274,7 @@ export default function AccountBenevole() {
                 number_of_volunteers={mission.number_of_volunteers}
                 category_label={mission.category}
                 category_color={mission.categoryColor}
-                image={mission.image}
+                image={{ uri: mission.image }}
                 favorite={mission.favorite}
                 onPressMission={() => handlePressMission(mission.id)}
                 onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
@@ -322,7 +322,7 @@ export default function AccountBenevole() {
                   number_of_volunteers={mission.number_of_volunteers}
                   category_label={mission.category}
                   category_color={mission.categoryColor}
-                  image={mission.image}
+                  image={{ uri: mission.image }}
                   favorite={mission.favorite}
                   onPressMission={() => handlePressMission(mission.id)}
                   onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
@@ -348,7 +348,7 @@ export default function AccountBenevole() {
                   number_of_volunteers={mission.number_of_volunteers}
                   category_label={mission.category}
                   category_color={mission.categoryColor}
-                  image={mission.image}
+                  image={{ uri: mission.image }}
                   favorite={mission.favorite}
                   onPressMission={() => handlePressMission(mission.id)}
                   onPressFavorite={(newValue) => handlePressFavorite(mission.id, newValue)}
