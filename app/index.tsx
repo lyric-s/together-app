@@ -15,6 +15,12 @@ import { Platform } from "react-native";
  *
  * @returns A `Redirect` element that navigates to the initial route for the current platform.
 */
+
+import { useEffect } from "react";
+import { View } from "react-native";
+import { Redirect } from "expo-router";
+import { Platform } from "react-native";
+
 export default function Index() {
 
   if (Platform.OS !== 'web') {

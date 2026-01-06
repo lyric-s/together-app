@@ -28,14 +28,6 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const pathname = usePathname();
-  const { width } = useWindowDimensions();
-
-  // Routes where the navbar should be hidden
-  const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos'];
-  const shouldShowNavbar = !hideNavbarRoutes.some(route => pathname.startsWith(route));
-  
-  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
   return (
     <SafeAreaProvider>
