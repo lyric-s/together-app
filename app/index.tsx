@@ -12,8 +12,6 @@
  * @returns The JSX element for the home screen layout.
  */
 
-import { useEffect } from "react";
-import { View } from "react-native";
 import { Redirect } from "expo-router";
 import { Platform } from "react-native";
 
@@ -23,6 +21,5 @@ export default function Index() {
     return <Redirect href="/splash" />;
   }
 
-  // Sur web, c’est ici que tu mets ta page d’accueil
-  return <Redirect href="/(main)/home/AccountBenevole" />;
-}
+  // Web platform: redirect to main home page
+  return <Redirect href="/(main)/home/AccountBenevole" />;}

@@ -13,9 +13,10 @@
  * @returns {JSX.Element} A full-screen view containing the animated splash image.
  */
 
-import { View, Animated, Platform, StyleSheet } from 'react-native';
+import { View, Animated, StyleSheet } from 'react-native';
 import { useEffect, useRef } from 'react';
-import { useRouter, Redirect } from 'expo-router';
+import { useRouter } from 'expo-router';
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default function Splash() {
   const router = useRouter();
@@ -24,11 +25,19 @@ export default function Splash() {
   // Function to check if the user is connected
   const checkAuthAndRedirect = async () => {
     // Here, we will replace with our actual logic (e.g. Firebase, Supabase, or AsyncStorage)
-    const userIsLoggedIn = true; // Change true to test redirection to home
+    // const userIsLoggedIn = true; // Change true to test redirection to home
 
-    if (userIsLoggedIn) {
-      router.replace('/(main)/home/AccountBenevole');
-    } else {
+    try {
+      const authToken = await AsyncStorage.getItem('authToken');
+      const userIsLoggedIn = !!authToken;
+
+      if (userIsLoggedIn) {
+        router.replace('/(main)/home/AccountBenevole');
+      } else {
+        router.replace('/register');
+      }
+    } catch (error) {
+      console.error('Error checking auth state:', error);
       router.replace('/register');
     }
   };

@@ -3,10 +3,10 @@
  * @description Root layout component that wraps the entire application.
  *
  * This file defines the root navigation structure using Expo Router's Stack navigator.
- * It applies the appropriate theme (dark or light) based on the device's color scheme
- * and sets up the main navigation screens including splash, index, login, and register.
- *
- * All screens are configured without headers by default.
+ * It applies the appropriate theme (dark or light) based on the device's color scheme,
+ * configures a modal screen, and conditionally renders a bottom navigation bar on mobile platforms.
+ * 
+ * All screens are configured without headers by default. * All screens are configured without headers by default.
  */
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
