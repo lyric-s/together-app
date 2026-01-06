@@ -101,7 +101,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
 
   const sections = {
     volunteer_connected: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "AccountBenevole" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
       { icon: require("../assets/images/search.png"), label: "Recherche", route: "search" },
       { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "upcoming" },
       { icon: require("../assets/images/historical.png"), label: "Historiques", route: "history" },
