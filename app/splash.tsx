@@ -13,32 +13,44 @@
  * @returns {JSX.Element} A full-screen view containing the animated splash image.
  */
 
-import { View, Image, Animated, Platform, StyleSheet } from 'react-native';
+import { View, Animated, Platform, StyleSheet } from 'react-native';
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 
 export default function Splash() {
   const router = useRouter();
   const opacity = useRef(new Animated.Value(0)).current;
 
+  // Function to check if the user is connected
+  const checkAuthAndRedirect = async () => {
+    // Here, we will replace with our actual logic (e.g. Firebase, Supabase, or AsyncStorage)
+    const userIsLoggedIn = true; // Change true to test redirection to home
+
+    if (userIsLoggedIn) {
+      router.replace('/(main)/home/AccountBenevole');
+    } else {
+      router.replace('/register');
+    }
+  };
+
   useEffect(() => {
-  if (Platform.OS === 'web') {
-    router.replace('/');
-    return;
-  }
-
-  Animated.timing(opacity, {
-    toValue: 1,
-    duration: 600,
-    useNativeDriver: true,
-  }).start();
-
-  const timeout = setTimeout(() => {
-    router.replace('/');
-  }, 1200);
-
-  return () => clearTimeout(timeout);
-}, []);
+    Animated.sequence([
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }),
+      Animated.delay(200),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // Call to logical redirection after animation
+      checkAuthAndRedirect();
+    });
+  }, [opacity]);
 
 
   return (
