@@ -36,10 +36,10 @@ const BottomNavBar: React.FC = () => {
   const pathname = usePathname();
 
   const tabs: TabItem[] = [
-    { id: 'home', route: '/', iconName: 'home', iconOutline: 'home-outline' },
-    { id: 'search', route: '/join_mission', iconName: 'search', iconOutline: 'search-outline' },
-    { id: 'library', route: '/annonces', iconName: 'book', iconOutline: 'book-outline' },
-    { id: 'profile', route: '/profil', iconName: 'person', iconOutline: 'person-outline' },
+    { id: 'home', route: '/home', iconName: 'home', iconOutline: 'home-outline' },
+    { id: 'search', route: '/search', iconName: 'search', iconOutline: 'search-outline' },
+    { id: 'library', route: '/library', iconName: 'book', iconOutline: 'book-outline' },
+    { id: 'profile', route: '/profile', iconName: 'person', iconOutline: 'person-outline' },
   ];
 
   return (
