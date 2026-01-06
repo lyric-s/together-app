@@ -7,7 +7,7 @@
 import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
-import Footer from '@/components/footer';
+import Footer from '@/components/Footer';
 
 
 /**

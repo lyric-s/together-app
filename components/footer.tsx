@@ -12,9 +12,6 @@ import { View, Text, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles } from '@/styles/components/FooterStyle';
 
-interface FooterProps {
-  isAuthenticated?: boolean; //Indicates if the user is currently authenticated.
-}
 
 type HoverLinkProps = {
   children: React.ReactNode;
@@ -53,8 +50,7 @@ const HoverLink = ({ children, onPress }: HoverLinkProps) => {
  * on the authentication state of the user.
  */
 export default function Footer({
-  isAuthenticated = false,
-}: FooterProps) {
+}) {
   const router = useRouter();
   const isWeb = Platform.OS === 'web';
   
@@ -90,7 +86,7 @@ export default function Footer({
 
           <HoverLink 
                 onPress={() => router.push('/settings')} > 
-                Ploice d'écriture
+                Police d'écriture
           </HoverLink>
 
           <HoverLink 
@@ -102,44 +98,34 @@ export default function Footer({
         {/* Informations */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Informations</Text>
-
-          <HoverLink 
-                onPress={() => router.push('/privacy')} > 
-                Politique de confidentialité
-          </HoverLink>
           <HoverLink 
                 onPress={() => router.push('/about_us')} > 
                 À propos
           </HoverLink>
           <HoverLink 
-                onPress={() => router.push('/contact')} > 
-                Contact
+                onPress={() => router.push('/privacy')} > 
+                Politique de confidentialité
+          </HoverLink>
+          <HoverLink 
+                onPress={() => router.push('/mentions_legales')} > 
+                Mentions légales
+          </HoverLink>
+          <HoverLink 
+                onPress={() => router.push('/cgu')} > 
+                CGU
           </HoverLink>
 
         </View>
 
-        {/* Compte */}
+        {/* Contact */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Compte</Text>
-
-          {!isAuthenticated ? (
-            <>
-              <HoverLink 
-                onPress={() => router.push('/login')} > 
-                Se connecter
-              </HoverLink>
-              <HoverLink 
-                onPress={() => router.push('/register')} > 
-                S'inscrire
-              </HoverLink>
-            </>
-          ) : (
-
-            <HoverLink 
-                onPress={() => console.log("deconnexion")} > 
-                Se déconnecter
-            </HoverLink>
-          )}
+            <Text style={styles.sectionTitle}>Contact</Text>
+            <Text style={styles.link}>
+                Téléphone : 01 82 88 81 73
+            </Text>
+            <Text style={styles.link}>
+                Mail : toTogether@mail.com
+            </Text>
         </View>
       </View>
 
