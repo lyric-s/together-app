@@ -61,7 +61,7 @@ webInfoColumn: {
   alignItems: "center",
   marginBottom: 12,
   gap: 10,
-  flexWrap: Platform.OS === "web" ? "wrap" : "nowrap",
+  flexWrap: isWeb ? "wrap" : "nowrap",
 },
 
 
@@ -109,12 +109,13 @@ webInfoColumn: {
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
+    paddingTop: 30
   },
 
   heartIcon: {
     width: 42,
     height: 42,
-    marginTop: 98,
+    marginTop: 10,
   },
 
   infoLine: {

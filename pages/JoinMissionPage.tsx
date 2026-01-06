@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+/**
+ * @file JoinMissionPage.tsx
+ * @description Detailed mission page for volunteers to view mission information and join.
+ *
+ * Displays mission details including image, category, volunteer count, 
+ * association info, date, location, description, and action buttons.
+ * Responsive layout adapts between mobile and web/desktop views.
+ */
+import  { useState } from "react";
 import {
   View,
   Text,
   Image,
   ScrollView,
   TouchableOpacity,
-  ImageSourcePropType,
+  // ImageSourcePropType,
   useWindowDimensions
 } from "react-native";
-
 
 import BackButton from "@/components/BackButton";
 import ButtonAuth from "@/components/Button";
@@ -16,11 +23,14 @@ import CategoryLabel from "@/components/CategoryLabel";
 import { Colors } from "@/constants/colors";
 import { styles } from "@/styles/pages/JoinMissionPageStyle";
 
+/**
+ * Mission data structure containing all necessary information for display.
+ */
 type Mission = {
   title: string;
   category: string;
   categoryColor: string;
-  image: ImageSourcePropType;
+  // image: ImageSourcePropType;
   associationName: string;
   dateStart: Date;
   dateEnd: Date;
@@ -30,6 +40,13 @@ type Mission = {
   volunteersMax: number;
 };
 
+/**
+ * Main mission detail page component.
+ *
+ * Features responsive layout with image + info side-by-side on web,
+ * stacked on mobile. Includes scrollable content with mission details,
+ * volunteer count progress, and join/favorite actions.
+ */
 export default function JoinMissionPage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const { width } = useWindowDimensions();
@@ -41,7 +58,7 @@ export default function JoinMissionPage() {
     title: "Collecte alimentaire",
     category: "Solidarité",
     categoryColor: Colors.orange,
-    image: require("@/assets/images/dogs_img.png"),
+    // image: require("@/assets/images/dogs_img.png"),
     associationName: "Restos du Cœur",
     dateStart: new Date("2025-11-12T15:00:00"),
     dateEnd: new Date("2025-11-12T17:00:00"),
@@ -52,7 +69,9 @@ export default function JoinMissionPage() {
     volunteersMax: 10,
   };
 
-  // ---- HELPERS ----
+   /**
+   * Formats date range into readable French format: "Date from HH:MM to HH:MM".
+   */
   const formatDateRange = (start: Date, end: Date) => {
     const date = start.toLocaleDateString("fr-FR");
     const startHour = start.toLocaleTimeString("fr-FR", {
@@ -94,7 +113,7 @@ export default function JoinMissionPage() {
     >
       <View style={isWeb ? styles.webTopSection : undefined}>
         <Image 
-          source={mission.image} 
+          source={require("@/assets/images/volunteering_img.jpg")} 
           style={styles.missionImage}
           accessible={true}
           accessibilityLabel={`Image de la mission ${mission.title}`}
