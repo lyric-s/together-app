@@ -53,8 +53,6 @@ export default function Footer({
 }) {
   const router = useRouter();
   const isWeb = Platform.OS === 'web';
-  
-  const [hovered, setHovered] = useState(false);
 
   return (
     <View style={styles.footer}>
