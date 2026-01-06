@@ -35,9 +35,14 @@ export default function Splash() {
         // Add token validation logic here
         // Example for JWT: check expiration
         try {
-          const payload = JSON.parse(atob(authToken.split('.')[1]));
-          const isExpired = payload.exp * 1000 < Date.now();
-          userIsLoggedIn = !isExpired;
+          const parts = authToken.split('.');
+          if (parts.length !== 3) {
+            userIsLoggedIn = false;
+          } else {
+            const payload = JSON.parse(atob(parts[1]));
+            const isExpired = payload.exp * 1000 < Date.now();
+            userIsLoggedIn = !isExpired;
+          }
         } catch {
           userIsLoggedIn = false;
         }
