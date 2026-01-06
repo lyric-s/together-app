@@ -208,7 +208,7 @@ export default function AccountBenevole() {
         <View style={styles.headerMobile}>
           <View style={styles.logoContainer}>
             <Image
-              source={ require('../assets/images/logo.png')}
+              source={ require('@/assets/images/logo.png')}
               style={{ width: 40, height: 40 }}
               resizeMode="contain"
             />
