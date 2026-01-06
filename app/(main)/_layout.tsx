@@ -20,13 +20,14 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 /**
- * RootLayout component that serves as the top-level layout wrapper.
+ * Top-level app layout that provides theme context and configures global navigation.
  *
- * Provides theme context to all child components and configures the navigation stack
- * with the application's main screens. The theme automatically switches between
- * dark and light modes based on the device's color scheme preference.
+ * Wraps the app with a SafeAreaProvider and ThemeProvider (applies dark or light theme
+ * based on the device color scheme), renders the Expo Router Stack with headers hidden,
+ * declares a modal route named "modal", and conditionally includes the mobile bottom
+ * navigation bar when running on iOS or Android. Also configures the status bar.
  *
- * @returns {JSX.Element} The themed navigation stack with status bar configuration.
+ * @returns The root JSX element containing the themed navigation stack, optional mobile bottom navigation, and status bar.
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();

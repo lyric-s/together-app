@@ -18,6 +18,13 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
+/**
+ * Render a full-screen splash screen that plays an entrance/exit animation and then redirects based on persisted authentication state.
+ *
+ * After the animation completes, the component reads the `authToken` from AsyncStorage, treats it as a JWT (validating the `exp` claim), and navigates to `/(main)/home/AccountBenevole` if the token is present and not expired; otherwise it navigates to `/register`. On any error while checking the token it redirects to `/register`.
+ *
+ * @returns The splash screen React element.
+ */
 export default function Splash() {
   const router = useRouter();
   const opacity = useRef(new Animated.Value(0)).current;
