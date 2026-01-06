@@ -29,7 +29,25 @@ export default function Splash() {
 
     try {
       const authToken = await AsyncStorage.getItem('authToken');
-      const userIsLoggedIn = !!authToken;
+      
+      let userIsLoggedIn = false;
+      if (authToken) {
+        // Add token validation logic here
+        // Example for JWT: check expiration
+        try {
+          const payload = JSON.parse(atob(authToken.split('.')[1]));
+          const isExpired = payload.exp * 1000 < Date.now();
+          userIsLoggedIn = !isExpired;
+        } catch {
+          userIsLoggedIn = false;
+        }
+      }
+
+      if (userIsLoggedIn) {
+        router.replace('/(main)/home/AccountBenevole');
+      } else {
+        router.replace('/register');
+      }
 
       if (userIsLoggedIn) {
         router.replace('/(main)/home/AccountBenevole');
