@@ -4,9 +4,11 @@
  * This file defines the layout structure, featuring a centered navigation component.
  */
 
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
+import Footer from '@/components/footer';
+
 
 /**
  * Renders the home screen layout that vertically centers the bottom navigation bar between two flexible spacer sections.
@@ -17,10 +19,10 @@ import MissionVolunteerCard from '@/components/MissionVolunteerCard';
  */
 export default function Index() {
     return (
-        <>
+        <SafeAreaView style={{ flex: 1 }}>
 
             {/* Main container wrapped in SafeAreaView to handle device notches/safe areas */}
-            <SafeAreaView style={styles.mainContainer}>
+            <ScrollView style={styles.mainContainer}>
 
                 {/* Central section where the navigation component is positioned */}
                 <View style={styles.centerSection}>
@@ -38,9 +40,74 @@ export default function Index() {
                         
                     />
                 </View>
+                <View style={styles.centerSection}>
+                    <MissionVolunteerCard
+                        mission_title="Donner des repas"
+                        association_name="Croix Rouge"
+                        date={new Date()}
+                        number_of_volunteers={3}
+                        number_max_volunteers={10}
+                        category_label="Social"
+                        category_color="orange"
+                        favorite={false}
+                        onPressMission={() => console.log("MISSION")}
+                        onPressFavorite={(fav) => console.log("Favorite :", fav)}
+                        
+                    />
+                </View>
+                <View style={styles.centerSection}>
+                    <MissionVolunteerCard
+                        mission_title="Donner des repas"
+                        association_name="Croix Rouge"
+                        date={new Date()}
+                        number_of_volunteers={3}
+                        number_max_volunteers={10}
+                        category_label="Social"
+                        category_color="orange"
+                        favorite={false}
+                        onPressMission={() => console.log("MISSION")}
+                        onPressFavorite={(fav) => console.log("Favorite :", fav)}
+                        
+                    />
+                </View>
+                <View style={styles.centerSection}>
+                    <MissionVolunteerCard
+                        mission_title="Donner des repas"
+                        association_name="Croix Rouge"
+                        date={new Date()}
+                        number_of_volunteers={3}
+                        number_max_volunteers={10}
+                        category_label="Social"
+                        category_color="orange"
+                        favorite={false}
+                        onPressMission={() => console.log("MISSION")}
+                        onPressFavorite={(fav) => console.log("Favorite :", fav)}
+                        
+                    />
+                </View>
+                <View style={styles.centerSection}>
+                    <MissionVolunteerCard
+                        mission_title="Donner des repas"
+                        association_name="Croix Rouge"
+                        date={new Date()}
+                        number_of_volunteers={3}
+                        number_max_volunteers={10}
+                        category_label="Social"
+                        category_color="orange"
+                        favorite={false}
+                        onPressMission={() => console.log("MISSION")}
+                        onPressFavorite={(fav) => console.log("Favorite :", fav)}
+                        
+                    />
+                </View>
 
-            </SafeAreaView>
-        </>
+                <Footer 
+                    isAuthenticated={true}
+                />
+
+            </ScrollView>
+            
+        </SafeAreaView>
     );
 }
 
