@@ -1,115 +1,71 @@
-# Welcome to your Expo app 👋
+# 🚀 Together App (Frontend)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A cross-platform mobile and web application built with **React Native** and **Expo**. This project focuses on a modern user experience, unified routing with **Expo Router**, and containerized web deployment using **Docker** and **Nginx**.
 
-## Get started
+## 🛠 Tech Stack
 
-1. Install dependencies
+### Development Environment
+* **Runtime:** [Node.js](https://nodejs.org/)
+* **Framework:** [Expo](https://expo.dev/) (SDK 54) & [React Native](https://reactnative.dev/)
+* **Language:** [TypeScript](https://www.typescriptlang.org/)
+* **Linting:** [ESLint](https://eslint.org/) (with `eslint-config-expo`)
 
-   ```bash
-   npm install
-   ```
+### Core Libraries & UI
+* **Routing:** [Expo Router](https://docs.expo.dev/router/introduction/) (File-based routing)
+* **UI Library:** React Native Elements & [Expo Vector Icons](https://icons.expo.fyi/)
+* **Animations:** [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+* **Gesture Handling:** [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)
+* **Assets:** Expo Image & Expo Font
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-<<<<<<< HEAD
-<<<<<<< HEAD
+### Web & Containerization
+* **Web Bundler:** Metro (Expo Web)
+* **Production Server:** [Nginx](https://nginx.org/) (Alpine)
+* **Containerization:** Docker & Docker Compose
 
 ---
 
-## How to properly name commits 
+## 📂 Project Structure
 
-### `<prefix>: <JIRA-1> <commit message>`
+```text
+.
+├── app                 # Expo Router pages & layouts (File-based routing)
+│   ├── _layout.tsx     # Root layout configuration
+│   ├── index.tsx       # Home entry point
+│   └── ...             # Other screens
+├── assets              # Static assets (Images, Fonts)
+├── components          # Reusable UI components (Buttons, Inputs, Cards)
+├── constants           # App-wide constants (Colors, Theme, Config)
+├── hooks               # Custom React hooks (useColorScheme, etc.)
+├── scripts             # Utility scripts (e.g., reset-project)
+├── styles              # Shared stylesheets and style definitions
+├── types               # TypeScript interface and type definitions
+├── Dockerfile          # Multi-stage Docker build for Web
+├── docker-compose.yml  # Container orchestration configuration
+├── app.json            # Expo configuration (Name, Slug, Plugins)
+└── package.json        # Dependencies and Scripts
+````
 
-`prefix` is **meant to be replaced** by one of the expected prefixes which can be found in the section below, it is **mandatory** to put one. 
+## Local Development Setup
 
-`JIRA-1` is an example **meant to be replaced** by the actual ticket name, in capital letters, related to the work being done on the branch. \
-If the branch you are committing on is **not linked** to a JIRA ticket, just write the message; otherwise, you **must** include the ticket name. 
+### 1. Prerequisites
+* **Node.js** (LTS recommended)
+* **npm** (comes with Node.js)
+* **Expo Go** app on your physical device (Android/iOS) or an Emulator.
 
-`commit message` is **meant to be replaced** and must have **no capital letters**. It should be no more than a **short, but clear, sentence**.
+### 2. Installation
+Clone the repository and install dependencies:
 
-## Expected prefixes
+```bash
+git clone <repository-url>
 
-### `feat:`
-Introduces a **new feature**.
+# Install dependencies
+npm install
+```
 
-### `fix:`
-A **bug fix**.
+### 3. Run Locally
 
-### `build:`
-Changes that affect the **build system or external dependencies**.
+Start the development server with Expo:
 
-### `chore:`
-Routine tasks that **don’t affect source or test code** (e.g., maintenance, cleanup).
-
-### `ci:`
-Changes to **continuous integration configuration** (CI scripts, workflows).
-
-### `docs:`
-Documentation-only changes.
-
-### `style:`
-Code changes that **don’t affect meaning** (formatting, whitespace, semicolons).
-
-### `refactor:`
-Code changes that **neither fix bugs nor add features** (structural improvements).
-
-### `perf:`
-Code changes that **improve performance**.
-
-### `test:`
-Adding or modifying **tests**.
-
-### `revert:`
-Reverts a previous commit.
-
-## Breaking Changes
-
-### **BREAKING CHANGE:** (footer)
-A footer indicating a **breaking API change** → major SemVer bump.
-
-### **! after type**
-Alternative breaking-change notation:  
-Example: `feat!: change API behavior` 
-
-[source: conventional commits organization website](https://www.conventionalcommits.org/en/v1.0.0/#specification)
-=======
->>>>>>> 3ba22b2d (adding component  button for web and mobile)
-=======
->>>>>>> b48348aa (chore: updated project directories and files path)
+```bash
+# Start the development server
+npm epo start
