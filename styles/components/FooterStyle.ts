@@ -17,16 +17,18 @@ export const styles = StyleSheet.create({
   },
 
   /* Web layout */
-  sectionsContainerWeb: {
-    maxWidth: 1200,     
+    sectionsContainerWeb: {
+    maxWidth: 1200,
+    width: '100%',
     alignSelf: 'center',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 40,
-  },
+    justifyContent: 'center', 
+    gap: 80,                  
+    },
 
   section: {
     flex: 1,
+    minWidth: 200,
   },
 
   sectionTitle: {
