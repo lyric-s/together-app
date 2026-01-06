@@ -47,13 +47,6 @@ export default function Splash() {
           userIsLoggedIn = false;
         }
       }
-
-      if (userIsLoggedIn) {
-        router.replace('/(main)/home/AccountBenevole');
-      } else {
-        router.replace('/register');
-      }
-
       if (userIsLoggedIn) {
         router.replace('/(main)/home/AccountBenevole');
       } else {
