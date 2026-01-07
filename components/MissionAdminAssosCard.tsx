@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, ImageSourcePropType, useWindowDimensions  } from "react-native";
+import { View, Text, Image, TouchableOpacity  } from "react-native";
 import { styles } from "../styles/components/MissionAdminAssosCardStyle";
 
 interface MissionAdminAssosCardProps {
