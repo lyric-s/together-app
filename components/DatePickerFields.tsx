@@ -67,10 +67,16 @@ export default function DatePickerField({
             DateTimePickerAndroid.open({
               value: newDate,
               onChange: (timeEvent, selectedTime) => {
-                if (timeEvent.type === "set" && selectedTime) {
-                  newDate.setHours(selectedTime.getHours());
-                  newDate.setMinutes(selectedTime.getMinutes());
+                if (timeEvent.type === "set" ){
+                  if (selectedTime) {
+                    newDate.setHours(selectedTime.getHours());
+                    newDate.setMinutes(selectedTime.getMinutes());
+                    
+                  } 
                   onChange(newDate);
+                } else {
+                   // User cancelled time picker, still apply date with current time
+                    onChange(newDate);
                 }
               },
               mode: "time",
