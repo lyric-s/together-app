@@ -17,6 +17,7 @@ import { View, Animated, StyleSheet } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { decode as atob } from 'base-64';
 
 export default function Splash() {
   const router = useRouter();
@@ -40,10 +41,13 @@ export default function Splash() {
             userIsLoggedIn = false;
           } else {
             const payload = JSON.parse(atob(parts[1]));
-            const isExpired = payload.exp * 1000 < Date.now();
+            const isExpired = payload.exp && typeof payload.exp === 'number' 
+              ? payload.exp * 1000 < Date.now() 
+              : true;
             userIsLoggedIn = !isExpired;
           }
-        } catch {
+        } catch (parseError) {
+          console.error('JWT parsing error:', parseError);
           userIsLoggedIn = false;
         }
       }
