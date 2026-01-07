@@ -5,12 +5,12 @@
  */
 
 /**
- * Renders the home screen layout that vertically centers the bottom navigation bar between two flexible spacer sections.
+ * Redirects the user to the platform-appropriate initial route.
  *
- * The layout is wrapped in a SafeAreaView so content respects device safe areas.
+ * On native platforms (iOS/Android) this navigates to `/splash`; on web it navigates to `/(main)/home/AccountBenevole`.
  *
- * @returns The JSX element for the home screen layout.
- */
+ * @returns A `Redirect` element that navigates to the initial route for the current platform.
+*/
 
 import { Redirect } from "expo-router";
 import { Platform } from "react-native";
@@ -22,4 +22,5 @@ export default function Index() {
   }
 
   // Web platform: redirect to main home page
-  return <Redirect href="/(main)/home/AccountBenevole" />;}
+  return <Redirect href="/(main)/home/AccountBenevole" />;
+}
