@@ -9,8 +9,11 @@
  * All screens are configured without headers by default.
  */
 
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -27,11 +30,16 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <View style={{ flex: 1 }}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name='splash' />
-        <Stack.Screen name="index" />
-      </Stack>
-    </View>
+    <SafeAreaProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <View style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name='splash' />
+          <Stack.Screen name="index" />
+        </Stack>
+        </View>
+        <StatusBar style="auto" />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }

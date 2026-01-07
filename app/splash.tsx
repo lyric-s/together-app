@@ -79,7 +79,7 @@ export default function Splash() {
       // Call to logical redirection after animation
       checkAuthAndRedirect();
     });
-  }, [opacity]);
+  }, []);
 
 
   return (
