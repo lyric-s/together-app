@@ -1,4 +1,4 @@
-// app/(main)/serch/index.tsx
+// app/(main)/search/index.tsx
 import { View, Text } from 'react-native';
 
 export default function SearchScreen() {
