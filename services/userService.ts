@@ -1,10 +1,5 @@
 import api from './api';
-
-export interface UserCreate {
-  username: string;
-  email: string;
-  password: string;
-}
+import { UserCreate } from './authService'
 
 export const userService = {
   // Corresponds to your Python function: create_user

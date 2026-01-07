@@ -34,9 +34,12 @@ export const authService = {
   // Corresponds to @router.post("/refresh")
   refresh: async () => {
     const refreshToken = await storageService.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
     const response = await api.post('/auth/refresh', { refresh_token: refreshToken });
     const { access_token } = response.data;
-    await storageService.saveTokens(access_token, refreshToken!);
+    await storageService.saveTokens(access_token, refreshToken);
     return access_token;
   }
 };
