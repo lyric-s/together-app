@@ -16,8 +16,8 @@
 import { View, Animated, StyleSheet } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { decode as atob } from 'base-64';
+import { storageService } from '@/services/storageService';
+import { userService } from '@/services/userService'
 
 export default function Splash() {
   const router = useRouter();
@@ -25,40 +25,26 @@ export default function Splash() {
 
   // Function to check if the user is connected
   const checkAuthAndRedirect = async () => {
-    // Here, we will replace with our actual logic (e.g. Firebase, Supabase, or AsyncStorage)
-    // const userIsLoggedIn = true; // Change true to test redirection to home
-
     try {
-      const authToken = await AsyncStorage.getItem('authToken');
+      const token = await storageService.getAccessToken();
       
-      let userIsLoggedIn = false;
-      if (authToken) {
-        // Add token validation logic here
-        // Example for JWT: check expiration
-        try {
-          const parts = authToken.split('.');
-          if (parts.length !== 3) {
-            userIsLoggedIn = false;
-          } else {
-            const payload = JSON.parse(atob(parts[1]));
-            const isExpired = payload.exp && typeof payload.exp === 'number' 
-              ? payload.exp * 1000 < Date.now() 
-              : true;
-            userIsLoggedIn = !isExpired;
-          }
-        } catch (parseError) {
-          console.error('JWT parsing error:', parseError);
-          userIsLoggedIn = false;
-        }
+      if (!token) {
+        return router.replace('/login');
       }
-      if (userIsLoggedIn) {
-        router.replace('/(main)/home/AccountBenevole');
-      } else {
-        router.replace('/login' as any);
-      }
+
+      // VALIDITY CHECK:
+      // Attempt to retrieve the logged-in user's information.
+      // If the token has expired, the interceptor in api.ts will attempt an automatic refresh.
+      // If all else fails, an error will be thrown and we will go to the catch.
+      await userService.getMe(); 
+      
+      // If we arrive here, it means that the token is valid (or has been refreshed).
+      router.replace('/(main)/home/AccountBenevole');
+
     } catch (error) {
-      console.error('Error checking auth state:', error);
-      router.replace('/login' as any);
+      // If the token is invalid, expired, or the server is unreachable
+      console.log("Session invalide ou expirée");
+      router.replace('/login');
     }
   };
 
