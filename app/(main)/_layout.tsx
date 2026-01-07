@@ -6,7 +6,7 @@
  * It applies the appropriate theme (dark or light) based on the device's color scheme,
  * configures a modal screen, and conditionally renders a bottom navigation bar on mobile platforms.
  * 
- * All screens are configured without headers by default. * All screens are configured without headers by default.
+ * All screens are configured without headers by default.
  */
 
 import { Stack } from 'expo-router';
