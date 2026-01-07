@@ -4,6 +4,10 @@
  * This file defines the layout structure, featuring a centered navigation component.
  */
 
+import { Redirect } from "expo-router";
+import { Platform } from "react-native";
+
+
 /**
  * Redirects the user to the platform-appropriate initial route.
  *
@@ -11,10 +15,6 @@
  *
  * @returns A `Redirect` element that navigates to the initial route for the current platform.
 */
-
-import { Redirect } from "expo-router";
-import { Platform } from "react-native";
-
 export default function Index() {
 
   if (Platform.OS !== 'web') {
