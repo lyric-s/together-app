@@ -225,7 +225,7 @@ export default function AccountBenevole() {
           <View style={styles.sectionMobile}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Récent</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/recherche')}>
                 <Text style={styles.seeAllText}>Voir tout</Text>
               </TouchableOpacity>
             </View>
@@ -257,7 +257,7 @@ export default function AccountBenevole() {
           <View style={styles.sectionMobile}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Favoris</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => router.push('/favoris')}>
                 <Text style={styles.seeAllText}>Voir tout</Text>
               </TouchableOpacity>
             </View>
