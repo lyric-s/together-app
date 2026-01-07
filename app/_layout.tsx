@@ -18,13 +18,11 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 /**
- * RootLayout component that serves as the top-level layout wrapper.
+ * Provides the app's root layout: applies a theme based on the device color scheme and renders the navigation stack without headers.
  *
- * Provides theme context to all child components and configures the navigation stack
- * with the application's main screens. The theme automatically switches between
- * dark and light modes based on the device's color scheme preference.
+ * The component wraps content with safe-area handling and a ThemeProvider, then renders the app's main Stack screens and a status bar.
  *
- * @returns {JSX.Element} The themed navigation stack with status bar configuration.
+ * @returns The root layout element containing theme provider, navigation stack, and status bar.
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();

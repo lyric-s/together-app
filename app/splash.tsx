@@ -19,6 +19,13 @@ import { useRouter } from 'expo-router';
 import { storageService } from '@/services/storageService';
 import { userService } from '@/services/userService'
 
+/**
+ * Displays a startup splash screen with a short fade animation, then checks authentication and navigates to the appropriate route.
+ *
+ * After the animation completes, the component reads the stored access token and attempts to validate or refresh the session; it navigates to the login route if no valid session is available, or to the main account screen if the session is valid.
+ *
+ * @returns The React element for the splash screen UI.
+ */
 export default function Splash() {
   const router = useRouter();
   const opacity = useRef(new Animated.Value(0)).current;

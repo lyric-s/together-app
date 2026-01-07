@@ -15,6 +15,11 @@
 import { Redirect } from "expo-router";
 import { Platform } from "react-native";
 
+/**
+ * Choose the initial navigation target based on the current platform.
+ *
+ * @returns A `Redirect` element that navigates to `/splash` on native platforms (iOS/Android) or to `/(main)/home/AccountBenevole` on web.
+ */
 export default function Index() {
 
   if (Platform.OS !== 'web') {

@@ -15,13 +15,11 @@ import BottomNavBar from '@/components/MobileNavigationBar';
 
 
 /**
- * RootLayout component that serves as the top-level layout wrapper.
+ * Root layout that renders the app's navigation stack and, on mobile devices, the bottom navigation bar.
  *
- * Provides theme context to all child components and configures the navigation stack
- * with the application's main screens. The theme automatically switches between
- * dark and light modes based on the device's color scheme preference.
+ * The stack is configured with headers hidden and includes a modal screen named "modal" presented modally.
  *
- * @returns {JSX.Element} The themed navigation stack with status bar configuration.
+ * @returns The root JSX element containing the configured `Stack` and the `BottomNavBar` when running on iOS or Android.
  */
 export default function RootLayout() {
 
