@@ -54,11 +54,11 @@ export default function Splash() {
       if (userIsLoggedIn) {
         router.replace('/(main)/home/AccountBenevole');
       } else {
-        router.replace('/register');
+        router.replace('/login' as any);
       }
     } catch (error) {
       console.error('Error checking auth state:', error);
-      router.replace('/register');
+      router.replace('/login' as any);
     }
   };
 
