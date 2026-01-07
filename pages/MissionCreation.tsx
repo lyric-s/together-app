@@ -79,15 +79,18 @@ export default function MissionCreation() {
     // Validate volunteer counts
     const min = parseInt(minVolunteers || "0");
     const max = parseInt(maxVolunteers);
+    if (isNaN(max) || max <= 0) {
+      alert("Le nombre maximum de bénévoles doit être un nombre valide supérieur à 0.");
+      return;
+    }
     if (minVolunteers && min > max) {
       alert("Le nombre minimum de bénévoles ne peut pas dépasser le maximum.");
       return;
     }
 
     // Validate start date is not in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (startDate < today) {
+    const now = new Date();
+    if (startDate < now) {
       alert("La date de début ne peut pas être dans le passé.");
       return;
     }
