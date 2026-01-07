@@ -4,11 +4,9 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   ScrollView,
-  Platform,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+// import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import DatePickerField from "@/components/DatePickerFields"; 
 import {styles} from "@/styles/pages/CreationMissionStyle";
@@ -24,37 +22,37 @@ export default function MissionCreation() {
   const [minVolunteers, setMinVolunteers] = useState("");
   const [maxVolunteers, setMaxVolunteers] = useState("");
   const [skills, setSkills] = useState("");
-  const [imageName, setImageName] = useState<string | null>(null);
+  // const [imageName, setImageName] = useState<string | null>(null);
   const categories = ["Environnement", "Social", "Sport", "Santé", "Animaux"] //TODO  
 
 
   // --- Image Picker ---
-const pickImage = async () => {
-  try {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      quality: 1,
-      allowsEditing: false,
-      mediaTypes: ["images"],
-    });
+// const pickImage = async () => {
+//   try {
+//     const result = await ImagePicker.launchImageLibraryAsync({
+//       quality: 1,
+//       allowsEditing: false,
+//       mediaTypes: ["images"],
+//     });
 
-    if (result.canceled) return;
+//     if (result.canceled) return;
 
-    const asset = result.assets?.[0];
-    if (!asset) return;
+//     const asset = result.assets?.[0];
+//     if (!asset) return;
 
-    const uri = asset.uri;
+//     const uri = asset.uri;
 
-    const safeFileName: string =
-    asset.fileName ??
-    (uri ? uri.split("/").pop() || "image" : "image");
+//     const safeFileName: string =
+//     asset.fileName ??
+//     (uri ? uri.split("/").pop() || "image" : "image");
 
-    setImage(uri);
-    setImageName(safeFileName);
+//     setImage(uri);
+//     setImageName(safeFileName);
 
-  } catch (error) {
-    console.error("Erreur lors du choix d'image :", error);
-  }
-};
+//   } catch (error) {
+//     console.error("Erreur lors du choix d'image :", error);
+//   }
+// };
 
 
 
@@ -65,8 +63,8 @@ const pickImage = async () => {
       !category ||
       !startDate ||
       !location ||
-      !maxVolunteers ||
-      !image
+      !maxVolunteers 
+      // || !image
     ) {
       alert("Veuillez remplir tous les champs obligatoires.");
       return;
@@ -143,13 +141,13 @@ const pickImage = async () => {
           </View>
 
 
-          <Text style={styles.label}>Image *</Text>
+          {/* <Text style={styles.label}>Image *</Text>
           <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
             <Text style={styles.imageButtonText}>+ Importer une image</Text>
           </TouchableOpacity>
           {image && (
             <Text style={{ fontSize: 12, marginTop: 4 }}>{imageName}</Text>
-          )}
+          )} */}
 
         </View>
 
