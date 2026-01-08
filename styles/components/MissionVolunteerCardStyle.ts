@@ -1,24 +1,25 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, Platform } from "react-native";
 import { Colors } from "../../constants/colors";
 
 const screenWidth = Dimensions.get("window").width;
 
 // breakpoint at 900px = PC/tablette large
 const isLargeScreen = screenWidth > 1000;
+const isWeb = Platform.OS === "web"
 
 export const styles = StyleSheet.create({
   card: {
-    width:  400,
+    width:  isLargeScreen ? 400 : Math.min(400, screenWidth * 0.9),
     backgroundColor: Colors.white,
     borderRadius: 12,
     marginVertical: 10,
-    marginHorizontal: 10,
     shadowColor: Colors.black,
     shadowOpacity: 0.1,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 3,
     overflow: "hidden",
+    alignSelf: "center",
   },
 
   imageContainer: {

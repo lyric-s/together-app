@@ -12,7 +12,7 @@ import { styles, THEMES } from '@/styles/components/SwitchButton.styles';
 /**
  * Available visual variants for the switch.
  */
-export type SwitchVariant = 'mission' | 'auth';
+export type SwitchVariant = 'mission' | 'auth' | 'research';
 
 /**
  * Props for the SwitchButton component.
@@ -51,6 +51,12 @@ export default function SwitchButton({
             right: 'Connexion',
             routes: { left: '/signup', right: '/login' },
             theme: THEMES.auth
+        },
+        research: {
+            left: 'Mission',
+            right: 'Association',
+            routes: { left: '/search_mission', right: '/search_association' },
+            theme: THEMES.mission
         }
     };
 
@@ -100,38 +106,6 @@ export default function SwitchButton({
             { backgroundColor: currentConfig.theme.activeButton }
         ];
     };
-
-    const currentConfig = config[variant];
-    
-    // Définir la valeur par défaut basée sur la config si non fournie
-    const initialTab = defaultValue || currentConfig.left;
-
-    const [internalActiveTab, setInternalActiveTab] = useState<string>(initialTab);
-    const router = useRouter();
-
-    const activeTab = value ?? internalActiveTab;
-
-    const handlePress = (tabName: string, side: 'left' | 'right') => {
-        if (value === undefined) {
-            setInternalActiveTab(tabName);
-        }
-        
-        // Appelle le callback parent s'il existe
-        if (onChange) {
-            onChange(tabName);
-        } else {
-            // Comportement par défaut : navigation automatique si pas de onChange fourni
-            const route = currentConfig.routes[side];
-            // @ts-ignore : router.push attend des chaînes typées spécifiques selon la config Expo, ici on reste générique
-            router.push(route);
-        }
-    };
-
-    // Helper pour le rendu du style conditionnel
-    const getTextStyle = (isActive: boolean) => ({
-        color: isActive ? currentConfig.theme.activeText : currentConfig.theme.inactiveText,
-        opacity: isActive ? 1 : 0.7,
-    });
 
     return (
         <View style={[styles.container, style]}>

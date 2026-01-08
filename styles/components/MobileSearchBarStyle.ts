@@ -4,7 +4,6 @@ import { Colors } from "../../constants/colors";
 export const styles = StyleSheet.create({
   container: {
     width: "100%",
-    // padding: 10,
   },
 
   /** TOP BAR */
@@ -20,6 +19,8 @@ export const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
+    borderColor: Colors.lightOrange,
+    borderWidth: 3,
   },
 
   input: {

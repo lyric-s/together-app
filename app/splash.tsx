@@ -29,7 +29,7 @@ export default function Splash() {
       const token = await storageService.getAccessToken();
       
       if (!token) {
-        return router.replace('/login');
+        return router.replace('/(main)/search/search_mission');
       }
 
       // VALIDITY CHECK:
@@ -39,7 +39,7 @@ export default function Splash() {
       await userService.getMe(); 
       
       // If we arrive here, it means that the token is valid (or has been refreshed).
-      router.replace('/(main)/home/AccountBenevole');
+      router.replace('/(main)/search/search_mission');
 
     } catch (error) {
       // If the token is invalid, expired, or the server is unreachable
