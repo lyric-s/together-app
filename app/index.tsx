@@ -16,11 +16,6 @@ import { Platform } from "react-native";
  * @returns A `Redirect` element that navigates to the initial route for the current platform.
 */
 export default function Index() {
-
-  if (Platform.OS !== 'web') {
-    return <Redirect href="/splash" />;
-  }
-
-  // Web platform: redirect to main home page
-  return <Redirect href="/(main)/home/AccountBenevole" />;
+  // We let the Splash Screen decide where to send us based on the AuthContext
+  return <Redirect href="/splash" />;
 }
