@@ -42,7 +42,7 @@ export default function ProfilAdmin() {
         if (isAuthLoading) return;
 
         if (userType !== 'admin') {
-            const isWeb = Platform.OS !== 'web';
+            const isWeb = Platform.OS === 'web';
             console.log(`⛔ Accès refusé (${userType}) -> Redirection`);
             if (!userType || userType === 'volunteer_guest') {
                 router.replace('/(main)/home/AccountWithoutCo');
@@ -84,7 +84,7 @@ export default function ProfilAdmin() {
                 phone_number: '',
                 birthdate: '',
                 skills: '',
-                adress: '',
+                address: '',
                 zip_code: '',
                 bio: '',
                 name: '',
@@ -115,14 +115,14 @@ export default function ProfilAdmin() {
         if (!profileUser?.id_admin) return;
         try {
             const payloadAdmin = {
-                last_name: data.last_name!,
-                first_name: data.first_name!,
-                username: data.username!,
-                email: data.email!,
+                last_name: data.last_name ?? profileUser.last_name,
+                first_name: data.first_name ?? profileUser.first_name,
+                username: data.username ?? profileUser.username,
+                email: data.email ?? profileUser.email,
                 ...(data.password ? { password: data.password } : {})
             }
             const res = await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
-            setProfileUser(prev => prev ? ({ ...prev, ...data }) : null);
+            setProfileUser(prev => prev ? ({ ...prev, ...payloadAdmin }) : null);
             await refetchUser(); // Synchro AutoContext
             showAlert('Succès', 'Les informations du profil ont été mises à jour avec succès.');
         } catch (error) {

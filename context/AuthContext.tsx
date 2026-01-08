@@ -18,7 +18,7 @@ export type AuthUser = {
   first_name?: string;
   phone_number?: string;
   birthdate?: string;
-  adress?: string;
+  address?: string;
   zip_code?: string;
   name?: string;
   country?: string;
@@ -61,6 +61,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           username: 'Invité'
         });
         setUserType('volunteer_guest');
+        setIsLoading(false);
         return;
       }
 
@@ -69,6 +70,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         { type: 'association', path: '/assos/me' },
         { type: 'admin', path: '/admins/me' }
       ];
+
+      let hasNetworkOrServerError = false;
 
       for (const { type, path } of endpoints) {
         try {
@@ -94,20 +97,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(`✅ ${type} profile loaded:`, authUser);
             return;
           }
+          if (response.status === 401 || response.status === 403) {
+            // This is a ‘normal’ authentication error (incorrect role), continue the loop
+            continue; 
+          } else {
+            // Error 500, 502, 503, 404... The server has a problem
+            console.warn(`⚠️ Serveur error ${response.status} on ${path}`);
+            hasNetworkOrServerError = true;
+          }
         } catch (endpointError) {
-          console.log(`❌ ${path} failed, trying next...`);
+          console.log(`❌ Network failed on ${path}`, endpointError);
+          hasNetworkOrServerError = true;
         }
       }
 
-      setError('No profile found for this user');
-      storageService.clear();
-      setUser(null);
-      setUserType('volunteer_guest');
+      // --- If you've reached this point, it means that none of the endpoints worked ---
+      if (hasNetworkOrServerError) {
+        // Case A: Network or server failure
+        // DO NOT DELETE THE TOKEN!
+        console.log('⚠️ Network/Server issues detected. Keeping token but setting error.');
+        setError('Problème de connexion. Veuillez réessayer.');
+        // You can let it expire to null or keep the old state, but you cannot log out.
+      } else {
+        // Case B: All endpoints returned 401/403
+        // The token is truly invalid everywhere.
+        console.log('⛔ Token invalid for all roles -> Logging out.');
+        setError('Session expired');
+        await storageService.clear();
+        setUser(null);
+        setUserType('volunteer_guest');
+      }
     } catch (e) {
       console.error('Auth error:', e);
       setError('Failed to load user');
-      setUser(null);
-      setUserType('volunteer_guest');
     } finally {
       setIsLoading(false);
     }

@@ -10,7 +10,6 @@ import {
 import ProfilePicture from "./ProfilPicture";
 import { getStyles } from "../styles/components/SideBarStyle";
 import { usePathname } from "expo-router";
-import { Colors } from "@/constants/colors";
 
 const MOBILE_BREAKPOINT = 900;
 
@@ -141,7 +140,8 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
 
   const isRouteActive = (route: string) => {
     if (route === "/") return pathname === "/";
-    return pathname.startsWith(route);
+    // Exact match or prefix match followed by "/"
+    return pathname === route || pathname.startsWith(route + "/");
   };
 
   return (

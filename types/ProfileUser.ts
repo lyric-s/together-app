@@ -8,7 +8,7 @@ export type ProfileData = {
     phone_number: string;
     birthdate: string;
     skills: string;
-    adress: string;
+    address: string;
     zip_code: string;
     bio: string;
     email: string;

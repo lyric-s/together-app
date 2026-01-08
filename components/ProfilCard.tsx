@@ -4,9 +4,8 @@ import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'reac
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
 import { ProfileData } from '@/types/ProfileUser';
-import { volunteerService } from '@/services/volunteerService';
 
-type UserType = 'asso' | 'benevole' | 'admin';
+type UserType = 'volunteer' | 'association' | 'admin' | 'volunteer_guest';
 
 type ProfileLabels = {
     username?: string;
@@ -18,7 +17,7 @@ type ProfileLabels = {
     confirmPassword: string;
     phone_number?: string;
     skills?: string;
-    adress?: string;
+    address?: string;
     zip_code?: string;
     bio?: string;
     name?: string;
@@ -39,26 +38,26 @@ const DEFAULT_PHOTO = require('@/assets/images/profil-picture.png');
 // Labels according to the type of user
 const getLabels = (userType: UserType): ProfileLabels => {
     switch (userType) {
-        case 'benevole':
+        case 'volunteer':
             return {
                 last_name: 'Nom',
                 first_name: 'Prénom',
                 username: 'Nom d\'utilisateur',
-                phone_number: '0765253512',
-                birthdate: '2003-04-30',
+                phone_number: 'N°Tel',
+                birthdate: 'Date de naissance (ex:2003-04-30)',
                 email: 'Adresse Mail',
-                adress: 'Adresse',
+                address: 'Adresse',
                 zip_code: 'Code postal',
                 skills: 'Compétences',
                 bio: 'Biographie',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
             };
-        case 'asso':
+        case 'association':
             return {
                 company_name: 'Nom de l\'association',
                 name: 'Nom',
-                phone_number: '0105066548',
+                phone_number: 'N°Tel',
                 rna_code: 'Code RNA',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
@@ -146,40 +145,40 @@ export default function ProfilCard({
 
     const handleSubmit = async () => {
         try {
-            if (userType === 'benevole' || userType === 'admin') {
-                if (!formData.last_name.trim()) {
+            if (userType === 'volunteer' || userType === 'admin') {
+                if (!formData.last_name?.trim()) {
                     showAlert('Erreur', 'Le nom est obligatoire');
                     return;
                 }
-                if (!formData.first_name.trim()) {
+                if (!formData.first_name?.trim()) {
                     showAlert('Erreur', 'Le prénom est obligatoire');
                     return;
                 }
-                if (!formData.email.trim()) {
+                if (!formData.email?.trim()) {
                     showAlert('Erreur', 'L\'adresse email est obligatoire');
                     return;
                 }
-                if (!formData.username.trim()) {
+                if (!formData.username?.trim()) {
                     showAlert('Erreur', 'Le nom d\'utilisateur est obligatoire');
                     return;
                 }
             }
-            if (userType === 'benevole') {
-                if (!formData.birthdate.trim()) {
+            if (userType === 'volunteer') {
+                if (!formData.birthdate?.trim()) {
                     showAlert('Erreur', 'La date de naissance est obligatoire');
                     return;
                 }
             }
-            else if (userType === 'asso') {
-                if (!formData.rna_code.trim()) {
+            else if (userType === 'association') {
+                if (!formData.rna_code?.trim()) {
                     showAlert('Erreur', 'Le code RNA est obligatoire');
                     return;
                 }
-                if (!formData.name.trim()) {
+                if (!formData.name?.trim()) {
                     showAlert('Erreur', 'Le nom est obligatoire');
                     return;
                 }
-                if (!formData.company_name.trim()) {
+                if (!formData.company_name?.trim()) {
                     showAlert('Erreur', 'Le nom de l\'association est obligatoire');
                     return;
                 }
@@ -207,7 +206,7 @@ export default function ProfilCard({
             }
 
             // Check email
-            if ((userType === 'benevole' || userType === 'admin') && formData.email.trim()) {
+            if ((userType === 'volunteer' || userType === 'admin') && formData.email?.trim()) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(formData.email)) {
                     showAlert('Erreur', 'L\'adresse email n\'est pas valide');
@@ -216,7 +215,7 @@ export default function ProfilCard({
             }
 
             // Check phone_number (FR)
-            if (userType === 'asso' || userType === 'benevole' && formData.phone_number.trim()) {
+            if ((userType === 'association' || userType === 'volunteer') && formData.phone_number?.trim()) {
                 const phoneRegex = /^[0-9]{10}$/;
                 const cleanPhone = formData.phone_number.replace(/\s/g, '');
                 if (!phoneRegex.test(cleanPhone)) {
@@ -262,7 +261,7 @@ export default function ProfilCard({
                         </TouchableOpacity>
                     </View>
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.last_name && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.last_name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.last_name}</Text>
@@ -279,7 +278,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.first_name && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.first_name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.first_name}</Text>
@@ -296,7 +295,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.username && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.username && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.username}</Text>
@@ -313,7 +312,7 @@ export default function ProfilCard({
                         </View>
                     )}
                     
-                    {(userType === 'benevole') && labels.birthdate && (
+                    {(userType === 'volunteer') && labels.birthdate && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.birthdate}</Text>
@@ -330,7 +329,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'asso') && labels.name && (
+                    {(userType === 'association') && labels.name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.name}</Text>
@@ -347,7 +346,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'asso') && labels.company_name && (
+                    {(userType === 'association') && labels.company_name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.company_name}</Text>
@@ -364,7 +363,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {userType === 'benevole' || userType === 'asso' && labels.phone_number && (
+                    {(userType === 'volunteer' || userType === 'association') && labels.phone_number && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.phone_number}</Text>
@@ -382,7 +381,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.email && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.email && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.email}</Text>
@@ -401,24 +400,24 @@ export default function ProfilCard({
                         </View>
                     )}
                     
-                    {(userType === 'benevole') && labels.adress && (
+                    {(userType === 'volunteer') && labels.address && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.adress}</Text>
+                                <Text style={styles.label}>{labels.address}</Text>
                             </View>
                             <View style={styles.inputWrapper}>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder={labels.adress}
-                                    value={formData.adress}
-                                    onChangeText={(text) => handleChange('adress', text)}
+                                    placeholder={labels.address}
+                                    value={formData.address}
+                                    onChangeText={(text) => handleChange('address', text)}
                                 />
                                 <View style={styles.separator} />
                             </View>
                         </View>
                     )}
 
-                    {(userType === 'benevole') && labels.zip_code && (
+                    {(userType === 'volunteer') && labels.zip_code && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.zip_code}</Text>
@@ -435,7 +434,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole') && labels.skills && (
+                    {(userType === 'volunteer') && labels.skills && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.skills}</Text>
@@ -454,7 +453,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole') && labels.bio && (
+                    {(userType === 'volunteer') && labels.bio && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.bio}</Text>
@@ -473,7 +472,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {userType === 'asso' && labels.rna_code && (
+                    {userType === 'association' && labels.rna_code && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.rna_code}</Text>
@@ -546,7 +545,7 @@ export default function ProfilCard({
                         style={styles.photo}
                     />
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.last_name && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.last_name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.last_name}</Text>
@@ -558,7 +557,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.first_name && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.first_name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.first_name}</Text>
@@ -570,7 +569,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.username && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.username && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.username}</Text>
@@ -582,7 +581,7 @@ export default function ProfilCard({
                         </View>
                     )}
                     
-                    {(userType === 'benevole') && labels.birthdate && (
+                    {(userType === 'volunteer') && labels.birthdate && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.birthdate}</Text>
@@ -594,7 +593,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'asso') && labels.name && (
+                    {(userType === 'association') && labels.name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.name}</Text>
@@ -606,7 +605,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'asso') && labels.company_name && (
+                    {(userType === 'association') && labels.company_name && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.company_name}</Text>
@@ -618,7 +617,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {userType === 'benevole' || userType === 'asso' && labels.phone_number && (
+                    {(userType === 'volunteer' || userType === 'association') && labels.phone_number && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.phone_number}</Text>
@@ -630,7 +629,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.email && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.email && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.email}</Text>
@@ -642,19 +641,19 @@ export default function ProfilCard({
                         </View>
                     )}
                     
-                    {(userType === 'benevole') && labels.adress && userData.adress && (
+                    {(userType === 'volunteer') && labels.address && userData.address && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.adress}</Text>
+                                <Text style={styles.label}>{labels.address}</Text>
                             </View>
                             <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.adress}</Text>
+                                <Text style={styles.text}>{formData.address}</Text>
                                 <View style={styles.separator} />
                             </View>
                         </View>
                     )}
 
-                    {(userType === 'benevole') && labels.zip_code && userData.zip_code && (
+                    {(userType === 'volunteer') && labels.zip_code && userData.zip_code && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.zip_code}</Text>
@@ -666,7 +665,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole') && labels.skills && userData.skills && (
+                    {(userType === 'volunteer') && labels.skills && userData.skills && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.skills}</Text>
@@ -678,7 +677,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {(userType === 'benevole') && labels.bio && userData.bio && (
+                    {(userType === 'volunteer') && labels.bio && userData.bio && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.bio}</Text>
@@ -690,7 +689,7 @@ export default function ProfilCard({
                         </View>
                     )}
 
-                    {userType === 'asso' && labels.rna_code && (
+                    {userType === 'association' && labels.rna_code && (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.rna_code}</Text>
