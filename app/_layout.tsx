@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { usePathname } from 'expo-router';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { AuthProvider } from '@/context';
 
 /**
  * RootLayout component that serves as the top-level layout wrapper.
@@ -33,6 +34,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <AuthProvider>
         <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name='splash' />
@@ -40,6 +42,7 @@ export default function RootLayout() {
         </Stack>
         </View>
         <StatusBar style="auto" />
+        </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );

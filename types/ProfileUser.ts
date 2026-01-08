@@ -1,12 +1,22 @@
-export type FormData = {
+export type ProfileData = {
+    id_volunteer: number;
+    id_admin: number;
+    id_asso: number;
     picture: any;
-    lastname: string;
-    firstname: string;
+    last_name: string;
+    first_name: string;
+    phone_number: string;
+    birthdate: string;
+    skills: string;
+    adress: string;
+    zip_code: string;
+    bio: string;
     email: string;
-    mobile: string;
-    role: string;
-    codeRNA: string;
-    recepisse: string;
+    username: string;
+    name: string;
+    country: string;
+    rna_code: string;
+    company_name: string;
     password: string;
     confirmPassword: string;
 };
