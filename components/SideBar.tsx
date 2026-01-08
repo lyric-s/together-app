@@ -82,6 +82,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
   const { width } = useWindowDimensions();
   const isMobile = width < MOBILE_BREAKPOINT;
   const styles = getStyles(width);
+  const pathname = usePathname();
 
   const [open, setOpen] = React.useState(!isMobile);
 
@@ -89,8 +90,6 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
   React.useEffect(() => {
     setOpen(!isMobile);
   }, [isMobile]);
-
-  const currentRoute = usePathname().replace("/", "");
 
   const appTitle =
     userType === "volunteer" || userType === "volunteer_guest"
@@ -101,28 +100,28 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
 
   const sections = {
     volunteer_connected: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
-      { icon: require("../assets/images/search.png"), label: "Recherche", route: "search" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "history" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "profile" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/home" },
+      { icon: require("../assets/images/search.png"), label: "Recherche", route: "/search" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/history" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/profile" },
     ],
     volunteer_guest: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
-      { icon: require("../assets/images/search.png"), label: "Recherche", route: "search" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/home" },
+      { icon: require("../assets/images/search.png"), label: "Recherche", route: "/search" },
     ],
     association: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "home" },
-      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "mission_creation" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "history" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "profile" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/home" },
+      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "/mission_creation" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/history" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/profile" },
     ],
     admin: [
-      { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "dashboard" },
-      { icon: require("../assets/images/search.png"), label: "Recherche", route: "search" },
-      { icon: require("../assets/images/report.png"), label: "Signalement", route: "report" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "ProfilAdmin" },
+      { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "/dashboard" },
+      { icon: require("../assets/images/search.png"), label: "Recherche", route: "/search" },
+      { icon: require("../assets/images/report.png"), label: "Signalement", route: "/report" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/profile" },
     ],
   };
 
@@ -139,6 +138,11 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     { icon: require("../assets/images/logout.png"), label: "Déconnexion", route: "logout" },
     { icon: require("../assets/images/settings.png"), label: "Réglages", route: "settings" },
   ];
+
+  const isRouteActive = (route: string) => {
+    if (route === "/") return pathname === "/";
+    return pathname.startsWith(route);
+  };
 
   return (
     <>
@@ -187,7 +191,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
                   key={i}
                   icon={item.icon}
                   label={item.label}
-                  active={currentRoute === item.route}
+                  active={isRouteActive(item.route)}
                   onPress={() => {
                     onNavigate(item.route);
                     if (isMobile) setOpen(false);
@@ -203,7 +207,7 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
                   key={i}
                   icon={item.icon}
                   label={item.label}
-                  active={currentRoute === item.route}
+                  active={isRouteActive(item.route)}
                   onPress={() => {
                     onNavigate(item.route);
                     if (isMobile) setOpen(false);
