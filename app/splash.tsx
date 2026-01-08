@@ -13,39 +13,59 @@
  * @returns {JSX.Element} A full-screen view containing the animated splash image.
  */
 
-import { View, Animated, StyleSheet } from 'react-native';
+import { View, Animated, StyleSheet, Platform } from 'react-native';
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
-import { storageService } from '@/services/storageService';
-import { userService } from '@/services/userService'
+import { useAuth, UserType } from '@/context/AuthContext';
 
 export default function Splash() {
   const router = useRouter();
   const opacity = useRef(new Animated.Value(0)).current;
+  const { isLoading, userType } = useAuth();
+  const isMobile = Platform.OS !== 'web';
 
   // Function to check if the user is connected
   const checkAuthAndRedirect = async () => {
-    try {
-      const token = await storageService.getAccessToken();
-      
-      if (!token) {
-        return router.replace('/login');
+    if (isLoading) return;
+
+    if (isMobile) {
+      if (userType === 'volunteer_guest') {
+        console.log('✅ Mobile → Guest');
+        router.replace('/(main)/home/AccountWithoutCo');
+        return;
       }
-
-      // VALIDITY CHECK:
-      // Attempt to retrieve the logged-in user's information.
-      // If the token has expired, the interceptor in api.ts will attempt an automatic refresh.
-      // If all else fails, an error will be thrown and we will go to the catch.
-      await userService.getMe(); 
       
-      // If we arrive here, it means that the token is valid (or has been refreshed).
-      router.replace('/(main)/home/AccountBenevole');
-
-    } catch (error) {
-      // If the token is invalid, expired, or the server is unreachable
-      console.log("Session invalide ou expirée");
-      router.replace('/login');
+      if (userType === 'volunteer') {
+        console.log('✅ Mobile → Volunteer');
+        router.replace('/(main)/profile/ProfileVolunteer');
+        return;
+      }
+      
+      // Mobile fallback
+      router.replace('/(main)/home/AccountWithoutCo');
+      return;
     }
+
+    if (userType === 'volunteer_guest') {
+      console.log('✅ Splash → Guest home');
+      router.replace('/(main)/home/AccountWithoutCo'); 
+      return;
+    }
+    
+    // Web Connecté → profil selon type
+    if (userType) {
+    const routes: Record<Exclude<UserType, 'volunteer_guest'>, string> = {
+      volunteer: '/(main)/profile/ProfileVolunteer',
+      association: '/(main)/profile/ProfileAsso',
+      admin: '/(main)/profile/ProfileAdmin'
+    };
+    
+      const targetRoute = routes[userType];
+      console.log(`✅ Redirect to: ${targetRoute}`);
+      router.replace(targetRoute as any);
+      return;
+    }
+    router.replace('/(main)/home/AccountWithoutCo');
   };
 
   useEffect(() => {
@@ -65,8 +85,13 @@ export default function Splash() {
       // Call to logical redirection after animation
       checkAuthAndRedirect();
     });
-  }, []);
+  }, [opacity]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      checkAuthAndRedirect();
+    }
+  }, [isLoading, userType]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>

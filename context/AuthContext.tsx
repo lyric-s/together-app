@@ -1,0 +1,158 @@
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { storageService } from '@/services/storageService';
+
+// Types (gardez votre AuthUser)
+export type UserType = "volunteer" | "association" | "admin" | "volunteer_guest";
+export type AuthUser = {
+  id_user: number;
+  email: string;
+  user_type: UserType;
+  username: string;
+  bio?: string;
+  skills?: string;
+  id_volunteer?: number;
+  id_admin?: number;
+  id_asso?: number;
+  picture?: any;
+  last_name?: string;
+  first_name?: string;
+  phone_number?: string;
+  birthdate?: string;
+  adress?: string;
+  zip_code?: string;
+  name?: string;
+  country?: string;
+  rna_code?: string;
+  company_name?: string;
+};
+
+type AuthContextType = {
+  user: AuthUser | null;
+  setUser: (user: AuthUser | null) => void;
+  userType: UserType | null;
+  isLoading: boolean;
+  error: string | null;
+  login: (token: string) => Promise<void>;
+  logout: () => Promise<void>;
+  refetchUser: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [userType, setUserType] = useState<UserType>('volunteer_guest');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+
+  const refetchUser = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const token = await storageService.getAccessToken();
+      if (!token) {
+        setUser({
+          id_user: -1,
+          email: 'invité@together-app.com',
+          user_type: 'volunteer_guest',
+          username: 'Invité'
+        });
+        setUserType('volunteer_guest');
+        return;
+      }
+
+      const endpoints: Array<{ type: UserType; path: string }> = [
+        { type: 'volunteer', path: '/volunteers/me' },
+        { type: 'association', path: '/assos/me' },
+        { type: 'admin', path: '/admins/me' }
+      ];
+
+      for (const { type, path } of endpoints) {
+        try {
+            console.log(`🔍 Testing ${path}...`);
+            const response = await fetch(`${API_URL}${path}`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            const authUser: AuthUser = {
+              id_user: userData.id_user,
+              email: userData.email,
+              user_type: type,
+              username: userData.username,
+              ...userData
+            };
+            setUser(authUser);
+            setUserType(type);
+            console.log(`✅ ${type} profile loaded:`, authUser);
+            return;
+          }
+        } catch (endpointError) {
+          console.log(`❌ ${path} failed, trying next...`);
+        }
+      }
+
+      setError('No profile found for this user');
+      storageService.clear();
+      setUser(null);
+      setUserType('volunteer_guest');
+    } catch (e) {
+      console.error('Auth error:', e);
+      setError('Failed to load user');
+      setUser(null);
+      setUserType('volunteer_guest');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [API_URL]);
+
+  const login = useCallback(async (accessToken: string) => {
+    try {
+      await storageService.saveTokens(accessToken, '');
+      await refetchUser();
+    } catch (e) {
+      console.error('Login error:', e);
+      throw e;
+    }
+  }, [refetchUser]);
+
+  // Logout
+  const logout = useCallback(async () => {
+    try {
+      await storageService.clear();
+      setUser(null);
+      setUserType('volunteer_guest');
+      setError(null);
+    } catch (e) {
+      console.error('Logout error:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    refetchUser();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      setUser,
+      userType,
+      isLoading,
+      error,
+      login,
+      logout,
+      refetchUser
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);

@@ -9,11 +9,13 @@
  * All screens are configured without headers by default.
  */
 
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
+import { useState } from 'react';
 import { Platform, View } from 'react-native';
 import BottomNavBar from '@/components/MobileNavigationBar';
-
-
+import Sidebar from '@/components/SideBar';
+import { useAuth } from '@/context';
+import {UserType} from '@/context/AuthContext'
 /**
  * RootLayout component that serves as the top-level layout wrapper.
  *
@@ -24,18 +26,27 @@ import BottomNavBar from '@/components/MobileNavigationBar';
  * @returns {JSX.Element} The themed navigation stack with status bar configuration.
  */
 export default function RootLayout() {
-
+  const { user, isLoading, userType } = useAuth();
   const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
 
-  return (
-    <View style={{ flex: 1 }}>
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-    </Stack>
+  const safeUserType: UserType = userType || 'volunteer_guest';
+  const safeUserName = user?.username || 'Invité';
 
-    {isMobile && (
-      <BottomNavBar />
-    )}
+  return (
+    <View style={{ flex: 1, flexDirection: 'row' }}>
+
+      {!isMobile && (
+        <Sidebar userType={safeUserType} userName={safeUserName} onNavigate={(route: string) => {router.push(route as any)}} />
+      )}
+
+      <View style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }}>
+      </Stack>
+
+      {isMobile && (
+        <BottomNavBar />
+      )}
+      </View>
     </View>
   );
 }
