@@ -98,3 +98,71 @@ export async function getAllMyMissions(): Promise<Mission[]> {
   }
 }
 
+// get volunteer's favorites mission
+export async function getMyFavoriteMissions(): Promise<Mission[]> {
+  try {
+    const { data } = await api.get<Mission[]>(
+      "/volunteers/me/favorites"
+    );
+    return data;
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+// add a mission to favorite
+export async function addMissionToFavorites(
+  missionId: number
+): Promise<void> {
+  try {
+    await api.post(
+      `/volunteers/me/favorites/${missionId}`
+    );
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+// remove a mission from favorite
+export async function removeMissionFromFavorites(
+  missionId: number
+): Promise<void> {
+  try {
+    await api.delete(
+      `/volunteers/me/favorites/${missionId}`
+    );
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+// apply to a mission
+export async function applyToMission(
+  missionId: number,
+  message?: string
+): Promise<void> {
+  try {
+    await api.post(
+      `/missions/${missionId}/apply`,
+      { message }
+    );
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+// withdraw from a mission
+export async function withdrawFromMission(
+  missionId: number
+): Promise<void> {
+  try {
+    await api.delete(
+      `/missions/${missionId}/withdraw`
+    );
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+
+
