@@ -134,12 +134,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Logout
   const logout = useCallback(async () => {
     try {
+      setIsLoading(true);
       await storageService.clear();
       setUser(null);
       setUserType('volunteer_guest');
       setError(null);
+      console.log("✅ Déconnexion réussie - Redirection via l'aiguilleur");
     } catch (e) {
       console.error('Logout error:', e);
+      setUser(null);
+      setUserType('volunteer_guest');
+    } finally {
+        setIsLoading(false);
     }
   }, []);
 

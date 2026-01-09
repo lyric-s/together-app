@@ -1,0 +1,54 @@
+/**
+ * @file _layout.tsx (VOLUNTEER)
+ * @description Specific layout for the Volunteer area (Web Only).
+ */
+
+import { Redirect, Stack, router } from 'expo-router';
+import { Platform, View, ActivityIndicator } from 'react-native';
+import BottomNavBar from '@/components/MobileNavigationBar';
+import Sidebar from '@/components/SideBar';
+import { useAuth } from '@/context/AuthContext';
+import { Colors } from '@/constants/colors';
+
+export default function VolunteerLayout() {
+  const { user, isLoading, userType } = useAuth();
+  const isWeb = Platform.OS === 'web';
+  
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={Colors.orange} />
+      </View>
+    );
+  }
+
+  if (userType !== 'volunteer') {
+    return <Redirect href="/(auth)/login" />;
+  }
+
+  return (
+    <View style={{ flex: 1, flexDirection: isWeb ? 'row' : 'column' }}>
+      {isWeb && (
+        <Sidebar 
+          userType="volunteer" 
+          userName={user?.username || 'Bénévole'} 
+          onNavigate={(route: string) => {
+             router.push(route as any);
+          }} 
+        />
+      )}
+
+      <View style={{ flex: 1 }}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="home/index" />
+          <Stack.Screen name="profile/index" />
+        </Stack>
+      </View>
+
+      {!isWeb && (
+        <BottomNavBar />
+      )}
+      
+    </View>
+  );
+}
