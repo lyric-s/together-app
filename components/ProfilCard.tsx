@@ -105,7 +105,7 @@ export default function ProfilCard({
     // Update the data when userData change (ex: after a refresh of database)
     useEffect(() => {
         setOriginalData(userData);
-        setFormData({ ...userData });
+        if (!isEditing) setFormData({ ...userData });
     }, [userData]);
 
     const handleChange = (field: string, value: string) => {
@@ -137,87 +137,98 @@ export default function ProfilCard({
 
     const handleCancel = () => {
         // Cancel changes: restore original data
-        setFormData({ ...originalData });
+        setFormData({ ...originalData, password: '', confirmPassword: '' });
         setIsEditing(false);
         console.log('Modifications annulées, données restaurées');
     };
 
     const handleSubmit = async () => {
         try {
-            if (userType === 'benevole' || userType === 'admin') {
-                if (!formData.last_name.trim()) {
+            const normalized: ProfileData = {
+                ...formData,
+                last_name: formData.last_name?.trim(),
+                first_name: formData.first_name?.trim(),
+                username: formData.username?.trim(),
+                birthdate: formData.birthdate?.trim(),
+                rna_code: formData.rna_code?.trim(),
+                name: formData.name?.trim(),
+                company_name: formData.company_name?.trim(),
+                email: formData.email?.trim(),
+                phone_number: formData.phone_number?.replace(/\s/g, ''),
+            };
+            if (userType === 'volunteer' || userType === 'admin') {
+                if (!normalized.last_name) {
                     showAlert('Erreur', 'Le nom est obligatoire');
                     return;
                 }
-                if (!formData.first_name.trim()) {
+                if (!normalized.first_name) {
                     showAlert('Erreur', 'Le prénom est obligatoire');
                     return;
                 }
-                if (!formData.email.trim()) {
+                if (!normalized.email) {
                     showAlert('Erreur', 'L\'adresse email est obligatoire');
                     return;
                 }
-                if (!formData.username.trim()) {
+                if (!normalized.username) {
                     showAlert('Erreur', 'Le nom d\'utilisateur est obligatoire');
                     return;
                 }
             }
-            if (userType === 'benevole') {
-                if (!formData.birthdate.trim()) {
+            if (userType === 'volunteer') {
+                if (!normalized.birthdate) {
                     showAlert('Erreur', 'La date de naissance est obligatoire');
                     return;
                 }
             }
-            else if (userType === 'asso') {
-                if (!formData.rna_code.trim()) {
+            else if (userType === 'association') {
+                if (!normalized.rna_code) {
                     showAlert('Erreur', 'Le code RNA est obligatoire');
                     return;
                 }
-                if (!formData.name.trim()) {
+                if (!normalized.name) {
                     showAlert('Erreur', 'Le nom est obligatoire');
                     return;
                 }
-                if (!formData.company_name.trim()) {
+                if (!normalized.company_name) {
                     showAlert('Erreur', 'Le nom de l\'association est obligatoire');
                     return;
                 }
             }
 
-            if (!formData.password) {
+            if (!normalized.password) {
                 showAlert('Erreur', 'Le mot de passe est obligatoire');
                 return;
             }
 
-            if (formData.password.length < 10) {
+            if (normalized.password.length < 10) {
                 showAlert('Erreur', 'Le mot de passe doit avoir minimum 10 caractères');
                 return;
             }
 
-            if (!formData.confirmPassword) {
+            if (!normalized.confirmPassword) {
                 showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
                 return;
             }
 
             // Check password
-            if (formData.password !== formData.confirmPassword) {
+            if (normalized.password !== normalized.confirmPassword) {
                 showAlert('Erreur', 'Les mots de passe ne correspondent pas');
                 return;
             }
 
             // Check email
-            if ((userType === 'benevole' || userType === 'admin') && formData.email.trim()) {
+            if ((userType === 'volunteer' || userType === 'admin') && normalized.email) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(formData.email)) {
+                if (!emailRegex.test(normalized.email)) {
                     showAlert('Erreur', 'L\'adresse email n\'est pas valide');
                     return;
                 }
             }
 
             // Check phone_number (FR)
-            if (userType === 'asso' || userType === 'benevole' && formData.phone_number.trim()) {
+            if ((userType === 'association' || userType === 'volunteer') && normalized.phone_number) {
                 const phoneRegex = /^[0-9]{10}$/;
-                const cleanPhone = formData.phone_number.replace(/\s/g, '');
-                if (!phoneRegex.test(cleanPhone)) {
+                if (!phoneRegex.test(normalized.phone_number)) {
                     showAlert('Erreur', 'Le numéro de téléphone doit contenir 10 chiffres');
                     return;
                 }
@@ -225,15 +236,15 @@ export default function ProfilCard({
 
             // Save in database
             if (onSave) {
-                await onSave(formData);
+                await onSave(normalized);
             }
 
             // Update original data with new data saved
-            setOriginalData({ ...formData });
+            setOriginalData({ ...normalized, password: '', confirmPassword: '' });
+            setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
             setIsEditing(false);
             
             showAlert('Succès', 'Profil enregistré avec succès');
-            console.log('Données sauvegardées:', formData);
         } catch (error) {
             showAlert('Erreur', 'Impossible de sauvegarder les modifications');
             console.error('Erreur de sauvegarde:', error);
@@ -269,7 +280,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.last_name}
-                                    value={formData.last_name}
+                                    value={formData.last_name ?? ''}
                                     onChangeText={(text) => handleChange('last_name', text)}
                                 />
                                 <View style={styles.separator} />
@@ -286,7 +297,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.first_name}
-                                    value={formData.first_name}
+                                    value={formData.first_name ?? ''}
                                     onChangeText={(text) => handleChange('first_name', text)}
                                 />
                                 <View style={styles.separator} />
@@ -303,7 +314,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.username}
-                                    value={formData.username}
+                                    value={formData.username ?? ''}
                                     onChangeText={(text) => handleChange('username', text)}
                                 />
                                 <View style={styles.separator} />
@@ -320,7 +331,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.birthdate}
-                                    value={formData.birthdate}
+                                    value={formData.birthdate ?? ''}
                                     onChangeText={(text) => handleChange('birthdate', text)}
                                 />
                                 <View style={styles.separator} />
@@ -337,7 +348,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.name}
-                                    value={formData.name}
+                                    value={formData.name ?? ''}
                                     onChangeText={(text) => handleChange('name', text)}
                                 />
                                 <View style={styles.separator} />
@@ -354,7 +365,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.company_name}
-                                    value={formData.company_name}
+                                    value={formData.company_name ?? ''}
                                     onChangeText={(text) => handleChange('company_name', text)}
                                 />
                                 <View style={styles.separator} />
@@ -371,7 +382,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder="06 85 54 23 81"
-                                    value={formData.phone_number}
+                                    value={formData.phone_number ?? ''}
                                     onChangeText={(text) => handleChange('phone_number', text)}
                                     keyboardType="phone-pad"
                                 />
@@ -389,7 +400,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder="exemple@gmail.com"
-                                    value={formData.email}
+                                    value={formData.email ?? ''}
                                     onChangeText={(text) => handleChange('email', text)}
                                     keyboardType="email-address"
                                     autoCapitalize="none"
@@ -407,9 +418,9 @@ export default function ProfilCard({
                             <View style={styles.inputWrapper}>
                                 <TextInput
                                     style={styles.input}
-                                    placeholder={labels.adress}
-                                    value={formData.adress}
-                                    onChangeText={(text) => handleChange('adress', text)}
+                                    placeholder={labels.address}
+                                    value={formData.address ?? ''}
+                                    onChangeText={(text) => handleChange('address', text)}
                                 />
                                 <View style={styles.separator} />
                             </View>
@@ -425,7 +436,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.zip_code}
-                                    value={formData.zip_code}
+                                    value={formData.zip_code ?? ''}
                                     onChangeText={(text) => handleChange('zip_code', text)}
                                 />
                                 <View style={styles.separator} />
@@ -442,7 +453,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={[styles.input, { minHeight: 100 }]}
                                     placeholder={labels.skills}
-                                    value={formData.skills}
+                                    value={formData.skills ?? ''}
                                     onChangeText={(text) => handleChange('skills', text)}
                                     multiline
                                     numberOfLines={4}
@@ -461,7 +472,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={[styles.input, { minHeight: 100 }]}
                                     placeholder={labels.bio}
-                                    value={formData.bio}
+                                    value={formData.bio ?? ''}
                                     onChangeText={(text) => handleChange('bio', text)}
                                     multiline
                                     numberOfLines={4}
@@ -480,7 +491,7 @@ export default function ProfilCard({
                                 <TextInput
                                     style={styles.input}
                                     placeholder={labels.rna_code}
-                                    value={formData.rna_code}
+                                    value={formData.rna_code ?? ''}
                                     onChangeText={(text) => handleChange('rna_code', text)}
                                 />
                                 <View style={styles.separator} />
@@ -496,7 +507,7 @@ export default function ProfilCard({
                             <TextInput
                                 style={styles.input}
                                 placeholder="••••••••••"
-                                value={formData.password}
+                                value={formData.password ?? ''}
                                 onChangeText={(text) => handleChange('password', text)}
                                 secureTextEntry
                             />
@@ -512,7 +523,7 @@ export default function ProfilCard({
                             <TextInput
                                 style={styles.input}
                                 placeholder="••••••••••"
-                                value={formData.confirmPassword}
+                                value={formData.confirmPassword ?? ''}
                                 onChangeText={(text) => handleChange('confirmPassword', text)}
                                 secureTextEntry
                             />
