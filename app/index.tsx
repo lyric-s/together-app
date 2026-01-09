@@ -22,5 +22,5 @@ export default function Index() {
   }
 
   // Web platform: redirect to main home page
-  return <Redirect href="/(main)/home/AccountBenevole" />;
+  return <Redirect href="/(main)/library/upcoming/volunteer_upcoming_activity" />;
 }
