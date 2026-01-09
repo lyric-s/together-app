@@ -25,6 +25,11 @@ type ProfileLabels = {
     company_name?: string;
 };
 
+type ProfileFormData = Partial<ProfileData> & {
+   password?: string;
+   confirmPassword?: string;
+};
+
 type Props = {
     userType: UserType;
     userData: ProfileData; // Data of the user from the database
@@ -100,7 +105,7 @@ export default function ProfilCard({
     const [originalData, setOriginalData] = useState<ProfileData>(userData);
     
     // Editable data (working copy)
-    const [formData, setFormData] = useState<ProfileData>({ ...userData });
+    const [formData, setFormData] = useState<ProfileFormData>({ ...userData });
 
     // Update the data when userData change (ex: after a refresh of database)
     useEffect(() => {
@@ -145,16 +150,26 @@ export default function ProfilCard({
     const handleSubmit = async () => {
         try {
             const normalized: ProfileData = {
-                ...formData,
-                last_name: formData.last_name?.trim(),
-                first_name: formData.first_name?.trim(),
-                username: formData.username?.trim(),
-                birthdate: formData.birthdate?.trim(),
-                rna_code: formData.rna_code?.trim(),
-                name: formData.name?.trim(),
-                company_name: formData.company_name?.trim(),
-                email: formData.email?.trim(),
-                phone_number: formData.phone_number?.replace(/\s/g, ''),
+                picture: formData.picture ?? DEFAULT_PHOTO,
+                id_volunteer: formData.id_volunteer ?? -1,
+                id_admin: formData.id_admin ?? -1,
+                id_asso: formData.id_asso ?? -1,
+                last_name: (formData.last_name ?? '').trim(),
+                first_name: (formData.first_name ?? '').trim(),
+                username: (formData.username ?? '').trim(),
+                birthdate: (formData.birthdate ?? '').trim(),
+                rna_code: (formData.rna_code ?? '').trim(),
+                name: (formData.name ?? '').trim(),
+                company_name: (formData.company_name ?? '').trim(),
+                address: (formData.address ?? '').trim(),
+                zip_code: (formData.zip_code ?? '').trim(),
+                skills: (formData.skills ?? '').trim(),
+                bio: (formData.bio ?? '').trim(),
+                country: (formData.country ?? '').trim(),
+                email: (formData.email ?? '').trim(),
+                phone_number: (formData.phone_number ?? '').replace(/\s/g, ''),
+                password: formData.password ?? '',
+                confirmPassword: formData.confirmPassword ?? '',
             };
             if (userType === 'volunteer' || userType === 'admin') {
                 if (!normalized.last_name) {
@@ -241,7 +256,7 @@ export default function ProfilCard({
 
             // Update original data with new data saved
             setOriginalData({ ...normalized, password: '', confirmPassword: '' });
-            setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
+            setFormData(prev => ({ ...prev, ...normalized, password: '', confirmPassword: '' }));
             setIsEditing(false);
             
             showAlert('Succès', 'Profil enregistré avec succès');
