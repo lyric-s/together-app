@@ -121,10 +121,9 @@ export default function ProfilAdmin() {
                 email: data.email ?? profileUser.email,
                 ...(data.password ? { password: data.password } : {})
             }
-            const res = await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
+            await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
             setProfileUser(prev => prev ? ({ ...prev, ...payloadAdmin }) : null);
             await refetchUser(); // Synchro AutoContext
-            showAlert('Succès', 'Les informations du profil ont été mises à jour avec succès.');
         } catch (error) {
             showAlert('Erreur', 'Échec de la mise à jour du profil.');
         }
