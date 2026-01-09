@@ -1,8 +1,16 @@
-// app/(admin)/profile/index.tsx
-import React from 'react';
-import ProfilAdmin from '@/screens/ProfilAdminScreen';
+// screens/ProfilAdminScreen.tsx
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, Text, ScrollView, useWindowDimensions, Platform, } from 'react-native';
+import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { ProfileData } from '@/types/ProfileUser';
+import AlertToast from '@/components/AlertToast';
+import { Colors } from '@/constants/colors';
+import { styles } from '@/styles/pages/ProfilCSS';
+import ProfilCard from '@/components/ProfilCard';
+import { adminService } from '@/services/adminService';
+import { useAuth } from '@/context/AuthContext';
 
-<<<<<<< HEAD
 /**
  * Admin profile screen that displays and allows editing of the authenticated admin's profile.
  *
@@ -35,10 +43,6 @@ export default function ProfilAdmin() {
         if (isAuthLoading) return;
 
         if (userType !== 'admin') {
-<<<<<<< HEAD:app/(main)/profile/ProfilAdmin.tsx
-            const isWeb = Platform.OS !== 'web';
-=======
->>>>>>> fce15cb (fix: TA-88 add route structure via (volunteer)/ (association)/ (admin)/):app/(admin)/profile/index.tsx
             console.log(`⛔ Accès refusé (${userType}) -> Redirection`);
             router.replace('/(auth)/login');
         }
@@ -68,7 +72,7 @@ export default function ProfilAdmin() {
                 phone_number: '',
                 birthdate: '',
                 skills: '',
-                adress: '',
+                address: '',
                 zip_code: '',
                 bio: '',
                 name: '',
@@ -98,19 +102,14 @@ export default function ProfilAdmin() {
         if (!profileUser?.id_admin) return;
         try {
             const payloadAdmin = {
-                last_name: data.last_name!,
-                first_name: data.first_name!,
-                username: data.username!,
-                email: data.email!,
+                last_name: data.last_name ?? profileUser.last_name,
+                first_name: data.first_name ?? profileUser.first_name,
+                username: data.username ?? profileUser.username,
+                email: data.email ?? profileUser.email,
                 ...(data.password ? { password: data.password } : {})
             }
-<<<<<<< HEAD
-            const res = await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
-            setProfileUser(prev => prev ? ({ ...prev, ...data }) : null);
-=======
             await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
             setProfileUser(prev => prev ? ({ ...prev, ...payloadAdmin }) : null);
->>>>>>> cfd986d (fix: TA-88 refresh token in login, unsafe context for authcontext, does not display attributes when there is nothing in profilcard)
             await refetchUser(); // Synchro AutoContext
         } catch (error) {
             showAlert('Erreur', 'Échec de la mise à jour du profil.');
@@ -176,8 +175,4 @@ export default function ProfilAdmin() {
             </LinearGradient>
         </>
     );
-=======
-export default function ProfilAdminScreen() {
-    return <ProfilAdmin />;
->>>>>>> 15ecf8c (fix: TA-88 implementation page in route via index.tsx)
 }
