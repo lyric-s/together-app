@@ -290,8 +290,7 @@ export default function VolunteerUpcomingActivity() {
             value="A venir"
             onChange={(tab) => {
               if (tab === 'Historique') {
-                router.push('(main)/library/history/volunteer_previous_activity'as RelativePathString);
-              }
+                router.push('(main)/library/history/volunteer_previous_activity' as RelativePathString);              }
             }}
           />
         </View>

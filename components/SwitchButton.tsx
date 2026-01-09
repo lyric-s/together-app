@@ -55,10 +55,9 @@ export default function SwitchButton({
         activity: {
             left: 'A venir',
             right: 'Historique',
-            routes: { left: '/(main)/library/upcoming/volunteer_upcoming_activity', right: '(main)/library/history/volunteer_previous_activity' },
+            routes: { left: '/(main)/library/upcoming/volunteer_upcoming_activity', right: '/(main)/library/history/volunteer_previous_activity' },
             theme: THEMES.auth
-        }
-    };
+        }    };
 
     const currentConfig = config[variant];
     const initialTab = defaultValue || currentConfig.left;
