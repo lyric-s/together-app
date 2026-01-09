@@ -18,6 +18,14 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'expo-router';
 import { useAuth, UserType } from '@/context/AuthContext';
 
+/**
+ * Displays a centered splash image with a fade animation and redirects the user to the appropriate route.
+ *
+ * The component runs a fade-in/hold/fade-out animation on mount and then performs navigation based on platform, authentication loading state, and `userType`. It also triggers an immediate redirect once authentication finishes if the splash animation has already completed.
+ *
+ * @returns The splash screen view containing an animated image.
+ */
+
 export default function Splash() {
   const router = useRouter();
   const opacity = useRef(new Animated.Value(0)).current;

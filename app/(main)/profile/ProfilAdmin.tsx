@@ -11,6 +11,15 @@ import ProfilCard from '@/components/ProfilCard';
 import { adminService } from '@/services/adminService';
 import { useAuth } from '@/context/AuthContext';
 
+/**
+ * Admin profile screen that displays and allows editing of the authenticated admin's profile.
+ *
+ * Fetches the current admin profile on load, redirects users who are not admins, shows loading and alert states,
+ * and provides a save handler that updates the profile and refreshes authentication context.
+ *
+ * @returns The JSX element rendering the admin profile screen.
+ */
+
 export default function ProfilAdmin() {
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 900;
