@@ -4,7 +4,7 @@ import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'reac
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
 import { ProfileData } from '@/types/ProfileUser';
-import { UserType } from '@/context/AuthContext';'
+import { UserType } from '@/context/AuthContext';
 
 type ProfileLabels = {
     username?: string;
