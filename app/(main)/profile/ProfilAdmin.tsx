@@ -110,7 +110,7 @@ export default function ProfilAdmin() {
         setAlertModal({ visible: true, title, message });
     }, []);
 
-    const handleSave = async (data: Partial<ProfileData>):Promise<void> => {
+    const handleSave = async (data: ProfileData):Promise<void> => {
         // Here you would typically send the updated data to your backend/server
         if (!profileUser?.id_admin) return;
         try {
