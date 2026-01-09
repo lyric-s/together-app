@@ -4,8 +4,7 @@ import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'reac
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
 import { ProfileData } from '@/types/ProfileUser';
-
-type UserType = 'volunteer' | 'association' | 'admin' | 'volunteer_guest';
+import { UserType } from '@/context/AuthContext';'
 
 type ProfileLabels = {
     username?: string;
@@ -653,7 +652,7 @@ export default function ProfilCard({
                         </View>
                     ) : null}
 
-                    {(userType === 'volunteer') && labels.zip_code && userData.zip_code && formData.zip_code ? (
+                    {(userType === 'volunteer') && labels.zip_code && formData.zip_code ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.zip_code}</Text>

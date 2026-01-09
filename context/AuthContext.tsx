@@ -167,7 +167,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     refetchUser();
-  }, []);
+  }, [refetchUser]);
 
   return (
     <AuthContext.Provider value={{
