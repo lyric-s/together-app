@@ -130,10 +130,18 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
   else if (userType === 'association') activeSection = sections.association;
   else if (userType === 'admin') activeSection = sections.admin;
 
-  const securityItems = [
+  const securityItemsConnected = [
     { icon: require("../assets/images/logout.png"), label: "Déconnexion", route: "LOGOUT_ACTION" },
     { icon: require("../assets/images/settings.png"), label: "Réglages", route: "/settings" },
   ];
+
+  const securityItemsGuest = [
+    { icon: require("../assets/images/login.png"), label: "Se connecter", route: "/(auth)/login" },
+  ];
+
+  const securityItems = userType === 'volunteer_guest' 
+    ? securityItemsGuest 
+    : securityItemsConnected;
 
   const handleNavigation = (route: string) => {
     if (route === "LOGOUT_ACTION") {
@@ -203,7 +211,9 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
             </View>
 
             <View>
-              <Text style={styles.sectionTitle}>SECURITE</Text>
+              <Text style={styles.sectionTitle}>
+                {userType === 'volunteer_guest' ? 'COMPTE' : 'SECURITE'}
+              </Text>
               {securityItems.map((item, i) => (
                 <SidebarButton
                   key={i}
