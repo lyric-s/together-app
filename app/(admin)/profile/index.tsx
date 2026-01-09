@@ -1,4 +1,4 @@
-// ProfilAdmin.tsx
+// index.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, useWindowDimensions, Platform, } from 'react-native';
 import { router } from 'expo-router';
@@ -23,15 +23,8 @@ import { useAuth } from '@/context/AuthContext';
 export default function ProfilAdmin() {
     const { width } = useWindowDimensions();
     const isSmallScreen = width < 900;
-    
-    /*
-    const [profileUser, setProfileUser] = useState<any>({
-        id_admin: 0,
-        last_name: 'Xavier',
-        first_name: 'Paul',
-        email: 'paul.xavier@gmail.com',
-    });
-    */
+    const isWeb = Platform.OS === 'web';
+
     // We distinguish between page loading and authentication loading
     const { user, userType, isLoading: isAuthLoading, refetchUser } = useAuth();
     
@@ -45,27 +38,17 @@ export default function ProfilAdmin() {
         message: '' 
     });
 
-    
     useEffect(() => {
         // While the authentication is loading, we do nothing.
         if (isAuthLoading) return;
 
         if (userType !== 'admin') {
+<<<<<<< HEAD:app/(main)/profile/ProfilAdmin.tsx
             const isWeb = Platform.OS !== 'web';
+=======
+>>>>>>> fce15cb (fix: TA-88 add route structure via (volunteer)/ (association)/ (admin)/):app/(admin)/profile/index.tsx
             console.log(`⛔ Accès refusé (${userType}) -> Redirection`);
-            if (!userType || userType === 'volunteer_guest') {
-                router.replace('/(main)/home/AccountWithoutCo');
-            }
-            else if (userType === 'volunteer') {
-                router.replace('/(main)/home/AccountBenevole');
-            }
-            else if (userType === 'association' && isWeb) {
-                router.replace('/(main)/home/AccountAsso');
-            }
-            else {
-                // Mobile asso → home (pas de profil asso mobile)
-                router.replace('/(main)/home/AccountWithoutCo');
-            }
+            router.replace('/(auth)/login');
         }
     }, [userType, isAuthLoading]);
 
@@ -120,7 +103,6 @@ export default function ProfilAdmin() {
     }, []);
 
     const handleSave = async (data: ProfileData):Promise<void> => {
-        // Here you would typically send the updated data to your backend/server
         if (!profileUser?.id_admin) return;
         try {
             const payloadAdmin = {
@@ -143,10 +125,28 @@ export default function ProfilAdmin() {
         }
     }
 
-    if (isAuthLoading || isPageLoading || !profileUser) {
+    if (isAuthLoading || isPageLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white }}>
                 <Text>Chargement...</Text>
+            </View>
+        );
+    }
+
+    if (!isWeb) {
+         return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+                <Text style={{ fontSize: 18, textAlign: 'center' }}>
+                    L'espace administrateur est uniquement accessible sur ordinateur.
+                </Text>
+            </View>
+        );
+    }
+
+    if (!profileUser) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Impossible de charger les données du profil.</Text>
             </View>
         );
     }

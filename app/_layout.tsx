@@ -11,13 +11,11 @@
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { usePathname } from 'expo-router';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { AuthProvider } from '@/context';
+import { AuthProvider } from '@/context/AuthContext';
 
 /**
  * RootLayout component that serves as the top-level layout wrapper.
@@ -35,13 +33,10 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AuthProvider>
-        <View style={{ flex: 1 }}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name='splash' />
-          <Stack.Screen name="index" />
-        </Stack>
-        </View>
-        <StatusBar style="auto" />
+            <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" />
+            </Stack>
+            <StatusBar style="auto" />
         </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
