@@ -84,6 +84,15 @@ const getLabels = (userType: UserType): ProfileLabels => {
     }
 };
 
+/**
+ * Render an editable profile card that displays and allows editing of a volunteer, association, or admin profile.
+ *
+ * @param userType - Determines which fields and labels are shown: "volunteer", "association", or "admin".
+ * @param userData - Initial profile values displayed and used to populate the edit form.
+ * @param onSave - Optional callback invoked with the normalized ProfileData when the user saves changes.
+ * @param showAlert - Function used to display success or error alerts to the user.
+ * @returns A React element displaying the profile in view mode or an editable form in edit mode.
+ */
 export default function ProfilCard({
     userType,
     userData,

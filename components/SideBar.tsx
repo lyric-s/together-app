@@ -55,27 +55,16 @@ function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps
 }
 
 /**
- * Sidebar component for web and responsive layouts.
+ * Renders the application sidebar with responsive behavior and navigation controls.
  *
- * @param userType - Type of the user ("volunteer", "volunteer_guest", "association", "admin")
- * @param userName - Display name of the user or association
- * @param onNavigate - Callback to navigate when a button is clicked; receives the route string
+ * On wide screens the sidebar is shown permanently; on narrow screens it is toggled by a burger button
+ * and appears as an overlay that does not resize main content. Selecting a navigation item on narrow
+ * screens closes the sidebar. The sidebar shows an app title derived from the user type, a profile
+ * row, and two sections of navigation items (GENERAL and SECURITE) with active-item highlighting.
  *
- * Responsive behavior:
- * - On large screens (desktop), the sidebar is permanently visible and occupies a fixed space
- *   on the left side of the layout.
- * - On small screens, the sidebar is hidden by default and replaced by a burger menu button.
- * - The burger button toggles the visibility of the sidebar.
- * - When opened on small screens, the sidebar appears as an overlay (absolute positioned)
- *   and does NOT push or resize the main content.
- * - Selecting a navigation item on small screens automatically closes the sidebar.
- *
- * Displays:
- * - App title based on user type
- * - Profile picture and user name
- * - Two sections: GENERAL (main navigation) and SECURITE (logout/settings)
- * - Buttons highlight in bright orange when active
- * - Scrollable content when menu height exceeds viewport
+ * @param userType - One of "volunteer", "volunteer_guest", "association", or "admin"; determines available routes and the app title
+ * @param userName - Display name shown in the profile row
+ * @param onNavigate - Callback invoked with the destination route string when a navigation item is selected
  */
 export default function Sidebar({ userType, userName, onNavigate }: SidebarProps) {
   const { width } = useWindowDimensions();

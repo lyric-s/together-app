@@ -9,12 +9,12 @@ import { Platform } from "react-native";
 
 
 /**
- * Redirects the user to the platform-appropriate initial route.
+ * Redirects the user to the application's splash route.
  *
- * On native platforms (iOS/Android) this navigates to `/splash`; on web it navigates to `/(main)/home/AccountBenevole`.
+ * The splash screen will perform any further routing decisions (for example based on authentication).
  *
- * @returns A `Redirect` element that navigates to the initial route for the current platform.
-*/
+ * @returns A `Redirect` element that navigates to `/splash`.
+ */
 export default function Index() {
   // We let the Splash Screen decide where to send us based on the AuthContext
   return <Redirect href="/splash" />;

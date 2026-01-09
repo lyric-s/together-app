@@ -17,13 +17,11 @@ import Sidebar from '@/components/SideBar';
 import { useAuth } from '@/context';
 import {UserType} from '@/context/AuthContext'
 /**
- * RootLayout component that serves as the top-level layout wrapper.
+ * Top-level layout for the app that composes navigation and platform-specific chrome.
  *
- * Provides theme context to all child components and configures the navigation stack
- * with the application's main screens. The theme automatically switches between
- * dark and light modes based on the device's color scheme preference.
+ * Uses authentication context to derive the current user's type and display name (defaults: `userType` -> `'volunteer_guest'`, `userName` -> `'Invité'`), renders a sidebar on non-mobile platforms and a bottom navigation bar on mobile, and provides the main navigation Stack for app screens.
  *
- * @returns {JSX.Element} The themed navigation stack with status bar configuration.
+ * @returns The root JSX element containing the app's navigation layout and platform-specific navigation UI.
  */
 export default function RootLayout() {
   const { user, isLoading, userType } = useAuth();
