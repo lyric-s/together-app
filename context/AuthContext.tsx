@@ -32,12 +32,20 @@ type AuthContextType = {
   userType: UserType | null;
   isLoading: boolean;
   error: string | null;
-  login: (token: string) => Promise<void>;
+  login: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refetchUser: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -113,9 +121,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [API_URL]);
 
-  const login = useCallback(async (accessToken: string) => {
+  const login = useCallback(async (accessToken: string, refreshToken: string) => {
     try {
-      await storageService.saveTokens(accessToken, '');
+      await storageService.saveTokens(accessToken, refreshToken);
       await refetchUser();
     } catch (e) {
       console.error('Login error:', e);
@@ -154,5 +162,3 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

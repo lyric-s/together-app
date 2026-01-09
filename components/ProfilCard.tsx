@@ -546,7 +546,7 @@ export default function ProfilCard({
                         style={styles.photo}
                     />
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.last_name && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.last_name && formData.last_name ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.last_name}</Text>
@@ -556,9 +556,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.first_name && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.first_name && formData.first_name ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.first_name}</Text>
@@ -568,9 +568,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.username && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.username && formData.username ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.username}</Text>
@@ -580,9 +580,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
                     
-                    {(userType === 'benevole') && labels.birthdate && (
+                    {(userType === 'volunteer') && labels.birthdate && formData.birthdate ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.birthdate}</Text>
@@ -592,9 +592,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'asso') && labels.name && (
+                    {(userType === 'association') && labels.name && formData.name ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.name}</Text>
@@ -604,9 +604,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'asso') && labels.company_name && (
+                    {(userType === 'association') && labels.company_name && formData.company_name ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.company_name}</Text>
@@ -616,9 +616,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {userType === 'benevole' || userType === 'asso' && labels.phone_number && (
+                    {(userType === 'volunteer' || userType === 'association') && labels.phone_number && formData.phone_number ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.phone_number}</Text>
@@ -628,9 +628,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'benevole' || userType === 'admin') && labels.email && (
+                    {(userType === 'volunteer' || userType === 'admin') && labels.email && formData.email ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.email}</Text>
@@ -640,9 +640,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
                     
-                    {(userType === 'benevole') && labels.adress && userData.adress && (
+                    {(userType === 'volunteer') && labels.address && formData.address ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.adress}</Text>
@@ -652,9 +652,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'benevole') && labels.zip_code && userData.zip_code && (
+                    {(userType === 'volunteer') && labels.zip_code && userData.zip_code && formData.zip_code ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.zip_code}</Text>
@@ -664,9 +664,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'benevole') && labels.skills && userData.skills && (
+                    {(userType === 'volunteer') && labels.skills && formData.skills ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.skills}</Text>
@@ -676,9 +676,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {(userType === 'benevole') && labels.bio && userData.bio && (
+                    {(userType === 'volunteer') && labels.bio && formData.bio ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.bio}</Text>
@@ -688,9 +688,9 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {userType === 'asso' && labels.rna_code && (
+                    {userType === 'association' && labels.rna_code && formData.rna_code ? (
                         <View style={styles.inputRow}>
                             <View style={styles.labelContainer}>
                                 <Text style={styles.label}>{labels.rna_code}</Text>
@@ -700,7 +700,7 @@ export default function ProfilCard({
                                 <View style={styles.separator} />
                             </View>
                         </View>
-                    )}
+                    ) : null}
             
                     <View style={{ width: '100%', marginTop: 20, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', }}>
                         <CustomButton

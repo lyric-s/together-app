@@ -121,10 +121,14 @@ export default function ProfilAdmin() {
                 email: data.email!,
                 ...(data.password ? { password: data.password } : {})
             }
+<<<<<<< HEAD
             const res = await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
             setProfileUser(prev => prev ? ({ ...prev, ...data }) : null);
+=======
+            await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
+            setProfileUser(prev => prev ? ({ ...prev, ...payloadAdmin }) : null);
+>>>>>>> cfd986d (fix: TA-88 refresh token in login, unsafe context for authcontext, does not display attributes when there is nothing in profilcard)
             await refetchUser(); // Synchro AutoContext
-            showAlert('Succès', 'Les informations du profil ont été mises à jour avec succès.');
         } catch (error) {
             showAlert('Erreur', 'Échec de la mise à jour du profil.');
         }
