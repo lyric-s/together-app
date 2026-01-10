@@ -46,18 +46,6 @@ export default function ProfilAdmin() {
         setAlertModal({ visible: true, title, message });
     }, []);
 
-    if (isAuthLoading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white }}>
-                <ActivityIndicator size="large" color={Colors.orange} />
-            </View>
-        );
-    }
-
-    if (userType !== 'admin') {
-        return <Redirect href="/(auth)/login" />;
-    }
-
     const fetchProfile = useCallback( async () => {
         setIsPageLoading(true);
         try {
@@ -85,6 +73,18 @@ export default function ProfilAdmin() {
         }
     }, [user, fetchProfile]);
 
+    if (isAuthLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white }}>
+                <ActivityIndicator size="large" color={Colors.orange} />
+            </View>
+        );
+    }
+
+    if (userType !== 'admin') {
+        return <Redirect href="/(auth)/login" />;
+    }
+
     const handleSave = async (data: UserProfile): Promise<void> => {
         if (!profileUser?.id_admin) {
             showAlert('Erreur', 'Identifiant administrateur manquant.');
@@ -98,7 +98,6 @@ export default function ProfilAdmin() {
             const payloadAdmin = {
                 last_name: data.last_name ?? profileUser.last_name,
                 first_name: data.first_name ?? profileUser.first_name,
-                username: data.username ?? profileUser.username,
                 email: data.email ?? profileUser.email,
                 ...(data.password ? { password: data.password } : {})
             }
