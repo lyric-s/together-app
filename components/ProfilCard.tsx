@@ -120,7 +120,7 @@ export default function ProfilCard({
     useEffect(() => {
         setOriginalData(userData);
         if (!isEditing) setFormData({ ...userData });
-    }, [userData]);
+    }, [userData, isEditing]);
 
     const handleChange = (field: string, value: string) => {
         // Only working copy
@@ -227,7 +227,7 @@ export default function ProfilCard({
             else if (isAsso(formData)) {
                 // Validation Association
                 if (!formData.name?.trim() || !formData.company_name?.trim() || !formData.rna_code?.trim() || !formData.phone_number?.trim() || !formData.email?.trim()) {
-                    return showAlert('Erreur', 'Champs obligatoire manquants');
+                    return showAlert('Erreur', 'Champs obligatoires manquants');
                 }
                 if (!emailRegex.test(formData.email.trim())) {
                     return showAlert('Erreur', "L'adresse email n'est pas valide.");
