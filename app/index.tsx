@@ -7,6 +7,11 @@ import AnimatedSplashScreen from '@/components/AnimatedSplash';
 
 SplashScreen.preventAutoHideAsync();
 
+/**
+ * Selects and renders the initial app view: shows an animated splash on native platforms while authentication is loading, then redirects to the appropriate route based on the signed-in user and their `userType`.
+ *
+ * @returns The root React element for the index route — either the splash animation or a `Redirect` to the resolved home/dashboard route.
+ */
 export default function IndexDispatcher() {
   const { userType, isLoading, user } = useAuth();
   const [isAnimationFinished, setIsAnimationFinished] = useState(false);

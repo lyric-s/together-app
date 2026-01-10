@@ -95,6 +95,19 @@ const getLabels = (userType: UserType): ProfileLabels => {
     }
 };
 
+/**
+ * Render and manage an editable profile card for admin, volunteer, or association users.
+ *
+ * The component displays profile fields appropriate to the user's subtype, allows switching
+ * between view and edit modes, supports picking a profile image, performs per-type validation,
+ * and invokes `onSave` with a sanitized UserProfile payload when changes are saved.
+ *
+ * @param userType - The current user subtype used to derive labels and visible fields
+ * @param userData - The source UserProfile shown and edited in the card
+ * @param onSave - Optional callback invoked with the final UserProfile payload after successful validation
+ * @param showAlert - Function used to present user-facing alert messages for validation or errors
+ * @returns A React element rendering the profile card UI
+ */
 export default function ProfilCard({
     userType,
     userData,

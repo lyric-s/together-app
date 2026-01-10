@@ -42,15 +42,13 @@ type SidebarButtonProps = {
 };
 
 /**
- * SidebarButton component for the sidebar menu.
+ * Render a sidebar menu button containing an icon and a label.
  *
- * @param icon - Image source of the button icon
- * @param label - Text label displayed next to the icon
- * @param onPress - Callback executed when the button is pressed
- * @param active - Boolean indicating if the button is currently active (changes background color)
- *
- * Renders a horizontal button with an icon on the left and a label on the right.
- * When `active` is true, the background becomes bright orange to highlight selection.
+ * @param icon - Image source used for the button icon
+ * @param label - Text displayed next to the icon
+ * @param onPress - Callback invoked when the button is pressed
+ * @param active - When `true`, applies active styling to indicate selection
+ * @returns A React element representing the touchable sidebar button
  */
 function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps) {
   const { width } = useWindowDimensions();

@@ -1,6 +1,10 @@
 // app/(association)/history/index.tsx
 import React from 'react';
-//import HistoryAsso from '@/pages/HistoryAsso';
+/**
+ * Placeholder React component for the association history page.
+ *
+ * @returns The component's rendered React node; currently `null`.
+ */
 
 export default function HistoryAssoPage() {
 //    return <HistoryAsso />;

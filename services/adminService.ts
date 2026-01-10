@@ -3,7 +3,18 @@ import { AxiosError } from 'axios';
 import { Volunteer,} from '@/models/volunteer.model';
 import { Admin, AdminCreate, AdminUpdate } from '@/models/admin.model';
 
-// --- Error handling helper ---
+/**
+ * Normalize and rethrow API errors as user-friendly Error instances.
+ *
+ * Processes the provided error; if it is an AxiosError, extracts a backend message
+ * from `response.data.detail`, `response.data.message`, or `error.message` (falling
+ * back to a default French message), logs that message to the console, and throws
+ * a new Error with the message. For non-Axios errors, throws a generic French
+ * connection error.
+ *
+ * @param error - The thrown error to normalize and rethrow
+ * @throws An Error containing the extracted backend message for Axios errors, or a generic connection error for other error types
+ */
 function handleApiError(error: unknown): never {
   if (error instanceof AxiosError) {
     // Attempts to retrieve the error message from the backend (FastAPI/Django/Node)
