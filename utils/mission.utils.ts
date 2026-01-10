@@ -7,4 +7,4 @@ export function isMissionFinished(mission: Mission): boolean {
   return new Date(mission.date_end) < new Date();
 }
 
-// + nb of participant for a mission
+// TODO: Add utility to calculate number of participants for a mission

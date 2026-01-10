@@ -11,6 +11,7 @@ import ProfilePicture from "./ProfilPicture";
 import { getStyles } from "../styles/components/SideBarStyle";
 import { usePathname, Href } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
+import { normalizePath } from '@/utils/path.utils';
 
 const MOBILE_BREAKPOINT = 900;
 
@@ -26,10 +27,6 @@ const resolvePath = (route: Href | string): string => {
     return route.pathname;
   }
   return '';
-};
-
-const normalizePath = (path: string) => {
-    return path.replace(/\/\([^)]+\)/g, '');
 };
 
 type MenuItem = {

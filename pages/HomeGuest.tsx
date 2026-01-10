@@ -30,7 +30,7 @@ export default function HomeGuest() {
     const loadMissions = async () => {
       try {
         const data = await missionService.getAll();
-        setMissions(data);
+        setMissions(data ?? []);
       } catch (e) {
         console.error(e);
       } finally {
@@ -42,7 +42,6 @@ export default function HomeGuest() {
 
   const handlePressMission = (missionId: number) => {
     console.log('Mission pressed:', missionId);
-    //router.push('/(auth)/login');
     router.push(`/(guest)/search/mission/${missionId}`);
   };
 

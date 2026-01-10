@@ -2,9 +2,9 @@
 import React from 'react';
 import HomeGuest from '@/pages/HomeGuest';
 /**
- * Placeholder page component for the guest home route.
+ * Guest home route component.
  *
- * @returns No rendered output; the component currently does not return any JSX.
+ * @returns The HomeGuest component displaying available mission.
  */
 
 export default function HomeGuestPage() {

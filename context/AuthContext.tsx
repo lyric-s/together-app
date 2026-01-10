@@ -118,6 +118,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             let standardUser: AuthUser;
             if (type === 'volunteer' || type === 'association') {
               const { user, ...restOfData } = rawData;
+              if (!user || typeof user.id_user === 'undefined') {
+                console.warn(`⚠️ Unexpected response structure for ${type}`);
+                continue;
+              }
               standardUser = {
                 id_user: user.id_user,
                 email: user.email,
