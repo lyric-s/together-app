@@ -1,7 +1,7 @@
 // app/(association)/mission_creation/index.tsx
 import React from 'react';
-import MissionCreation from '@/screens/MissionCreationScreen';
+import MissionCreation from '@/pages/MissionCreation';
 
-export default function MissionCreationScreen() {
+export default function MissionCreationPage() {
     return <MissionCreation />;
 }

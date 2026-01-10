@@ -1,7 +1,7 @@
 // app/(admin)/report/index.tsx
 import React from 'react';
-import ReportsVerification from '@/screens/ReportsVerificationScreen';
+import ReportsVerification from '@/pages/ReportsVerification';
 
-export default function ReportsVerificationScreen() {
+export default function ReportsVerificationPage() {
     return <ReportsVerification />;
 }

@@ -1,7 +1,7 @@
 // app/(auth)/register.tsx
 import React from 'react';
-import Register from '@/screens/RegisterScreen';
+import Register from '@/pages/Register';
 
-export default function RegisterScreen() {
+export default function RegisterPage() {
     return <Register />
 }

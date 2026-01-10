@@ -1,7 +1,7 @@
 // app/(volunteer)/upcoming/index.tsx
 import React from 'react';
-import UpcomingVolunteer from '@/screens/UpcomingVolunteerScreen';
+import UpcomingVolunteer from '@/pages/UpcomingVolunteer';
 
-export default function UpcomingVolunteerScreen() {
+export default function UpcomingVolunteer() {
     return <UpcomingVolunteer />;
 }

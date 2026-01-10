@@ -1,4 +1,4 @@
-// screens/ProfilAdminScreen.tsx
+// pages/ProfilAdmin.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, useWindowDimensions, Platform, ActivityIndicator } from 'react-native';
 import { Redirect } from 'expo-router';

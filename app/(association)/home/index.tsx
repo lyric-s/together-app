@@ -1,7 +1,7 @@
 // app/(association)/home/index.tsx
 import React from 'react';
-import HomeAsso from '@/screens/HomeAssoScreen';
+import HomeAsso from '@/pages/HomeAsso';
 
-export default function HomeAssoScreen() {
+export default function HomeAssoPage() {
     return <HomeAsso />;
 }

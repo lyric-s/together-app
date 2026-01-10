@@ -1,7 +1,7 @@
 // app/(admin)/dashboard/index.tsx
 import React from 'react';
-import DashboardAdmin from '@/screens/DashboardAdminScreen';
+import DashboardAdmin from '@/pages/DashboardAdmin';
 
-export default function DashboardAdminScreen() {
+export default function DashboardAdminPage() {
     return <DashboardAdmin />;
 }

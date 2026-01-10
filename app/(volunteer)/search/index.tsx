@@ -1,7 +1,7 @@
 // app/(volunteer)/search/index.tsx
 import React from 'react';
-import SearchVolunteer from '@/screens/SearchVolunteerScreen';
+import SearchVolunteer from '@/pages/SearchVolunteer';
 
-export default function SearchVolunteerScreen() {
+export default function SearchVolunteerPage() {
     return <SearchVolunteer />;
 }

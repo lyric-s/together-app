@@ -1,7 +1,7 @@
 // app/(volunteer)/history/index.tsx
 import React from 'react';
-import HistoryVolunteer from '@/screens/HistoryVolunteerScreen';
+import HistoryVolunteer from '@/pages/HistoryVolunteer';
 
-export default function HistoryVolunteerScreen() {
+export default function HistoryVolunteerPage() {
     return <HistoryVolunteer />;
 }

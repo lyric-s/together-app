@@ -1,7 +1,7 @@
 // app/(guest)/home/index.tsx
 import React from 'react';
-import HomeGuest from '@/screens/HomeGuestScreen';
+import HomeGuest from '@/pages/HomeGuest';
 
-export default function HomeGuestScreen() {
+export default function HomeGuestPage() {
     return <HomeGuest />;
 }
