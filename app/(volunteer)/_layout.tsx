@@ -10,6 +10,15 @@ import Sidebar from '@/components/SideBar';
 import { useAuth } from '@/context/AuthContext';
 import { Colors } from '@/constants/colors';
 
+/**
+ * Layout component for the Volunteer area that enforces access control and provides platform-specific navigation.
+ *
+ * Renders a full-screen loading indicator while authentication is loading, redirects to the login route if the
+ * authenticated user's type is not "volunteer", and otherwise renders the main layout: a persistent Sidebar on web,
+ * a Stack containing the volunteer "home" and "profile" screens, and a BottomNavBar on non-web platforms.
+ *
+ * @returns The component's rendered JSX element: either the loading indicator, a redirect to login, or the volunteer layout with sidebar/stack/bottom navigation.
+ */
 export default function VolunteerLayout() {
   const { user, isLoading, userType } = useAuth();
   const isWeb = Platform.OS === 'web';
