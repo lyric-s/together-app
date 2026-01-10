@@ -1,7 +1,7 @@
 // app/(association)/profile/index.tsx
 import React from 'react';
-import ProfileAsso from '@/screens/ProfileAssoScreen';
+import ProfileAsso from '@/pages/ProfileAsso';
 
-export default function ProfileAssoScreen() {
+export default function ProfileAssoPage() {
     return <ProfileAsso />;
 }

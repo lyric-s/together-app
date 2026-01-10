@@ -1,7 +1,7 @@
 // app/(admin)/profile/index.tsx
 import React from 'react';
-import ProfilAdmin from '@/screens/ProfilAdminScreen';
+import ProfilAdmin from '@/pages/ProfilAdmin';
 
-export default function ProfilAdminScreen() {
+export default function ProfilAdminPage() {
     return <ProfilAdmin />;
 }

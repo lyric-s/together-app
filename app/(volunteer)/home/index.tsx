@@ -1,7 +1,7 @@
 // app/(volunteer)/home/index.tsx
 import React from 'react';
-import HomeVolunteer from '@/screens/HomeVolunteerScreen';
+import HomeVolunteer from '@/pages/HomeVolunteer';
 
-export default function HomeVolunteerScreen() {
+export default function HomeVolunteerPage() {
     return <HomeVolunteer />;
 }

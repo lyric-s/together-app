@@ -1,7 +1,7 @@
 // app/(association)/history/index.tsx
 import React from 'react';
-import HistoryAsso from '@/screens/HistoryAssoScreen';
+import HistoryAsso from '@/pages/HistoryAsso';
 
-export default function HistoryAssoScreen() {
+export default function HistoryAssoPage() {
     return <HistoryAsso />;
 }

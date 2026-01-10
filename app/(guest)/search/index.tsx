@@ -1,7 +1,7 @@
 // app/(guest)/search/index.tsx
 import React from 'react';
-import SearchGuest from '@/screens/SearchGuestScreen';
+import SearchGuest from '@/pages/SearchGuest';
 
-export default function SearchGuestScreen() {
+export default function SearchGuestPage() {
     return <SearchGuest />;
 }

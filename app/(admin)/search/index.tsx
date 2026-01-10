@@ -1,7 +1,7 @@
 // app/(admin)/search/index.tsx
 import React from 'react';
-import SearchAdmin from '@/screens/SearchAdminScreen';
+import SearchAdmin from '@/pages/SearchAdmin';
 
-export default function SearchAdminScreen() {
+export default function SearchAdminPage() {
     return <SearchAdmin />;
 }

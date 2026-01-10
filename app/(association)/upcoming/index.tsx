@@ -1,7 +1,7 @@
 // app/(association)/upcoming/index.tsx
 import React from 'react';
-import UpcomingAsso from '@/screens/UpcomingAssoScreen';
+import UpcomingAsso from '@/pages/UpcomingAsso';
 
-export default function UpcomingAssoScreen() {
+export default function UpcomingAssoPage() {
     return <UpcomingAsso />;
 }

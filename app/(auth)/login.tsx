@@ -1,10 +1,10 @@
 // app/(auth)/login.tsx
 import React from 'react';
-import LoginMobile from '@/screens/LoginMobileScreen';
-import LoginWeb from '@/screens/LoginWebScreen';
+import LoginMobile from '@/pages/LoginMobile';
+import LoginWeb from '@/pages/LoginWeb';
 import { Platform } from 'react-native';
 
-export default function LoginScreen() {
+export default function LoginPage() {
     const isWeb = Platform.OS === 'web';
     if (isWeb) {
         return <LoginWeb />;
