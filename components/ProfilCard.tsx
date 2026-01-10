@@ -16,7 +16,7 @@ type ProfileLabels = {
     confirmPassword: string;
     phone_number?: string;
     skills?: string;
-    adress?: string;
+    address?: string;
     zip_code?: string;
     bio?: string;
     name?: string;
@@ -50,22 +50,22 @@ const isAsso = (data: UserProfile): data is AssociationProfile => data.type === 
 // Labels according to the type of user
 const getLabels = (userType: UserType): ProfileLabels => {
     switch (userType) {
-        case 'benevole':
+        case 'volunteer':
             return {
                 last_name: 'Nom',
                 first_name: 'Prénom',
                 username: 'Nom d\'utilisateur',
-                phone_number: '0765253512',
-                birthdate: '2003-04-30',
+                phone_number: 'N°Tel',
+                birthdate: 'Date de naissance (ex: 2003-04-30)',
                 email: 'Adresse Mail',
-                adress: 'Adresse',
+                address: 'Adresse',
                 zip_code: 'Code postal',
                 skills: 'Compétences',
                 bio: 'Biographie',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
             };
-        case 'asso':
+        case 'association':
             return {
                 company_name: 'Nom de l\'association',
                 name: 'Nom',
