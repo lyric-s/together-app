@@ -1,22 +1,39 @@
-export type ProfileData = {
-    id_volunteer: number;
-    id_admin: number;
-    id_asso: number;
-    picture: any;
-    last_name: string;
-    first_name: string;
-    phone_number: string;
-    birthdate: string;
-    skills: string;
-    adress: string;
-    zip_code: string;
-    bio: string;
-    email: string;
-    username: string;
-    name: string;
-    country: string;
-    rna_code: string;
-    company_name: string;
-    password: string;
-    confirmPassword: string;
-};
+interface BaseProfile {
+  id_user?: number
+  email: string;
+  username: string;
+  picture?: any;
+  password?: string;
+  confirmPassword?: string;
+}
+
+export interface AdminProfile extends BaseProfile {
+  type: 'admin';
+  id_admin: number;
+  first_name: string;
+  last_name: string;
+}
+
+export interface VolunteerProfile extends BaseProfile {
+  type: 'volunteer';
+  id_volunteer: number;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  birthdate: string;
+  address?: string;
+  zip_code?: string;
+  skills?: string;
+  bio?: string;
+}
+
+export interface AssociationProfile extends BaseProfile {
+  type: 'association';
+  id_asso: number;
+  name: string;
+  phone_number: string;
+  rna_code: string;
+  company_name: string;
+}
+
+export type UserProfile = AdminProfile | VolunteerProfile | AssociationProfile;

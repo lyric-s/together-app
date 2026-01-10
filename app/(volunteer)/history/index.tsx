@@ -2,6 +2,6 @@
 import React from 'react';
 import HistoryVolunteer from '@/screens/HistoryVolunteerScreen';
 
-export default function ProfilAdminPage() {
+export default function HistoryVolunteerScreen() {
     return <HistoryVolunteer />;
 }

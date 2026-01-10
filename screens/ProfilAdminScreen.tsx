@@ -1,15 +1,15 @@
 // screens/ProfilAdminScreen.tsx
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, ScrollView, useWindowDimensions, Platform, } from 'react-native';
+import { View, Text, ScrollView, useWindowDimensions, Platform, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ProfileData } from '@/types/ProfileUser';
 import AlertToast from '@/components/AlertToast';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ProfilCSS';
 import ProfilCard from '@/components/ProfilCard';
 import { adminService } from '@/services/adminService';
 import { useAuth } from '@/context/AuthContext';
+import { UserProfile, AdminProfile } from '@/types/ProfileUser';
 
 /**
  * Admin profile screen that displays and allows editing of the authenticated admin's profile.
@@ -30,7 +30,7 @@ export default function ProfilAdmin() {
     
     // Local loading for profile data
     const [isPageLoading, setIsPageLoading] = useState(true);
-    const [profileUser, setProfileUser] = useState<ProfileData | null>(null);
+    const [profileUser, setProfileUser] = useState<AdminProfile | null>(null);
 
     const [alertModal, setAlertModal] = useState({ 
         visible: false, 
@@ -60,27 +60,14 @@ export default function ProfilAdmin() {
         setIsPageLoading(true);
         try {
             const data = await adminService.getMe();
-            const profileData: ProfileData = {
+            const profileData: AdminProfile = {
+                type: 'admin',
                 id_admin: data.id_admin,
-                id_volunteer: -1, // Non utilisé pour admin
-                id_asso: -1,     // Non utilisé pour admin
                 first_name: data.first_name,
                 last_name: data.last_name,
                 email: data.email,
                 username: data.username,
                 picture: null,
-                phone_number: '',
-                birthdate: '',
-                skills: '',
-                address: '',
-                zip_code: '',
-                bio: '',
-                name: '',
-                country: '',
-                rna_code: '',
-                company_name: '',
-                password: '',
-                confirmPassword: '',
             };
             setProfileUser(profileData);
         } catch (error) {
@@ -98,8 +85,15 @@ export default function ProfilAdmin() {
         setAlertModal({ visible: true, title, message });
     }, []);
 
-    const handleSave = async (data: ProfileData):Promise<void> => {
-        if (!profileUser?.id_admin) return;
+    const handleSave = async (data: UserProfile): Promise<void> => {
+        if (!profileUser?.id_admin) {
+            showAlert('Erreur', 'Identifiant administrateur manquant.');
+            return;
+        }
+        if (data.type !== 'admin') {
+             showAlert('Erreur', 'Type de profil invalide.');
+             return;
+        }
         try {
             const payloadAdmin = {
                 last_name: data.last_name ?? profileUser.last_name,
@@ -111,6 +105,7 @@ export default function ProfilAdmin() {
             await adminService.updateProfile(profileUser.id_admin, payloadAdmin);
             setProfileUser(prev => prev ? ({ ...prev, ...payloadAdmin }) : null);
             await refetchUser(); // Synchro AutoContext
+            showAlert('Succès', 'Votre profil a été mis à jour avec succès.');
         } catch (error) {
             showAlert('Erreur', 'Échec de la mise à jour du profil.');
         }
@@ -119,7 +114,8 @@ export default function ProfilAdmin() {
     if (isAuthLoading || isPageLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white }}>
-                <Text>Chargement...</Text>
+                <ActivityIndicator size="large" color={Colors.orange} />
+                <Text style={{ marginTop: 10 }}>Chargement...</Text>
             </View>
         );
     }

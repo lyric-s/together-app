@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { storageService } from '@/services/storageService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Types (gardez votre AuthUser)
 export type UserType = "volunteer" | "association" | "admin" | "volunteer_guest";
@@ -99,6 +100,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             };
             setUser(authUser);
             setUserType(type);
+            await AsyncStorage.setItem('cached_user', JSON.stringify(authUser));
             console.log(`✅ ${type} profile loaded:`, authUser);
             return;
           }
@@ -107,10 +109,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
 
+<<<<<<< HEAD
       setError('No profile found for this user');
       storageService.clear();
       setUser(null);
       setUserType('volunteer_guest');
+=======
+      // --- If you've reached this point, it means that none of the endpoints worked ---
+      if (hasNetworkOrServerError) {
+        console.log('⚠️ Problème réseau. Tentative de chargement du profil en cache...');
+        try {
+          const cachedUserJson = await AsyncStorage.getItem('cached_user');
+          
+          if (cachedUserJson) {
+            const cachedUser = JSON.parse(cachedUserJson) as AuthUser;
+            setUser(cachedUser);
+            setUserType(cachedUser.user_type);
+            console.log('✅ Profil chargé depuis le cache (Mode Hors-ligne)');
+          } else {
+            setError('Pas de connexion internet et aucune donnée locale.');
+          }
+        } catch (cacheError) {
+          console.error("Erreur lecture cache:", cacheError);
+        }
+      } else {
+        // Case B: All endpoints returned 401/403
+        // The token is truly invalid everywhere.
+        console.log('⛔ Token invalid for all roles -> Logging out.');
+        await logout();
+        setError('Session expired');
+      }
+>>>>>>> c65fec8 (fix: TA-88 correction profilCard, type general, route as Href)
     } catch (e) {
       console.error('Auth error:', e);
       setError('Failed to load user');
@@ -136,6 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setIsLoading(true);
       await storageService.clear();
+      await AsyncStorage.removeItem('cached_user');
       setUser(null);
       setUserType('volunteer_guest');
       setError(null);

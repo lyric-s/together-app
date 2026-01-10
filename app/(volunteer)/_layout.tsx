@@ -3,7 +3,7 @@
  * @description Specific layout for the Volunteer area (Web Only).
  */
 
-import { Redirect, Stack, router } from 'expo-router';
+import { Href, Redirect, Stack, router } from 'expo-router';
 import { Platform, View, ActivityIndicator } from 'react-native';
 import BottomNavBar from '@/components/MobileNavigationBar';
 import Sidebar from '@/components/SideBar';
@@ -32,8 +32,8 @@ export default function VolunteerLayout() {
         <Sidebar 
           userType="volunteer" 
           userName={user?.username || 'Bénévole'} 
-          onNavigate={(route: string) => {
-             router.push(route as any);
+          onNavigate={(route) => {
+             router.push(route as Href);
           }} 
         />
       )}
