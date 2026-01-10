@@ -5,6 +5,12 @@ type Props = {
     onAnimationFinish: () => void;
 };
 
+/**
+ * Displays a centered splash image and runs a fade-in, pause, and fade-out animation, invoking the provided callback when the animation completes.
+ *
+ * @param onAnimationFinish - Callback invoked when the animation sequence finishes (called only if the animation completed).
+ * @returns The splash screen React element with the image opacity animated. 
+ */
 export default function AnimatedSplashScreen({ onAnimationFinish }: Props) {
     const opacity = useRef(new Animated.Value(0)).current;
 

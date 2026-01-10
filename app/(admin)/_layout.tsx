@@ -9,6 +9,17 @@ import Sidebar from '@/components/SideBar';
 import { useAuth } from '@/context/AuthContext';
 import { Colors } from '@/constants/colors';
 
+/**
+ * Render the web-only administrator layout with access control and a sidebar for navigation.
+ *
+ * The component displays:
+ * - a centered loading indicator while authentication state is resolving;
+ * - a French message preventing access from non-web platforms;
+ * - a redirect to the admin login when the current user is not an admin;
+ * - the admin two-pane layout (Sidebar and main content Stack) for authorized web users.
+ *
+ * @returns A React element representing the appropriate UI for the current auth and platform state.
+ */
 export default function AdminLayout() {
   const { user, isLoading, userType } = useAuth();
   const isWeb = Platform.OS === 'web';

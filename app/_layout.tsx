@@ -18,13 +18,13 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/context/AuthContext';
 
 /**
- * RootLayout component that serves as the top-level layout wrapper.
+ * Root layout component that provides theming, authentication context, and the primary navigation stack.
  *
- * Provides theme context to all child components and configures the navigation stack
- * with the application's main screens. The theme automatically switches between
- * dark and light modes based on the device's color scheme preference.
+ * The theme switches between dark and light based on the device color scheme. All screens in the stack
+ * are rendered without headers and the layout includes a StatusBar configured with automatic style.
  *
- * @returns {JSX.Element} The themed navigation stack with status bar configuration.
+ * @returns The root JSX element composing SafeAreaProvider, ThemeProvider, AuthProvider, the navigation Stack
+ *          (containing the `index` screen with headers hidden), and a StatusBar.
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
