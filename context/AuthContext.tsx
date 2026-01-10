@@ -56,6 +56,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
 
+  // Logout
+  const logout = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      await storageService.clear();
+      await AsyncStorage.removeItem('cached_user');
+      setUser(null);
+      setUserType('volunteer_guest');
+      setError(null);
+      console.log("✅ Déconnexion réussie - Redirection via l'aiguilleur");
+    } catch (e) {
+      console.error('Logout error:', e);
+      setUser(null);
+      setUserType('volunteer_guest');
+    } finally {
+        setIsLoading(false);
+    }
+  }, []);
+  
   const refetchUser = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -70,6 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           username: 'Invité'
         });
         setUserType('volunteer_guest');
+        setIsLoading(false);
         return;
       }
 
@@ -78,6 +98,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         { type: 'association', path: '/assos/me' },
         { type: 'admin', path: '/admins/me' }
       ];
+
+      let hasNetworkOrServerError = false;
+      let success = false;
 
       for (const { type, path } of endpoints) {
         try {
@@ -102,19 +125,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUserType(type);
             await AsyncStorage.setItem('cached_user', JSON.stringify(authUser));
             console.log(`✅ ${type} profile loaded:`, authUser);
-            return;
+            success = true;
+            break;
+          }
+          if (response.status === 401 || response.status === 403) {
+            continue; 
+          } else {
+            // Error Server (500, 503, etc.)
+            console.warn(`⚠️ Server error ${response.status} on ${path}`);
+            hasNetworkOrServerError = true;
           }
         } catch (endpointError) {
           console.log(`❌ ${path} failed, trying next...`);
+          hasNetworkOrServerError = true;
         }
       }
 
-<<<<<<< HEAD
-      setError('No profile found for this user');
-      storageService.clear();
-      setUser(null);
-      setUserType('volunteer_guest');
-=======
+      if (success) {
+        return; 
+      }
+
       // --- If you've reached this point, it means that none of the endpoints worked ---
       if (hasNetworkOrServerError) {
         console.log('⚠️ Problème réseau. Tentative de chargement du profil en cache...');
@@ -139,16 +169,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await logout();
         setError('Session expired');
       }
->>>>>>> c65fec8 (fix: TA-88 correction profilCard, type general, route as Href)
     } catch (e) {
       console.error('Auth error:', e);
       setError('Failed to load user');
-      setUser(null);
-      setUserType('volunteer_guest');
     } finally {
       setIsLoading(false);
     }
-  }, [API_URL]);
+  }, [API_URL, logout]);
 
   const login = useCallback(async (accessToken: string, refreshToken: string) => {
     try {
@@ -159,25 +186,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       throw e;
     }
   }, [refetchUser]);
-
-  // Logout
-  const logout = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      await storageService.clear();
-      await AsyncStorage.removeItem('cached_user');
-      setUser(null);
-      setUserType('volunteer_guest');
-      setError(null);
-      console.log("✅ Déconnexion réussie - Redirection via l'aiguilleur");
-    } catch (e) {
-      console.error('Logout error:', e);
-      setUser(null);
-      setUserType('volunteer_guest');
-    } finally {
-        setIsLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
     refetchUser();
