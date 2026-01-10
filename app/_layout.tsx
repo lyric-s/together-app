@@ -12,12 +12,11 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { usePathname } from 'expo-router';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/context/AuthContext';
-
+import { StatusBar } from 'react-native'
+import { Colors } from '@/constants/colors';
 /**
  * Root layout component that provides theming, authentication context, and the primary navigation stack.
  *
@@ -29,21 +28,15 @@ import { AuthProvider } from '@/context/AuthContext';
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const pathname = usePathname();
-  const { width } = useWindowDimensions();
 
-  // Routes where the navbar should be hidden
-  const hideNavbarRoutes = ['/login', '/signup', '/ProfilAssos', '/ProfilAdmin', '/ActivityAssos', '/ChangeMission'];
-  const shouldShowNavbar = !hideNavbarRoutes.includes(pathname);
-  const isMobile = Platform.OS === 'ios' || Platform.OS === 'android';
   return (
     <SafeAreaProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme} >
         <AuthProvider>
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.white }, animation: 'fade'}}>
                 <Stack.Screen name="index" />
             </Stack>
-            <StatusBar style="auto" />
+            <StatusBar barStyle="dark-content" backgroundColor="white" />
         </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>

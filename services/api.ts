@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { storageService } from './storageService';
 import Constants from 'expo-constants';
 
@@ -17,40 +17,49 @@ if (__DEV__ && !localhost) {
 
 const BASE_URL = __DEV__ 
   ? `http://${localhost}:8000`
-  : 'http://together-api-staging.out-online.net';
+  : 'https://together-api.out-online.net/';
 
 const api = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000,
 });
 
 // Token interceptor
-api.interceptors.request.use(async (config) => {
+api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const token = await storageService.getAccessToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
-});
+}, (error) => Promise.reject(error));
 
 // Automatic token expiry management (Refresh)
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  async (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    if (originalRequest.url?.includes('/auth/refresh')) {
+        await storageService.clear();
+        return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         // We import dynamically to avoid import loops
         const { authService } = require('./authService');
+        console.log("🔄 Tentative de rafraîchissement du token...");
         const newToken = await authService.refresh();
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        console.log("✅ Token rafraîchi avec succès, on relance la requête.");
         return api(originalRequest);
-      } catch (err) {
+      } catch (refreshError) {
+        console.error("❌ Échec du refresh token, déconnexion forcée.");
         await storageService.clear(); // If the refresh fail, we deconnect
-        return Promise.reject(err);
+        return Promise.reject(refreshError);
       }
     }
     return Promise.reject(error);

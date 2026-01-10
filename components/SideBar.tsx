@@ -28,6 +28,10 @@ const resolvePath = (route: Href | string): string => {
   return '';
 };
 
+const normalizePath = (path: string) => {
+    return path.replace(/\/\([^)]+\)/g, '');
+};
+
 type MenuItem = {
     icon: any;
     label: string;
@@ -166,8 +170,11 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
   const isRouteActive = (route: Href | string) => {
     if (route === "LOGOUT_ACTION") return false;
     const routePath = resolvePath(route);
-    if (pathname === routePath) return true;
-    return pathname.startsWith(`${routePath}/`);
+    const cleanPathname = normalizePath(pathname);
+    const cleanRoute = normalizePath(routePath);
+
+    if (cleanPathname === cleanRoute) return true;
+    return cleanPathname.startsWith(`${cleanRoute}/`);
   };
 
   return (

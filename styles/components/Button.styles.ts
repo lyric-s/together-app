@@ -5,7 +5,7 @@ export default StyleSheet.create({
     button: {
         marginTop: 10,
         alignSelf: 'center',
-        width: '56%',
+        width: '60%',
         maxWidth: 260,
         height: 50,
         borderRadius: 30,

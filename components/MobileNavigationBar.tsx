@@ -54,8 +54,14 @@ const BottomNavBar: React.FC = () => {
 
   const tabs = userType === 'volunteer' ? volunteerTabs : guestTabs;
 
+  const normalizePath = (path: string) => {
+    return path.replace(/\/\([^)]+\)/g, ''); // Retire /(...)
+  };
+
   const isTabActive = (route: string) => {
-    return pathname === route || pathname.startsWith(`${route}/`);
+    const cleanPathname = normalizePath(pathname);
+    const cleanRoute = normalizePath(route);
+    return cleanPathname === cleanRoute || cleanPathname.startsWith(`${cleanRoute}/`);
   };
 
   return (

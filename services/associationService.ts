@@ -1,0 +1,105 @@
+import api from './api';
+import { Association, AssociationCreate, AssociationUpdate } from '@/models/association.model';
+import { Mission, MissionCreate, MissionUpdate } from '@/models/mission.model';
+import { handleApiError } from '@/services/apiErrorHandler';
+
+export const associationService = {
+
+  // GET /associations/
+  getAll: async (): Promise<Association[]> => {
+    try {
+      const { data } = await api.get<Association[]>('/associations/');
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // GET /associations/{id}
+  getById: async (id: number): Promise<Association> => {
+    try {
+      const { data } = await api.get<Association>(`/associations/${id}`);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // GET /associations/me
+  getMe: async (): Promise<Association> => {
+    try {
+      const { data } = await api.get<Association>('/associations/me');
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // POST /associations/
+  create: async (data: AssociationCreate): Promise<Association> => {
+    try {
+      const response = await api.post<Association>('/associations/', data);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // PATCH /associations/{id}
+  update: async (id: number, payload: AssociationUpdate): Promise<Association> => {
+    try {
+      const { data } = await api.patch<Association>(`/associations/${id}`, payload);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // DELETE /associations/{id}
+  delete: async (id: number): Promise<void> => {
+    try {
+      await api.delete(`/associations/${id}`);
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+  
+  // GET /associations/me/missions
+  getMyMissions: async (): Promise<Mission[]> => {
+    try {
+      const { data } = await api.get<Mission[]>('/associations/me/missions');
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // POST /associations/me/missions
+  createMission: async (payload: MissionCreate): Promise<Mission> => {
+    try {
+      const { data } = await api.post<Mission>('/associations/me/missions', payload);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // PATCH /associations/me/missions/{id}
+  updateMission: async (id: number, payload: MissionUpdate): Promise<Mission> => {
+    try {
+      const { data } = await api.patch<Mission>(`/associations/me/missions/${id}`, payload);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // DELETE /associations/me/missions/{id}
+  deleteMission: async (id: number): Promise<void> => {
+    try {
+      await api.delete(`/associations/me/missions/${id}`);
+    } catch (error) {
+      handleApiError(error);
+    }
+  }
+};

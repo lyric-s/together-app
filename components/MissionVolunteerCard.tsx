@@ -2,82 +2,62 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import CategoryLabel from "./CategoryLabel";
 import { styles } from "../styles/components/MissionVolunteerCardStyle"
-
-
+import { Mission } from "@/models/mission.model";
+import { Colors } from "@/constants/colors";
 
 interface MissionCardProps {
-  mission_title: string;
-  association_name: string;
-  city?: string;
-  date: Date;
-  number_max_volunteers: number;
-  number_of_volunteers: number;
+  mission: Mission; 
   onPressMission: () => void;
-  favorite?: boolean;
-  onPressFavorite?: (newFavoriteValue: boolean) => void;
-  category_label: string;
-  category_color: string;
-  image?: any | null;
-
+  onPressFavorite?: (missionId: number, newFavoriteValue: boolean) => void;
+  isFavorite?: boolean;
 }
 
 /**
  * Renders a touchable mission card with image, category badge, optional favorite toggle, mission details, and volunteer counts.
  *
  * Displays the provided image with an overlaid category label and an optional heart button that toggles local favorite state and calls the provided callback. Shows title, association name, date (formatted for "fr-FR" and includes time when hours ≠ 0), optional city, and current/maximum volunteers.
- *
- * @param mission_title - Mission title shown as the card heading
- * @param association_name - Name of the association or organizer
- * @param city - Optional city name; rendered only when provided
- * @param date - Date of the mission; formatted using the "fr-FR" locale (date plus time if hours ≠ 0)
- * @param number_max_volunteers - Maximum number of volunteers for the mission
- * @param number_of_volunteers - Current number of volunteers signed up
- * @param onPressMission - Callback invoked when the card is pressed
- * @param favorite - Initial favorite state for the heart toggle (defaults to false)
- * @param onPressFavorite - Optional callback invoked with the new favorite value when the heart is toggled
- * @param category_label - Text shown inside the category badge
- * @param category_color - Background color passed to the category badge component
- * @param image - Image source displayed at the top of the card (optional)
- * @returns The rendered mission card component
  */
+
 export default function MissionVolunteerCard({
-  mission_title,
-  association_name,
-  city,
-  date,
-  number_max_volunteers,
-  number_of_volunteers,
+  mission,
   onPressMission,
-  favorite = false,
+  isFavorite = false,
   onPressFavorite,
-  category_label,
-  category_color,
-  image = null,
 }: MissionCardProps) {
 
   const defaultImage = require("../assets/images/volunteering_img.jpg");
-  const imageSource = image ?? defaultImage;
+  const imageSource = mission.image_url 
+    ? { uri: mission.image_url } 
+    : defaultImage;
 
-  const [isFavorite, setIsFavorite] = useState(favorite);
-
+  const [favoriteState, setFavoriteState] = useState(isFavorite);
+  
   useEffect(() => {
-    setIsFavorite(favorite);
-  }, [favorite]);
+    setFavoriteState(isFavorite);
+  }, [isFavorite]);
 
   const toggleFavorite = () => {
-    const newValue = !isFavorite;
-    setIsFavorite(newValue);
+    if (!onPressFavorite) return;
 
-    if (onPressFavorite) {
-        onPressFavorite(newValue);
-    }
+    const newValue = !favoriteState;
+    setFavoriteState(newValue);
+    onPressFavorite(mission.id_mission, newValue);
   };
 
-
   // date format → jj/mm/aaaa hh:mm
+  const dateObj = new Date(mission.date_start);
   const formattedDate =
-    date.toLocaleDateString("fr-FR") +
-    (date.getHours() !== 0 || date.getMinutes() !== 0 ? ` à ${date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` : "");
+    dateObj.toLocaleDateString("fr-FR") +
+    (dateObj.getHours() !== 0 || dateObj.getMinutes() !== 0 
+      ? ` à ${dateObj.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` 
+      : ""
+    );
+
+  const assoName = mission.association?.name || "Association inconnue";
+  const city = mission.location?.zip_code || ""; // Peut être vide
+  const categoryLabel = mission.category?.label || "Général";
+  // Couleur par défaut si pas de catégorie ou pas de couleur définie
+  const categoryColor = Colors.orange;
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPressMission}>
@@ -87,33 +67,32 @@ export default function MissionVolunteerCard({
         <Image source={imageSource} style={styles.image} />
 
         {/* Category label */}
-        <TouchableOpacity style={styles.categoryLabel}>
+        <View style={styles.categoryLabel}>
           <CategoryLabel
-            text = {category_label}
-            backgroundColor = {category_color}
+            text={categoryLabel}
+            backgroundColor={categoryColor}
           />
-        </TouchableOpacity>
+        </View>
 
         {/* Heart  (optional) */}
-        { favorite !== undefined && onPressFavorite && (
+        {onPressFavorite && (
             <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
                 <Image
                     source={
-                    isFavorite
-                        ? require("../assets/images/red_heart.png")
-                        : require("../assets/images/gray_heart.png")
+                        favoriteState
+                            ? require("../assets/images/red_heart.png")
+                            : require("../assets/images/gray_heart.png")
                     }
                     style={styles.heartIcon}
                 />
             </TouchableOpacity>
         )}
-        
       </View>
 
       {/* Text */}
       <View style={styles.content}>
-        <Text style={styles.title}>{mission_title}</Text>
-        <Text style={styles.association}>{association_name}</Text>
+        <Text style={styles.title}>{mission.name}</Text>
+        <Text style={styles.association}>{assoName}</Text>
         <Text style={styles.date}>{formattedDate}</Text>
         {city && <Text style={styles.city}>{city}</Text>}
       </View>
@@ -125,25 +104,9 @@ export default function MissionVolunteerCard({
           style={styles.peopleIcon}
         />
         <Text style={styles.peopleText}>
-          {number_of_volunteers}/{number_max_volunteers}
+          {mission.capacity_min} / {mission.capacity_max}
         </Text>
       </View>
     </TouchableOpacity>
   );
 }
-
-// How to use
-{/* <MissionVolunteerCard
-        mission_title="Nettoyage de la plage"
-        association_name="Ocean Protect"
-        city="Marseille"
-        date={new Date("2025-04-23T09:00:00")}
-        number_max_volunteers={20}
-        number_of_volunteers={7}
-        favorite={false}
-        category_label="Nature"
-        category_color="red"
-        image={require("../assets/images/dogs_img.png")}
-        onPressMission={() => console.log("Mission 1 clicked")}
-        onPressFavorite={(fav) => console.log("Favorite 1:", fav)}
-      /> */}
