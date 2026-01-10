@@ -3,7 +3,7 @@
  * @description Specific layout for the Association area (Web Only).
  */
 
-import { Redirect, Stack, router } from 'expo-router';
+import { Href, Redirect, Stack, router } from 'expo-router';
 import { Platform, View, Text, ActivityIndicator } from 'react-native';
 import Sidebar from '@/components/SideBar';
 import { useAuth } from '@/context/AuthContext';
@@ -41,8 +41,8 @@ export default function AssociationLayout() {
         <Sidebar 
             userType="association" 
             userName={user?.company_name || 'Association'} 
-            onNavigate={(route: string) => {
-                router.push(route as any);
+            onNavigate={(route) => {
+                router.push(route as Href);
             }} 
         />
 

@@ -3,8 +3,8 @@ import { styles } from '@/styles/components/ProfilCardStyle';
 import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
-import { ProfileData } from '@/types/ProfileUser';
 import { UserType } from '@/context/AuthContext';
+import { UserProfile, AdminProfile, VolunteerProfile, AssociationProfile } from '@/types/ProfileUser';
 
 type ProfileLabels = {
     username?: string;
@@ -25,19 +25,27 @@ type ProfileLabels = {
     company_name?: string;
 };
 
-type ProfileFormData = Partial<ProfileData> & {
-   password?: string;
-   confirmPassword?: string;
+type InputBlockProps = {
+    label: string;
+    value?: string;
+    isEditing: boolean;
+    onChange: (text: string) => void; // On précise ici que la fonction attend une string
+    secure?: boolean;
+    multiline?: boolean;
 };
 
 type Props = {
     userType: UserType;
-    userData: ProfileData; // Data of the user from the database
-    onSave?: (data: ProfileData) => Promise<void>; // Function to save into the database
+    userData: UserProfile; // Data of the user from the database
+    onSave?: (data: UserProfile) => Promise<void>; // Function to save into the database
     showAlert: (title: string, message: string) => void;
 };
 
 const DEFAULT_PHOTO = require('@/assets/images/profil-picture.png');
+
+const isAdmin = (data: UserProfile): data is AdminProfile => data.type === 'admin';
+const isVolunteer = (data: UserProfile): data is VolunteerProfile => data.type === 'volunteer';
+const isAsso = (data: UserProfile): data is AssociationProfile => data.type === 'association';
 
 // Labels according to the type of user
 const getLabels = (userType: UserType): ProfileLabels => {
@@ -61,7 +69,9 @@ const getLabels = (userType: UserType): ProfileLabels => {
             return {
                 company_name: 'Nom de l\'association',
                 name: 'Nom',
-                phone_number: '0105066548',
+                username: 'Nom d\'utilisateur',
+                email: 'Adresse Mail',
+                phone_number: 'N°Tel',
                 rna_code: 'Code RNA',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
@@ -84,16 +94,6 @@ const getLabels = (userType: UserType): ProfileLabels => {
     }
 };
 
-/**
- * Render an editable profile card that displays and allows editing of a volunteer, association, or admin profile.
- *
- * @param userType - Determines which fields and labels are shown: "volunteer", "association", or "admin".
- * @param userData - Initial profile values displayed and used to populate the edit form.
- * @param onSave - Optional callback invoked with the normalized ProfileData when the user saves changes.
- * @param showAlert - Function used to display success or error alerts to the user.
- * @returns A React element displaying the profile in view mode or an editable form in edit mode.
- */
-
 export default function ProfilCard({
     userType,
     userData,
@@ -102,20 +102,18 @@ export default function ProfilCard({
 }: Props) {
     
     const [isEditing, setIsEditing] = useState(false);
+    const labels = getLabels(userType);
 
+    // Original data (immutable copy)
+    const [originalData, setOriginalData] = useState<UserProfile>(userData);
+    // Editable data (working copy)
+    const [formData, setFormData] = useState<UserProfile>(userData);
+    
     const handleEdit = () => {
         // Creation of copy of original data
-        setFormData({ ...originalData });
+        setFormData(JSON.parse(JSON.stringify(originalData)));
         setIsEditing(true);
     }
-
-    const labels = getLabels(userType);
-    
-    // Original data (immutable copy)
-    const [originalData, setOriginalData] = useState<ProfileData>(userData);
-    
-    // Editable data (working copy)
-    const [formData, setFormData] = useState<ProfileFormData>({ ...userData });
 
     // Update the data when userData change (ex: after a refresh of database)
     useEffect(() => {
@@ -159,120 +157,107 @@ export default function ProfilCard({
 
     const handleSubmit = async () => {
         try {
-            const normalized: ProfileData = {
-                picture: formData.picture ?? DEFAULT_PHOTO,
-                id_volunteer: formData.id_volunteer ?? -1,
-                id_admin: formData.id_admin ?? -1,
-                id_asso: formData.id_asso ?? -1,
-                last_name: (formData.last_name ?? '').trim(),
-                first_name: (formData.first_name ?? '').trim(),
-                username: (formData.username ?? '').trim(),
-                birthdate: (formData.birthdate ?? '').trim(),
-                rna_code: (formData.rna_code ?? '').trim(),
-                name: (formData.name ?? '').trim(),
-                company_name: (formData.company_name ?? '').trim(),
-                address: (formData.address ?? '').trim(),
-                zip_code: (formData.zip_code ?? '').trim(),
-                skills: (formData.skills ?? '').trim(),
-                bio: (formData.bio ?? '').trim(),
-                country: (formData.country ?? '').trim(),
-                email: (formData.email ?? '').trim(),
-                phone_number: (formData.phone_number ?? '').replace(/\s/g, ''),
-                password: formData.password ?? '',
-                confirmPassword: formData.confirmPassword ?? '',
-            };
-            if (userType === 'volunteer' || userType === 'admin') {
-                if (!normalized.last_name) {
-                    showAlert('Erreur', 'Le nom est obligatoire');
-                    return;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^[0-9]{10}$/;
+
+            const isPasswordChanged = formData.password && formData.password.trim() !== '';
+            let passwordPayload = {};
+
+            if (isPasswordChanged) {
+                const pass = formData.password || '';
+                const confirm = formData.confirmPassword || '';
+
+                if (pass.length < 10) {
+                    return showAlert('Erreur', 'Le mot de passe doit contenir au moins 10 caractères.');
                 }
-                if (!normalized.first_name) {
-                    showAlert('Erreur', 'Le prénom est obligatoire');
-                    return;
+
+                if (pass !== confirm) {
+                    return showAlert('Erreur', 'La confirmation du mot de passe ne correspond pas.');
                 }
-                if (!normalized.email) {
-                    showAlert('Erreur', 'L\'adresse email est obligatoire');
-                    return;
-                }
-                if (!normalized.username) {
-                    showAlert('Erreur', 'Le nom d\'utilisateur est obligatoire');
-                    return;
-                }
-            }
-            if (userType === 'volunteer') {
-                if (!normalized.birthdate) {
-                    showAlert('Erreur', 'La date de naissance est obligatoire');
-                    return;
-                }
-            }
-            else if (userType === 'association') {
-                if (!normalized.rna_code) {
-                    showAlert('Erreur', 'Le code RNA est obligatoire');
-                    return;
-                }
-                if (!normalized.name) {
-                    showAlert('Erreur', 'Le nom est obligatoire');
-                    return;
-                }
-                if (!normalized.company_name) {
-                    showAlert('Erreur', 'Le nom de l\'association est obligatoire');
-                    return;
-                }
+
+                passwordPayload = { password: pass };
             }
 
-            if (!normalized.password) {
-                showAlert('Erreur', 'Le mot de passe est obligatoire');
-                return;
-            }
+            let finalPayload: UserProfile | null = null;
 
-            if (normalized.password.length < 10) {
-                showAlert('Erreur', 'Le mot de passe doit avoir minimum 10 caractères');
-                return;
-            }
-
-            if (!normalized.confirmPassword) {
-                showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
-                return;
-            }
-
-            // Check password
-            if (normalized.password !== normalized.confirmPassword) {
-                showAlert('Erreur', 'Les mots de passe ne correspondent pas');
-                return;
-            }
-
-            // Check email
-            if ((userType === 'volunteer' || userType === 'admin') && normalized.email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(normalized.email)) {
-                    showAlert('Erreur', 'L\'adresse email n\'est pas valide');
-                    return;
+            if (isVolunteer(formData)) {
+                // Validation Specific Volunteer
+                if (!formData.username?.trim() || !formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim() || !formData.birthdate?.trim() || !formData.phone_number?.trim()) {
+                    return showAlert('Erreur', 'Champs obligatoires manquants');
                 }
-            }
-
-            // Check phone_number (FR)
-            if ((userType === 'association' || userType === 'volunteer') && normalized.phone_number) {
-                const phoneRegex = /^[0-9]{10}$/;
-                if (!phoneRegex.test(normalized.phone_number)) {
-                    showAlert('Erreur', 'Le numéro de téléphone doit contenir 10 chiffres');
-                    return;
+                if (!emailRegex.test(formData.email.trim())) {
+                    return showAlert('Erreur', "L'adresse email n'est pas valide.");
                 }
-            }
+                if (!phoneRegex.test(formData.phone_number.trim())) {
+                    return showAlert('Erreur', "Le numéro de téléphone n'est pas valide.");
+                }
 
-            // Save in database
-            if (onSave) {
-                await onSave(normalized);
+                finalPayload = {
+                    ...formData, // Keep ID, type, etc.
+                    last_name: formData.last_name.trim(),
+                    first_name: formData.first_name.trim(),
+                    email: formData.email.trim(),
+                    username: formData.username.trim(),
+                    phone_number: formData.phone_number.replace(/\s/g, ''),
+                    birthdate: formData.birthdate.trim(),
+                    address: (formData.address ?? '').trim(),
+                    zip_code: (formData.zip_code ?? '').trim(),
+                    skills: (formData.skills ?? '').trim(),
+                    bio: (formData.bio ?? '').trim(),
+                    ...passwordPayload
+                };
             }
+            else if (isAdmin(formData)) {
+                // Validation Specific Admin
+                if (!formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim() || !formData.username?.trim()) {
+                    return showAlert('Erreur', 'Champs obligatoires manquants');
+                }
+                if (!emailRegex.test(formData.email.trim())) {
+                    return showAlert('Erreur', "L'adresse email n'est pas valide.");
+                }
 
-            // Update original data with new data saved
-            setOriginalData({ ...normalized, password: '', confirmPassword: '' });
-            setFormData(prev => ({ ...prev, ...normalized, password: '', confirmPassword: '' }));
-            setIsEditing(false);
+                finalPayload = {
+                    ...formData,
+                    last_name: formData.last_name.trim(),
+                    first_name: formData.first_name.trim(),
+                    username: formData.username.trim(),
+                    email: formData.email.trim(),
+                    ...passwordPayload
+                };
+            }
+            else if (isAsso(formData)) {
+                // Validation Association
+                if (!formData.name?.trim() || formData.username?.trim() || !formData.company_name?.trim() || !formData.rna_code?.trim() || !formData.phone_number?.trim() || !formData.email?.trim()) {
+                    return showAlert('Erreur', 'Champs obligatoire manquants');
+                }
+                if (!emailRegex.test(formData.email.trim())) {
+                    return showAlert('Erreur', "L'adresse email n'est pas valide.");
+                }
+                if (!phoneRegex.test(formData.phone_number.trim())) {
+                    return showAlert('Erreur', "Le numéro de téléphone n'est pas valide.");
+                }
+                finalPayload = {
+                    ...formData,
+                    username: formData.username.trim(),
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    company_name: formData.company_name.trim(),
+                    rna_code: formData.rna_code.trim(),
+                    phone_number: (formData.phone_number || '').replace(/\s/g, ''),
+                    ...passwordPayload
+                };
+            }
             
-            showAlert('Succès', 'Profil enregistré avec succès');
+            if (finalPayload && onSave) {
+                await onSave(finalPayload);
+                setOriginalData(finalPayload);
+                setFormData({...finalPayload, password: '', confirmPassword: ''});
+                setIsEditing(false);
+            }
+
         } catch (error) {
-            showAlert('Erreur', 'Impossible de sauvegarder les modifications');
-            console.error('Erreur de sauvegarde:', error);
+            showAlert('Erreur', 'Sauvegarde impossible');
+            console.error(error);
         }
     };
 
@@ -282,469 +267,133 @@ export default function ProfilCard({
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
         >
-            {isEditing ? (
-                <>
-                    <View>
-                        <TouchableOpacity onPress={handleImagePick}>
-                            <Image 
-                                source={formData.picture || DEFAULT_PHOTO} 
-                                style={styles.photo} 
-                            />
-                            <View style={styles.editIconContainer}>
-                                <Text style={styles.editIcon}>📷</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.last_name && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.last_name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.last_name}
-                                    value={formData.last_name ?? ''}
-                                    onChangeText={(text) => handleChange('last_name', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
+            <View>
+                <TouchableOpacity onPress={isEditing ? handleImagePick : undefined} disabled={!isEditing}>
+                    <Image source={formData.picture || DEFAULT_PHOTO} style={styles.photo} />
+                    {isEditing && (
+                        <View style={styles.editIconContainer}><Text style={styles.editIcon}>📷</Text></View>
                     )}
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.first_name && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.first_name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.first_name}
-                                    value={formData.first_name ?? ''}
-                                    onChangeText={(text) => handleChange('first_name', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.username && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.username}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.username}
-                                    value={formData.username ?? ''}
-                                    onChangeText={(text) => handleChange('username', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-                    
-                    {(userType === 'benevole') && labels.birthdate && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.birthdate}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.birthdate}
-                                    value={formData.birthdate ?? ''}
-                                    onChangeText={(text) => handleChange('birthdate', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'asso') && labels.name && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.name}
-                                    value={formData.name ?? ''}
-                                    onChangeText={(text) => handleChange('name', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'asso') && labels.company_name && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.company_name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.company_name}
-                                    value={formData.company_name ?? ''}
-                                    onChangeText={(text) => handleChange('company_name', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'benevole' || userType === 'asso' && labels.phone_number && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.phone_number}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="06 85 54 23 81"
-                                    value={formData.phone_number ?? ''}
-                                    onChangeText={(text) => handleChange('phone_number', text)}
-                                    keyboardType="phone-pad"
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.email && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.email}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="exemple@gmail.com"
-                                    value={formData.email ?? ''}
-                                    onChangeText={(text) => handleChange('email', text)}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-                    
-                    {(userType === 'benevole') && labels.adress && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.adress}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.address}
-                                    value={formData.address ?? ''}
-                                    onChangeText={(text) => handleChange('address', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'benevole') && labels.zip_code && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.zip_code}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.zip_code}
-                                    value={formData.zip_code ?? ''}
-                                    onChangeText={(text) => handleChange('zip_code', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'benevole') && labels.skills && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.skills}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={[styles.input, { minHeight: 100 }]}
-                                    placeholder={labels.skills}
-                                    value={formData.skills ?? ''}
-                                    onChangeText={(text) => handleChange('skills', text)}
-                                    multiline
-                                    numberOfLines={4}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'benevole') && labels.bio && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.bio}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={[styles.input, { minHeight: 100 }]}
-                                    placeholder={labels.bio}
-                                    value={formData.bio ?? ''}
-                                    onChangeText={(text) => handleChange('bio', text)}
-                                    multiline
-                                    numberOfLines={4}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'asso' && labels.rna_code && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.rna_code}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.rna_code}
-                                    value={formData.rna_code ?? ''}
-                                    onChangeText={(text) => handleChange('rna_code', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.password}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="••••••••••"
-                                value={formData.password ?? ''}
-                                onChangeText={(text) => handleChange('password', text)}
-                                secureTextEntry
-                            />
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
-
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.confirmPassword}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="••••••••••"
-                                value={formData.confirmPassword ?? ''}
-                                onChangeText={(text) => handleChange('confirmPassword', text)}
-                                secureTextEntry
-                            />
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
-
-                    <View style={styles.buttonContainer}>
-                        <View style={styles.buttonWrapper}>
-                            <CustomButton
-                                image={require('@/assets/images/return.png')}
-                                onPress={handleCancel}
-                                style={{width:130, height:36, marginBottom: 20,}}
-                            />
-                        </View>
-                        <View style={styles.buttonWrapper}>
-                            <CustomButton
-                                image={require('@/assets/images/validate.png')}
-                                onPress={handleSubmit}
-                                style={{width:130, height:36, marginBottom: 20,}}
-                            />
-                        </View>
-                    </View>
-                </>
-            ) : (
-                <>
-                    <Image
-                        source={formData.picture || DEFAULT_PHOTO} 
-                        style={styles.photo}
-                    />
-
-                    {(userType === 'volunteer' || userType === 'admin') && labels.last_name && formData.last_name ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.last_name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.last_name}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer' || userType === 'admin') && labels.first_name && formData.first_name ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.first_name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.first_name}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer' || userType === 'admin') && labels.username && formData.username ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.username}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.username}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-                    
-                    {(userType === 'volunteer') && labels.birthdate && formData.birthdate ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.birthdate}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.birthdate}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'association') && labels.name && formData.name ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.name}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'association') && labels.company_name && formData.company_name ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.company_name}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.company_name}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer' || userType === 'association') && labels.phone_number && formData.phone_number ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.phone_number}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                               <Text style={styles.text}>{formData.phone_number}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer' || userType === 'admin') && labels.email && formData.email ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.email}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.email}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-                    
-                    {(userType === 'volunteer') && labels.address && formData.address ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.adress}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.adress}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer') && labels.zip_code && formData.zip_code ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.zip_code}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.zip_code}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer') && labels.skills && formData.skills ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.skills}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.skills}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {(userType === 'volunteer') && labels.bio && formData.bio ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.bio}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.bio}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
-
-                    {userType === 'association' && labels.rna_code && formData.rna_code ? (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.rna_code}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.rna_code}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    ) : null}
+                </TouchableOpacity>
+            </View>
             
-                    <View style={{ width: '100%', marginTop: 20, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', }}>
-                        <CustomButton
-                            image={require('@/assets/images/edit.png')}
-                            onPress={handleEdit}
-                            style={{width:150, height:36, marginBottom: 20,}}
-                        />
-                    </View>
+            {(isAdmin(formData) || isVolunteer(formData)) && (
+                <>
+                    {labels.last_name && (isEditing || formData.last_name) && (
+                        <InputBlock label={labels.last_name} value={formData.last_name} isEditing={isEditing} onChange={(t) => handleChange('last_name', t)} />
+                    )}
+                    {labels.first_name && (isEditing || formData.first_name) && (
+                        <InputBlock label={labels.first_name} value={formData.first_name} isEditing={isEditing} onChange={(t) => handleChange('first_name', t)} />
+                    )}
                 </>
             )}
+
+            {(isAdmin(formData) || isAsso(formData) || isVolunteer(formData)) && (
+                <>
+                    {labels.username && (isEditing || formData.username) && (
+                        <InputBlock label={labels.username} value={formData.username} isEditing={isEditing} onChange={(t) => handleChange('username', t)} />
+                    )}
+                    {labels.email && (isEditing || formData.email) && (
+                        <InputBlock label={labels.email} value={formData.email} isEditing={isEditing} onChange={(t) => handleChange('email', t)} />
+                    )}
+                </>
+            )}
+
+            {isVolunteer(formData) && (
+                <>
+                    {labels.birthdate && (isEditing || formData.birthdate) && (
+                        <InputBlock label={labels.birthdate} value={formData.birthdate} isEditing={isEditing} onChange={(t) => handleChange('birthdate', t)} />
+                    )}
+                    {labels.phone_number && (isEditing || formData.phone_number) && (
+                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} />
+                    )}
+                    {labels.address && (isEditing || formData.address) && (
+                        <InputBlock label={labels.address} value={formData.address} isEditing={isEditing} onChange={(t) => handleChange('address', t)} />
+                    )}
+                    {labels.zip_code && (isEditing || formData.zip_code) && (
+                        <InputBlock label={labels.zip_code} value={formData.zip_code} isEditing={isEditing} onChange={(t) => handleChange('zip_code', t)} />
+                    )}
+                    {/* Multilines */}
+                    {labels.skills && (isEditing || formData.skills) && (
+                        <InputBlock label={labels.skills} value={formData.skills} isEditing={isEditing} onChange={(t) => handleChange('skills', t)} multiline />
+                    )}
+                    {labels.bio && (isEditing || formData.bio) && (
+                        <InputBlock label={labels.bio} value={formData.bio} isEditing={isEditing} onChange={(t) => handleChange('bio', t)} multiline />
+                    )}
+                </>
+            )}
+
+            {isAsso(formData) && (
+                <>
+                    {labels.company_name && (isEditing || formData.company_name) && (
+                        <InputBlock label={labels.company_name} value={formData.company_name} isEditing={isEditing} onChange={(t) => handleChange('company_name', t)} />
+                    )}
+                    {labels.name && (isEditing || formData.name) && (
+                        <InputBlock label={labels.name} value={formData.name} isEditing={isEditing} onChange={(t) => handleChange('name', t)} />
+                    )}
+                    {labels.rna_code && (isEditing || formData.rna_code) && (
+                        <InputBlock label={labels.rna_code} value={formData.rna_code} isEditing={isEditing} onChange={(t) => handleChange('rna_code', t)} />
+                    )}
+                    {labels.phone_number && (isEditing || formData.phone_number) && (
+                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} />
+                    )}
+                </>
+            )}
+
+            {isEditing && (
+                <>
+                    <InputBlock label={labels.password} value={formData.password || ''} isEditing={true} onChange={(t) => handleChange('password', t)} secure />
+                    <InputBlock label={labels.confirmPassword} value={formData.confirmPassword || ''} isEditing={true} onChange={(t) => handleChange('confirmPassword', t)} secure />
+                </>
+            )}
+            
+            <View style={styles.buttonContainer}>
+                {isEditing ? (
+                    <>
+                        <View style={styles.buttonWrapper}>
+                            <CustomButton image={require('@/assets/images/return.png')} onPress={handleCancel} style={{width:130, height:36}} />
+                        </View>
+                        <View style={styles.buttonWrapper}>
+                            <CustomButton image={require('@/assets/images/validate.png')} onPress={handleSubmit} style={{width:130, height:36}} />
+                        </View>
+                    </>
+                ) : (
+                    <View style={{ width: '100%', alignItems: 'flex-end', marginTop: 20 }}>
+                        <CustomButton image={require('@/assets/images/edit.png')} onPress={handleEdit} style={{width:150, height:36}} />
+                    </View>
+                )}
+            </View>
         </ScrollView>
     );
 }
+
+const InputBlock = ({ label, value, isEditing, onChange, secure, multiline }: InputBlockProps) => {
+    const hasValue = value && value.trim().length > 0;
+
+    if (!isEditing && !hasValue) {
+        return null;
+    }
+
+    return (
+    <View style={styles.inputRow}>
+        <View style={styles.labelContainer}>
+            <Text style={styles.label}>{label}</Text>
+        </View>
+        <View style={styles.inputWrapper}>
+            {isEditing ? (
+                <TextInput
+                    style={[styles.input, multiline && { minHeight: 100 }]}
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={label}
+                    secureTextEntry={secure}
+                    multiline={multiline}
+                    numberOfLines={multiline ? 4 : 1}
+                />
+            ) : (
+                <Text style={styles.text}>{secure ? '********' : value}</Text>
+            )}
+            <View style={styles.separator} />
+        </View>
+    </View>
+    );
+};

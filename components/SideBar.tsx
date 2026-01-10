@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import ProfilePicture from "./ProfilPicture";
 import { getStyles } from "../styles/components/SideBarStyle";
-import { usePathname } from "expo-router";
+import { usePathname, Href } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
 
 const MOBILE_BREAKPOINT = 900;
@@ -17,7 +17,21 @@ const MOBILE_BREAKPOINT = 900;
 type SidebarProps = {
   userType: "volunteer" | "volunteer_guest" | "association" | "admin";
   userName: string;
-  onNavigate: (route: string) => void;
+  onNavigate: (route: Href | string) => void;
+};
+
+const resolvePath = (route: Href | string): string => {
+  if (typeof route === 'string') return route;
+  if (typeof route === 'object' && route !== null && 'pathname' in route) {
+    return route.pathname;
+  }
+  return '';
+};
+
+type MenuItem = {
+    icon: any;
+    label: string;
+    route: Href; 
 };
 
 type SidebarButtonProps = {
@@ -97,35 +111,34 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
       ? "Together Management"
       : "Together";
 
-  const sections = {
+  const sections: Record<string, MenuItem[]> = {
     volunteer: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "(volunteer)/home" },
-      { icon: require("../assets/images/search.png"), label: "Recherche", route: "(volunteer)/search" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "(volunteer)/upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "(volunteer)/history" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "(volunteer)/profile" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(volunteer)/home" },
+      { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(volunteer)/search" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(volunteer)/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(volunteer)/history" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/(volunteer)/profile" },
     ],
     volunteer_guest: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "(guest)/home" },
-      { icon: require("../assets/images/search.png"), label: "Recherche", route: "(guest)/search" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(guest)/home" },
+      { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(guest)/search" },
     ],
     association: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "(association)/home" },
-      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "(association)/mission_creation" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "(association)/upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "(association)/history" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "(association)/profile" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(association)/home" },
+      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "/(association)/mission_creation" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(association)/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(association)/history" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/(association)/profile" },
     ],
     admin: [
-      { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "(admin)/dashboard" },
-      { icon: require("../assets/images/search.png"), label: "Recherche", route: "(admin)/search" },
-      { icon: require("../assets/images/report.png"), label: "Signalement", route: "(admin)/report" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "(admin)/profile" },
+      { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "/(admin)/dashboard" },
+      { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(admin)/search" },
+      { icon: require("../assets/images/report.png"), label: "Signalement", route: "/(admin)/report" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/(admin)/profile" },
     ],
   };
   
   let activeSection = sections.volunteer_guest;
-  
   if (userType === 'volunteer') activeSection = sections.volunteer;
   else if (userType === 'association') activeSection = sections.association;
   else if (userType === 'admin') activeSection = sections.admin;
@@ -143,18 +156,20 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     ? securityItemsGuest 
     : securityItemsConnected;
 
-  const handleNavigation = (route: string) => {
+  const handleNavigation = (route: Href | string) => {
     if (route === "LOGOUT_ACTION") {
       logout();
       return;
     }
-    onNavigate(route);
+    onNavigate(route as Href);
     if (isMobile) setOpen(false);
   };
 
-  const isRouteActive = (route: string) => {
+  const isRouteActive = (route: Href | string) => {
     if (route === "LOGOUT_ACTION") return false;
-    return pathname.includes(route);
+    const routePath = resolvePath(route);
+    if (pathname === routePath) return true;
+    return pathname.startsWith(`${routePath}/`);
   };
 
   return (
