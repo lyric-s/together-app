@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react'
-import { styles } from '@/styles/components/AlertToastStyles'
-import { Text, TouchableOpacity, View, Animated } from 'react-native';
+import React, {useEffect, useState} from 'react'
+import { styles } from '@/styles/components/AlertToastStyles';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Text, TouchableOpacity, Animated, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 
 type Props = {
   visible: boolean;
@@ -18,10 +19,16 @@ export default function AlertToast({
   autoCloseDelay = 4000 
 }: Props) {
 
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
   const slideAnim = React.useRef(new Animated.Value(-100)).current;
+
+  const [showComponent, setShowComponent] = useState(visible);
     useEffect(() => {
     if (visible) {
+      setShowComponent(true);
       // Montre le toast
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
@@ -37,16 +44,19 @@ export default function AlertToast({
         Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
         Animated.timing(slideAnim, { toValue: -100, duration: 300, useNativeDriver: true }),
       ]).start();
+      setShowComponent(false);
     }
   }, [visible, autoCloseDelay, onClose]);
 
-  if (!visible) return null;
+  if (!showComponent) return null;
+
+  const isWeb = Platform.OS === 'web';
 
   return (
     <Animated.View 
       style={[
         styles.toastContainer,
-        { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+        { top: insets.top + 10, marginRight: 5, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
       ]}
     >
       <TouchableOpacity style={styles.toastContent} onPress={onClose} activeOpacity={0.9}>

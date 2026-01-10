@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const endpoints: Array<{ type: UserType; path: string }> = [
         { type: 'volunteer', path: '/volunteers/me' },
-        { type: 'association', path: '/assos/me' },
+        { type: 'association', path: '/associations/me' },
         { type: 'admin', path: '/admins/me' }
       ];
 
@@ -113,18 +113,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
 
           if (response.ok) {
-            const userData = await response.json();
-            const authUser: AuthUser = {
-              id_user: userData.id_user,
-              email: userData.email,
-              user_type: type,
-              username: userData.username,
-              ...userData
-            };
-            setUser(authUser);
+            const rawData = await response.json();
+            
+            let standardUser: AuthUser;
+            if (type === 'volunteer' || type === 'association') {
+              const { user, ...restOfData } = rawData;
+              standardUser = {
+                id_user: user.id_user,
+                email: user.email,
+                username: user.username,
+                user_type: type,
+                ...restOfData 
+              };
+            } else {
+              standardUser = {
+                  id_user: rawData.id_admin,
+                  email: rawData.email,
+                  username: rawData.username,
+                  user_type: type,
+                  ...rawData
+              };
+            }
+            setUser(standardUser);
             setUserType(type);
-            await AsyncStorage.setItem('cached_user', JSON.stringify(authUser));
-            console.log(`✅ ${type} profile loaded:`, authUser);
+            await AsyncStorage.setItem('cached_user', JSON.stringify(standardUser));
+            console.log(`✅ ${type} profile loaded:`, standardUser);
             success = true;
             break;
           }

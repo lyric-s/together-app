@@ -1,0 +1,158 @@
+// pages/HomeGuest.tsx
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'expo-router'
+import MissionVolunteerCard from '@/components/MissionVolunteerCard';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  useWindowDimensions,
+  Platform,
+  ActivityIndicator,
+} from 'react-native';
+import { Colors } from '@/constants/colors';
+import { styles } from '@/styles/pages/AccountWithoutCo';
+import { Mission } from '@/models/mission.model';
+import { missionService } from '@/services/missionService';
+
+export default function HomeGuest() {
+  const { width } = useWindowDimensions();
+  const router = useRouter();
+  const isMobile = Platform.OS !== 'web';
+  const isSmallScreen = width < 900;
+
+  const [missions, setMissions] = useState<Mission[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadMissions = async () => {
+      try {
+        const data = await missionService.getAll();
+        setMissions(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadMissions();
+  }, []);
+
+  const handlePressMission = (missionId: number) => {
+    console.log('Mission pressed:', missionId);
+    //router.push('/(auth)/login');
+    router.push(`/(guest)/search/mission/${missionId}`);
+  };
+
+  const handleJoinRegister = () => {
+    router.push('/(auth)/register');
+  };
+
+  if (loading) {
+      return (
+          <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
+              <ActivityIndicator size="large" color={Colors.orange} />
+          </View>
+      );
+  }
+
+  return (
+    <View style={[styles.container, { flex: 1 }]}> 
+      
+      {/* Header Mobile Only */}
+      {isMobile && (
+        <View style={styles.headerMobile}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={require('@/assets/images/logo.png')}
+              style={{ width: 40, height: 40 }}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+      )}
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[
+            isMobile ? { alignItems: 'center', paddingVertical: 5 } : {}
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        
+        {/* LISTE DES MISSIONS */}
+        <View style={isMobile ? styles.sectionMobile : styles.sectionWeb}>
+          <View style={styles.sectionHeader}>
+            <Text style={isMobile ? styles.sectionTitle : [styles.sectionTitleWeb, isSmallScreen && {paddingLeft: 35}]}>
+               {isMobile ? 'Récent' : 'Missions récentes'}
+            </Text>
+            
+            {isMobile && (
+              <TouchableOpacity onPress={() => router.push('/(guest)/search')}>
+                <Text style={styles.seeAllText}>Voir tout</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View style={isMobile ? {} : styles.missionsGrid}>
+            {missions.slice(0, 3).map((mission) => (
+              <View key={mission.id_mission} style={styles.cardWrapper}>
+                <MissionVolunteerCard
+                  mission={mission}
+                  onPressMission={() => handlePressMission(mission.id_mission)}
+                />
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* CTA BÉNÉVOLE */}
+        <View style={isMobile ? styles.ctaSectionMobile : styles.ctaSectionWeb}>
+          <Text style={isMobile ? styles.ctaTitleMobile : styles.ctaTitleWeb}>
+            Vous êtes un(e) bénévole, ou vous souhaitez en devenir un(e) !
+          </Text>
+          <Text style={isMobile ? styles.ctaDescriptionMobile : styles.ctaDescriptionWeb}>
+            Envie d'agir et de donner un peu de votre temps ?{'\n'}
+            <Text style={styles.boldText}>Together</Text> vous met en lien avec des associations proches de chez vous.
+          </Text>
+          <TouchableOpacity 
+            style={isMobile ? styles.ctaButtonMobile : styles.ctaButtonWeb} 
+            onPress={handleJoinRegister}
+          >
+            <Text style={isMobile ? styles.ctaButtonText : styles.ctaButtonTextWeb}>
+              REJOINDRE EN TANT QUE BÉNÉVOLE
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* CTA ASSOCIATION */}
+        <View style={[
+            isMobile ? styles.ctaSectionMobile : styles.ctaSectionWeb, 
+            styles.ctaSectionLavender
+        ]}>
+          <Text style={isMobile ? styles.ctaTitleMobile : styles.ctaTitleWeb}>
+            Vous êtes une association et vous cherchez des bénévoles !
+          </Text>
+          <Text style={isMobile ? styles.ctaDescriptionMobile : styles.ctaDescriptionWeb}>
+            Besoin de renfort pour vos actions ?{'\n'}
+            Avec <Text style={[styles.boldText, { color: Colors.inputBackground }]}>Together</Text>, publiez facilement vos missions.
+          </Text>
+          <TouchableOpacity 
+            style={[
+                isMobile ? styles.ctaButtonMobile : styles.ctaButtonWeb, 
+                isMobile ? styles.ctaButtonLavender : styles.ctaButtonBlueWeb
+            ]}
+            onPress={handleJoinRegister}
+          >
+            <Text style={isMobile ? styles.ctaButtonText : styles.ctaButtonTextWeb}>
+              REJOINDRE EN TANT QU'ASSOCIATION
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+      </ScrollView>
+    </View>
+  );
+}
