@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Platform } from 'react-native';
 import { Redirect } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
@@ -12,6 +12,10 @@ export default function IndexDispatcher() {
   const [isAnimationFinished, setIsAnimationFinished] = useState(false);
   
   const isWeb = Platform.OS === 'web';
+
+   const handleAnimationFinish = useCallback(() => {
+    setIsAnimationFinished(true);
+  }, []);
 
   // On the web, you don't have to wait for the animation
   useEffect(() => {
@@ -33,7 +37,7 @@ export default function IndexDispatcher() {
   if (isLoading || (!isAnimationFinished && !isWeb)) {
     return (
       <AnimatedSplashScreen 
-        onAnimationFinish={() => setIsAnimationFinished(true)} 
+        onAnimationFinish={handleAnimationFinish} 
       />
     );
   }
