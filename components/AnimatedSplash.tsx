@@ -9,7 +9,7 @@ export default function AnimatedSplashScreen({ onAnimationFinish }: Props) {
   const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.sequence([
+    const animation = Animated.sequence([
       // Fade In
       Animated.timing(opacity, {
         toValue: 1,
@@ -24,10 +24,14 @@ export default function AnimatedSplashScreen({ onAnimationFinish }: Props) {
         duration: 600,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      onAnimationFinish();
-    });
-  }, []);
+    ]);
+        animation.start(({ finished }) => {
+        if (finished) onAnimationFinish();
+         });
+    return () => {
+            animation.stop();
+        };
+    }, [opacity, onAnimationFinish]);
 
   return (
     <View style={styles.container}>
