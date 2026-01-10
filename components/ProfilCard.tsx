@@ -112,7 +112,7 @@ export default function ProfilCard({
     
     const handleEdit = () => {
         // Creation of copy of original data
-        setFormData(JSON.parse(JSON.stringify(originalData)));
+        setFormData(structuredClone(originalData));
         setIsEditing(true);
     }
 
