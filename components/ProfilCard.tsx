@@ -32,6 +32,7 @@ type InputBlockProps = {
     onChange: (text: string) => void; // On précise ici que la fonction attend une string
     secure?: boolean;
     multiline?: boolean;
+    required?: boolean;
 };
 
 type Props = {
@@ -182,7 +183,7 @@ export default function ProfilCard({
 
             if (isVolunteer(formData)) {
                 // Validation Specific Volunteer
-                if (!formData.username?.trim() || !formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim() || !formData.birthdate?.trim() || !formData.phone_number?.trim()) {
+                if (!formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim() || !formData.birthdate?.trim() || !formData.phone_number?.trim()) {
                     return showAlert('Erreur', 'Champs obligatoires manquants');
                 }
                 if (!emailRegex.test(formData.email.trim())) {
@@ -197,7 +198,6 @@ export default function ProfilCard({
                     last_name: formData.last_name.trim(),
                     first_name: formData.first_name.trim(),
                     email: formData.email.trim(),
-                    username: formData.username.trim(),
                     phone_number: formData.phone_number.replace(/\s/g, ''),
                     birthdate: formData.birthdate.trim(),
                     address: (formData.address ?? '').trim(),
@@ -209,7 +209,7 @@ export default function ProfilCard({
             }
             else if (isAdmin(formData)) {
                 // Validation Specific Admin
-                if (!formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim() || !formData.username?.trim()) {
+                if (!formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim()) {
                     return showAlert('Erreur', 'Champs obligatoires manquants');
                 }
                 if (!emailRegex.test(formData.email.trim())) {
@@ -220,14 +220,13 @@ export default function ProfilCard({
                     ...formData,
                     last_name: formData.last_name.trim(),
                     first_name: formData.first_name.trim(),
-                    username: formData.username.trim(),
                     email: formData.email.trim(),
                     ...passwordPayload
                 };
             }
             else if (isAsso(formData)) {
                 // Validation Association
-                if (!formData.name?.trim() || !formData.username?.trim() || !formData.company_name?.trim() || !formData.rna_code?.trim() || !formData.phone_number?.trim() || !formData.email?.trim()) {
+                if (!formData.name?.trim() || !formData.company_name?.trim() || !formData.rna_code?.trim() || !formData.phone_number?.trim() || !formData.email?.trim()) {
                     return showAlert('Erreur', 'Champs obligatoire manquants');
                 }
                 if (!emailRegex.test(formData.email.trim())) {
@@ -238,7 +237,6 @@ export default function ProfilCard({
                 }
                 finalPayload = {
                     ...formData,
-                    username: formData.username.trim(),
                     name: formData.name.trim(),
                     email: formData.email.trim(),
                     company_name: formData.company_name.trim(),
@@ -279,21 +277,21 @@ export default function ProfilCard({
             {(isAdmin(formData) || isVolunteer(formData)) && (
                 <>
                     {labels.last_name && (isEditing || formData.last_name) && (
-                        <InputBlock label={labels.last_name} value={formData.last_name} isEditing={isEditing} onChange={(t) => handleChange('last_name', t)} />
+                        <InputBlock label={labels.last_name} value={formData.last_name} isEditing={isEditing} onChange={(t) => handleChange('last_name', t)} required />
                     )}
                     {labels.first_name && (isEditing || formData.first_name) && (
-                        <InputBlock label={labels.first_name} value={formData.first_name} isEditing={isEditing} onChange={(t) => handleChange('first_name', t)} />
+                        <InputBlock label={labels.first_name} value={formData.first_name} isEditing={isEditing} onChange={(t) => handleChange('first_name', t)} required/>
                     )}
                 </>
             )}
 
             {(isAdmin(formData) || isAsso(formData) || isVolunteer(formData)) && (
                 <>
-                    {labels.username && (isEditing || formData.username) && (
-                        <InputBlock label={labels.username} value={formData.username} isEditing={isEditing} onChange={(t) => handleChange('username', t)} />
+                    {labels.username && formData.username && (
+                        <InputBlock label={labels.username} value={formData.username} isEditing={false} onChange={() => {}} />
                     )}
                     {labels.email && (isEditing || formData.email) && (
-                        <InputBlock label={labels.email} value={formData.email} isEditing={isEditing} onChange={(t) => handleChange('email', t)} />
+                        <InputBlock label={labels.email} value={formData.email} isEditing={isEditing} onChange={(t) => handleChange('email', t)} required />
                     )}
                 </>
             )}
@@ -301,10 +299,10 @@ export default function ProfilCard({
             {isVolunteer(formData) && (
                 <>
                     {labels.birthdate && (isEditing || formData.birthdate) && (
-                        <InputBlock label={labels.birthdate} value={formData.birthdate} isEditing={isEditing} onChange={(t) => handleChange('birthdate', t)} />
+                        <InputBlock label={labels.birthdate} value={formData.birthdate} isEditing={isEditing} onChange={(t) => handleChange('birthdate', t)} required />
                     )}
                     {labels.phone_number && (isEditing || formData.phone_number) && (
-                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} />
+                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} required />
                     )}
                     {labels.address && (isEditing || formData.address) && (
                         <InputBlock label={labels.address} value={formData.address} isEditing={isEditing} onChange={(t) => handleChange('address', t)} />
@@ -325,16 +323,16 @@ export default function ProfilCard({
             {isAsso(formData) && (
                 <>
                     {labels.company_name && (isEditing || formData.company_name) && (
-                        <InputBlock label={labels.company_name} value={formData.company_name} isEditing={isEditing} onChange={(t) => handleChange('company_name', t)} />
+                        <InputBlock label={labels.company_name} value={formData.company_name} isEditing={isEditing} onChange={(t) => handleChange('company_name', t)} required />
                     )}
                     {labels.name && (isEditing || formData.name) && (
-                        <InputBlock label={labels.name} value={formData.name} isEditing={isEditing} onChange={(t) => handleChange('name', t)} />
+                        <InputBlock label={labels.name} value={formData.name} isEditing={isEditing} onChange={(t) => handleChange('name', t)} required />
                     )}
                     {labels.rna_code && (isEditing || formData.rna_code) && (
-                        <InputBlock label={labels.rna_code} value={formData.rna_code} isEditing={isEditing} onChange={(t) => handleChange('rna_code', t)} />
+                        <InputBlock label={labels.rna_code} value={formData.rna_code} isEditing={isEditing} onChange={(t) => handleChange('rna_code', t)} required />
                     )}
                     {labels.phone_number && (isEditing || formData.phone_number) && (
-                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} />
+                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} required />
                     )}
                 </>
             )}
@@ -366,7 +364,7 @@ export default function ProfilCard({
     );
 }
 
-const InputBlock = ({ label, value, isEditing, onChange, secure, multiline }: InputBlockProps) => {
+const InputBlock = ({ label, value, isEditing, onChange, secure, multiline, required }: InputBlockProps) => {
     const hasValue = value && value.trim().length > 0;
 
     if (!isEditing && !hasValue) {
@@ -376,7 +374,10 @@ const InputBlock = ({ label, value, isEditing, onChange, secure, multiline }: In
     return (
     <View style={styles.inputRow}>
         <View style={styles.labelContainer}>
-            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.label}>
+                {label}
+                {isEditing && required && <Text style={{ color: 'red' }}> *</Text>}
+            </Text>
         </View>
         <View style={styles.inputWrapper}>
             {isEditing ? (
@@ -384,7 +385,7 @@ const InputBlock = ({ label, value, isEditing, onChange, secure, multiline }: In
                     style={[styles.input, multiline && { minHeight: 100 }]}
                     value={value}
                     onChangeText={onChange}
-                    placeholder={label}
+                    placeholder={label + (required ? '*' : '')}
                     secureTextEntry={secure}
                     multiline={multiline}
                     numberOfLines={multiline ? 4 : 1}
