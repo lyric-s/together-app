@@ -43,17 +43,28 @@ export default function JoinMissionPage() {
 
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
 
+  const [error, setError] = useState(false);
+
   // FETCH MISSION
   useEffect(() => {
     if (!id) return;
+    const numericId = Number(id);
+   if (isNaN(numericId)) {
+      setError(true);
+      setLoading(false);
+      return;
+   }
     const fetchMission = async () => {
       setLoading(true);
+      setError(false);
       try {
-        const data = await missionService.getById(Number(id));
+        const data = await missionService.getById(numericId);
+        if (!data) throw new Error('Mission not found');
         setMission(data);
         // Ici vous pourriez vérifier si c'est déjà un favori si l'utilisateur est connecté
       } catch (e) {
         console.error("Erreur chargement mission:", e);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -91,7 +102,6 @@ export default function JoinMissionPage() {
     );
   }
 
-  // PRÉPARATION DES DONNÉES
   const finished = isMissionFinished(mission);
   const mission_category = mission.category?.label || "Général";
   const mission_category_color = Colors.orange; 
@@ -108,9 +118,7 @@ export default function JoinMissionPage() {
 
   // HANDLERS (LOGIQUE GUEST)
   const checkAuthAndRedirect = () => {
-    // Si pas connecté ou invité -> Direction Login
     if (!userType || userType === 'volunteer_guest') {
-      // On peut ajouter un petit Alert pour expliquer pourquoi
       showToast("Connexion requise", "Vous devez être connecté pour effectuer cette action.");
       return false;
     }
