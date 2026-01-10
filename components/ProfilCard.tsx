@@ -120,7 +120,7 @@ export default function ProfilCard({
     useEffect(() => {
         setOriginalData(userData);
         if (!isEditing) setFormData({ ...userData });
-    }, [userData, isEditing]);
+    }, [userData]);
 
     const handleChange = (field: string, value: string) => {
         // Only working copy
@@ -189,7 +189,16 @@ export default function ProfilCard({
                 if (!emailRegex.test(formData.email.trim())) {
                     return showAlert('Erreur', "L'adresse email n'est pas valide.");
                 }
-                if (!phoneRegex.test(formData.phone_number.trim())) {
+                const birthdateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!birthdateRegex.test(formData.birthdate.trim())) {
+                    return showAlert('Erreur', 'La date de naissance doit être au format AAAA-MM-JJ.');
+                }
+                const dateObj = new Date(formData.birthdate.trim());
+                if (isNaN(dateObj.getTime())) {
+                    return showAlert('Erreur', 'La date de naissance n\'est pas valide.');
+                }
+                const cleanPhone = formData.phone_number.replace(/[\s\-\(\)]/g, '');
+                if (!phoneRegex.test(cleanPhone)) {
                     return showAlert('Erreur', "Le numéro de téléphone n'est pas valide.");
                 }
 
@@ -232,7 +241,8 @@ export default function ProfilCard({
                 if (!emailRegex.test(formData.email.trim())) {
                     return showAlert('Erreur', "L'adresse email n'est pas valide.");
                 }
-                if (!phoneRegex.test(formData.phone_number.trim())) {
+                const cleanPhone = formData.phone_number.replace(/[\s\-\(\)]/g, '');
+                if (!phoneRegex.test(cleanPhone)) {
                     return showAlert('Erreur', "Le numéro de téléphone n'est pas valide.");
                 }
                 finalPayload = {
@@ -287,7 +297,7 @@ export default function ProfilCard({
 
             {(isAdmin(formData) || isAsso(formData) || isVolunteer(formData)) && (
                 <>
-                    {labels.username && formData.username && (
+                    {labels.username && (
                         <InputBlock label={labels.username} value={formData.username} isEditing={false} onChange={() => {}} />
                     )}
                     {labels.email && (isEditing || formData.email) && (

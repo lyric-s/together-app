@@ -61,7 +61,8 @@ export default function ProfilAdmin() {
             };
             setProfileUser(profileData);
         } catch (error) {
-            showAlert('Erreur', 'Impossible de récupérer vos informations de profil.');
+            const message = error instanceof Error ? error.message : 'Impossible de récupérer le profil.';
+            showAlert('Erreur', message);
         } finally {
             setIsPageLoading(false);
         }
@@ -106,7 +107,8 @@ export default function ProfilAdmin() {
             await refetchUser(); // Synchro AutoContext
             showAlert('Succès', 'Votre profil a été mis à jour avec succès.');
         } catch (error) {
-            showAlert('Erreur', 'Échec de la mise à jour du profil.');
+            const message = error instanceof Error ? error.message : 'Échec de la mise à jour du profil.';
+            showAlert('Erreur', message);
         }
     }
 
