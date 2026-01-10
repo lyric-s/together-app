@@ -25,15 +25,23 @@ export const adminService = {
   // Retrieve MY profile
   // GET /admin/me
   getMe: async (): Promise<Admin> => {
-    const response = await api.get('/admin/me');
-    return response.data;
+    try {
+      const response = await api.get('/admin/me');
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
   },
 
   // Update MY profile
   // PATCH /admin/{adminId}
   updateProfile: async (adminId: number, data: AdminUpdate) => {
-    const response = await api.patch(`/admin/${adminId}`, data);
-    return response.data;
+    try {
+      const response = await api.patch(`/admin/${adminId}`, data);
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
   },
 
   /**

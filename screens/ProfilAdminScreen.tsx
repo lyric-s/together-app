@@ -1,7 +1,7 @@
 // screens/ProfilAdminScreen.tsx
 import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, ScrollView, useWindowDimensions, Platform, ActivityIndicator } from 'react-native';
-import { router } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import AlertToast from '@/components/AlertToast';
 import { Colors } from '@/constants/colors';
@@ -38,25 +38,27 @@ export default function ProfilAdmin() {
         message: '' 
     });
 
-    useEffect(() => {
-        // While the authentication is loading, we do nothing.
-        if (isAuthLoading) return;
+    const handleAlertClose = useCallback(() => {
+        setAlertModal({ visible: false, title: '', message: '' })
+    }, []);
 
-        if (userType !== 'admin') {
-            console.log(`⛔ Accès refusé (${userType}) -> Redirection`);
-            router.replace('/(auth)/login');
-        }
-    }, [userType, isAuthLoading]);
+    const showAlert = useCallback((title: string, message: string) => {
+        setAlertModal({ visible: true, title, message });
+    }, []);
 
-    useEffect(() => {
-        if (isAuthLoading) return;
-        
-        if (userType === 'admin' && user) {
-            fetchProfile();
-        }
-    }, [userType, user, isAuthLoading]);
+    if (isAuthLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white }}>
+                <ActivityIndicator size="large" color={Colors.orange} />
+            </View>
+        );
+    }
 
-    const fetchProfile = async () => {
+    if (userType !== 'admin') {
+        return <Redirect href="/(auth)/login" />;
+    }
+
+    const fetchProfile = useCallback( async () => {
         setIsPageLoading(true);
         try {
             const data = await adminService.getMe();
@@ -75,15 +77,13 @@ export default function ProfilAdmin() {
         } finally {
             setIsPageLoading(false);
         }
-    };
+    }, [showAlert]);
 
-    const handleAlertClose = useCallback(() => {
-        setAlertModal({ visible: false, title: '', message: '' })
-    }, []);
-
-    const showAlert = useCallback((title: string, message: string) => {
-        setAlertModal({ visible: true, title, message });
-    }, []);
+    useEffect(() => {        
+        if (user) {
+            fetchProfile();
+        }
+    }, [user, fetchProfile]);
 
     const handleSave = async (data: UserProfile): Promise<void> => {
         if (!profileUser?.id_admin) {
@@ -111,7 +111,7 @@ export default function ProfilAdmin() {
         }
     }
 
-    if (isAuthLoading || isPageLoading) {
+    if (isPageLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.white }}>
                 <ActivityIndicator size="large" color={Colors.orange} />
