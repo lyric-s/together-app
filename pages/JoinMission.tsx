@@ -92,7 +92,7 @@ export default function JoinMissionPage() {
   }
 
   // PRÉPARATION DES DONNÉES
-  const finished = false //isMissionFinished(mission);
+  const finished = isMissionFinished(mission);
   const mission_category = mission.category?.label || "Général";
   const mission_category_color = Colors.orange; 
   const mission_location = mission.location ? `${mission.location.zip_code}, ${mission.location.country}` : "Lieu non précisé";
@@ -140,7 +140,7 @@ export default function JoinMissionPage() {
         setIsFavorite(true);
       }
     } catch (e: any) {
-      console.error(e);
+      showToast("Erreur", e.message || "Impossible de modifier les favoris.");
     }
   };
 

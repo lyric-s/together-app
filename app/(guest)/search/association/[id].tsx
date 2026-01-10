@@ -6,6 +6,6 @@
 
 import AboutUsAssociation from '@/pages/AboutUsAssociation';
 
-export default function GuestMissionDetailsRoute() {
+export default function GuestAssociationDetailsRoute() {
   return <AboutUsAssociation />;
 }

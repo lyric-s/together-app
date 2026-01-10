@@ -19,23 +19,34 @@ export default function AboutUsAssociation() {
   
    const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    if (!id) return;
-  
-    const fetchAssociation = async () => {
-      setLoading(true);
-      try {
-        const data = await associationService.getById(Number(id));
-        setAssociation(data);
-      } catch (e) {
-        console.error("Erreur chargement association:", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchAssociation();
-  }, [id]);
+   const [error, setError] = useState(false);
+
+    useEffect(() => {
+        if (!id) return;
+    
+        const numericId = Number(id);
+        if (isNaN(numericId)) {
+            setError(true);
+            setLoading(false);
+            return;
+        }
+
+        const fetchAssociation = async () => {
+            setLoading(true);
+            setError(false);
+            try {
+                const data = await associationService.getById(numericId);
+                if (!data) throw new Error('Association not found');
+                setAssociation(data);
+            } catch (e) {
+                console.error("Erreur chargement association:", e);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAssociation();
+    }, [id]);
   
   if (loading) {
     return (

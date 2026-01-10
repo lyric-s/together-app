@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, usePathname, RelativePathString, Href } from 'expo-router';
+import { useRouter, usePathname } from 'expo-router';
 import { styles } from '@/styles/components/MobileNavigationBarStyles';
 import {Colors} from "@/constants/colors";
 import { useAuth } from '@/context/AuthContext';
+import { normalizePath } from '@/utils/path.utils';
 
 /**
  * Type definition for a bottom navigation tab.
@@ -53,10 +54,6 @@ const BottomNavBar: React.FC = () => {
   ];
 
   const tabs = userType === 'volunteer' ? volunteerTabs : guestTabs;
-
-  const normalizePath = (path: string) => {
-    return path.replace(/\/\([^)]+\)/g, ''); // Retire /(...)
-  };
 
   const isTabActive = (route: string) => {
     const cleanPathname = normalizePath(pathname);

@@ -54,9 +54,8 @@ export default function MissionVolunteerCard({
     );
 
   const assoName = mission.association?.name || "Association inconnue";
-  const city = mission.location?.zip_code || ""; // Peut être vide
+  const city = mission.location?.zip_code || "";
   const categoryLabel = mission.category?.label || "Général";
-  // Couleur par défaut si pas de catégorie ou pas de couleur définie
   const categoryColor = Colors.orange;
 
   return (

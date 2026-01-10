@@ -41,12 +41,15 @@ api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
     if (originalRequest.url?.includes('/auth/refresh')) {
         await storageService.clear();
         return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         // We import dynamically to avoid import loops
