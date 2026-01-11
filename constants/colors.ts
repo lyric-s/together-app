@@ -28,4 +28,5 @@ export const Colors = {
     champFond: '#6A66B8',
     lightViolet: '#A9A7ED',
     orangeVeryLight: '#FFEFDF',
+    colorCream: '#FFF8F2',
 };

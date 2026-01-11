@@ -17,7 +17,7 @@ if (__DEV__ && !localhost) {
 
 const BASE_URL = __DEV__ 
   ? `http://${localhost}:8000`
-  : 'https://together-api.out-online.net/';
+  : 'https://together-api.out-online.net';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -56,6 +56,9 @@ api.interceptors.response.use(
         const { authService } = require('./authService');
         console.log("🔄 Tentative de rafraîchissement du token...");
         const newToken = await authService.refresh();
+        if (!originalRequest.headers) {
+          originalRequest.headers = {} as any;
+        }
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         console.log("✅ Token rafraîchi avec succès, on relance la requête.");
         return api(originalRequest);

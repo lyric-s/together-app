@@ -1,5 +1,6 @@
 // app/(auth)/register.tsx
 import React from 'react';
+import Register from '@/pages/Register'
 /**
  * Registration page component for user sign-up; currently renders no UI.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function RegisterPage() {
-//    return <Register />
+    return <Register />
 }

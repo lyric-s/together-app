@@ -29,6 +29,8 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
+    width: '100%',
+    paddingHorizontal: 10,
   },
   sectionTitle: {
     fontSize: 20,

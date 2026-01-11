@@ -1,6 +1,7 @@
 import api from './api';
 import { Association, AssociationCreate, AssociationUpdate } from '@/models/association.model';
 import { Mission, MissionCreate, MissionUpdate } from '@/models/mission.model';
+import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler';
 
 export const associationService = {
@@ -36,10 +37,13 @@ export const associationService = {
   },
 
   // POST /associations/
-  create: async (data: AssociationCreate): Promise<Association> => {
+  create: async (userIn: UserCreate, associationIn: AssociationCreate): Promise<Association> => {
     try {
-      const response = await api.post<Association>('/associations/', data);
-      return response.data;
+      const { data } = await api.post<Association>('/associations/', {
+        user_in: userIn,
+        association_in: associationIn,
+      });
+      return data;
     } catch (error) {
       handleApiError(error);
     }

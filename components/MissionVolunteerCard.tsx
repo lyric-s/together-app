@@ -46,12 +46,14 @@ export default function MissionVolunteerCard({
 
   // date format → jj/mm/aaaa hh:mm
   const dateObj = new Date(mission.date_start);
+  const isValidDate = !isNaN(dateObj.getTime());
   const formattedDate =
+    isValidDate ?
     dateObj.toLocaleDateString("fr-FR") +
     (dateObj.getHours() !== 0 || dateObj.getMinutes() !== 0 
       ? ` à ${dateObj.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` 
       : ""
-    );
+    ) : "Date non disponible";
 
   const assoName = mission.association?.name || "Association inconnue";
   const city = mission.location?.zip_code || "";
