@@ -2,7 +2,6 @@ import { Colors } from '@/constants/colors';
 import { StyleSheet, useWindowDimensions } from 'react-native';;
 
 const { height } = useWindowDimensions();
-const dynamicStyles = { minHeight: height };
 
 export const styles = StyleSheet.create({
     container: {
