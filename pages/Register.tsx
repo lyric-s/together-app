@@ -313,7 +313,7 @@ export default function Register() {
                                 </>
                             )}
                             <TextInput placeholder={userTypeTab === 'Association' ? "Adresse *" : "Adresse"} placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} value={address} onChangeText={setAddress}/>
-                            <TextInput placeholder={userTypeTab === 'Association' ? "Code Postale *" : "Code Postale"} placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input}  value={zip_code} onChangeText={setZip_code}  />
+                            <TextInput placeholder={userTypeTab === 'Association' ? "Code Postal *" : "Code Postal"} placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input}  value={zip_code} onChangeText={setZip_code}  />
                             <TextInput placeholder="N°Téléphone *" placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} keyboardType="numeric"  value={phone_number} onChangeText={setPhone_number} />
                             <TextInput placeholder="Adresse mail *" placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} keyboardType="email-address" autoCapitalize="none" value={email} onChangeText={setEmail} />
                             <TextInput placeholder="Mot de passe *" placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} secureTextEntry={true}  value={password} onChangeText={setPassword} />
