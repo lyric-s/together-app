@@ -231,7 +231,7 @@ export default function JoinMissionPage() {
         <View style={styles.bottomCard}>
           <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center'}}>
             <Text style={styles.infoLine}>
-                <Text style={styles.infoLabel}>Association :</Text> {mission.association?.name}
+                <Text style={styles.infoLabel}>Association :</Text> {mission.association?.name || "Non spécifiée"}
             </Text>
             <TouchableOpacity onPress={goToAssociation} style={{ marginLeft: 5 }}>
                 <Text style={{ color: Colors.orange, textDecorationLine: 'underline', fontWeight: '600' }}>

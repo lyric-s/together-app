@@ -29,10 +29,10 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         borderRadius: 999,
     },
-    circleTopPurple: { width: 350, height: 350, backgroundColor: '#6A65B2', top: -120, left: -100 },
-    circleTopOrange: { width: 180, height: 180, backgroundColor: '#FF9A62', top: '15%', left: -60 },
-    circleBottomOrange: { width: 280, height: 280, backgroundColor: '#FF9A62', bottom: -100, left: 20 },
-    circleBottomPurple: { width: 200, height: 200, backgroundColor: '#6A65B2', bottom: -50, left: 180 },
+    circleTopPurple: { width: 350, height: 350, backgroundColor: Colors.violet, top: -120, left: -100 },
+    circleTopOrange: { width: 180, height: 180, backgroundColor: Colors.orange, top: '15%', left: -60 },
+    circleBottomOrange: { width: 280, height: 280, backgroundColor: Colors.orange, bottom: -100, left: 20 },
+    circleBottomPurple: { width: 200, height: 200, backgroundColor: Colors.violet, bottom: -50, left: 180 },
     mobileCircleTopRight: {
         position: 'absolute',
         top: -140,
@@ -87,14 +87,13 @@ export const styles = StyleSheet.create({
         width: 140,
         height: 140,
         borderRadius: 70,
-        backgroundColor: '#FF9A62',
+        backgroundColor: Colors.orange,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 30,
         overflow: 'hidden',
         borderWidth: 2,
         borderColor: 'white',
-        // Le padding force l'image à rester à l'intérieur sans toucher les bords
         padding: 20, 
     },
     avatarImage: {
@@ -132,7 +131,7 @@ export const styles = StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: '#6A65B2',
+        backgroundColor: Colors.violet,
         justifyContent: 'center',
         alignItems: 'center',
         marginLeft: 10,
@@ -140,7 +139,7 @@ export const styles = StyleSheet.create({
     },
     // --- BOUTON VALIDER ---
     submitBtn: {
-        backgroundColor: '#FF9A62',
+        backgroundColor: Colors.orange,
         paddingVertical: 14,
         paddingHorizontal: 50,
         borderRadius: 30,
