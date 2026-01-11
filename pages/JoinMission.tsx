@@ -46,21 +46,28 @@ export default function JoinMissionPage() {
 
   // FETCH MISSION
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      setError(true);
+      setLoading(false);
+      setMission(null);
+      return;
+    }
     const numericId = Number(id);
    if (isNaN(numericId)) {
       setError(true);
       setLoading(false);
+      setMission(null);
       return;
    }
     const fetchMission = async () => {
       setLoading(true);
       setError(false);
+      setMission(null);
       try {
         const data = await missionService.getById(numericId);
         if (!data) throw new Error('Mission not found');
         setMission(data);
-        if (userType && userType !== 'volunteer_guest') {
+        if (userType === 'volunteer') {
           const favorites = await volunteerService.getFavorites();
           const isAlreadyFavorite = favorites.some(fav => fav.id_mission === numericId);
           setIsFavorite(isAlreadyFavorite);
@@ -99,7 +106,7 @@ export default function JoinMissionPage() {
                 <BackButton name_page="Retour" />
             </View>
             <View>
-                <Text style={{ textAlign: 'center', marginTop: 20 }}>Mission introuvable</Text>
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>{error ? "Erreur lors du chargement. Réessayez." : "Mission introuvable"}</Text>
             </View>
         </View>
     );
@@ -173,7 +180,7 @@ export default function JoinMissionPage() {
         visible={toast.visible} 
         title={toast.title} 
         message={toast.message} 
-        onClose={() => setToast({...toast, visible: false})} 
+        onClose={() => setToast(t => ({ ...t, visible: false }))}
       />
 
       {/* HEADER */}

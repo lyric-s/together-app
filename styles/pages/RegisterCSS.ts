@@ -1,7 +1,5 @@
 import { Colors } from '@/constants/colors';
-import { StyleSheet, useWindowDimensions } from 'react-native';
-
-const { height } = useWindowDimensions();
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -15,7 +13,6 @@ export const styles = StyleSheet.create({
         flex: 1,
         flexDirection: 'row',
         backgroundColor: Colors.colorCream,
-        minHeight: height,
     },
     columnLayout: {
         flexDirection: 'column',
