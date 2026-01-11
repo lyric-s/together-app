@@ -8,7 +8,7 @@ import { Colors } from "@/constants/colors";
 interface MissionCardProps {
   mission: Mission; 
   onPressMission: () => void;
-  onPressFavorite?: (missionId: number, newFavoriteValue: boolean) => void;
+  onPressFavorite?: () => void;
   isFavorite?: boolean;
 }
 
@@ -29,20 +29,6 @@ export default function MissionVolunteerCard({
   const imageSource = mission.image_url 
     ? { uri: mission.image_url } 
     : defaultImage;
-
-  const [favoriteState, setFavoriteState] = useState(isFavorite);
-  
-  useEffect(() => {
-    setFavoriteState(isFavorite);
-  }, [isFavorite]);
-
-  const toggleFavorite = () => {
-    if (!onPressFavorite) return;
-
-    const newValue = !favoriteState;
-    setFavoriteState(newValue);
-    onPressFavorite(mission.id_mission, newValue);
-  };
 
   // date format → jj/mm/aaaa hh:mm
   const dateObj = new Date(mission.date_start);
@@ -77,10 +63,10 @@ export default function MissionVolunteerCard({
 
         {/* Heart  (optional) */}
         {onPressFavorite && (
-            <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+            <TouchableOpacity style={styles.heartButton} onPress={onPressFavorite}>
                 <Image
                     source={
-                        favoriteState
+                        isFavorite
                             ? require("../assets/images/red_heart.png")
                             : require("../assets/images/gray_heart.png")
                     }

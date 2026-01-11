@@ -1,5 +1,6 @@
 // app/(guest)/search/index.tsx
 import React from 'react';
+import SearchMission from '@/pages/SearchMission'
 /**
  * Page component for the guest search route.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function SearchGuestPage() {
-//    return <SearchGuest />;
+    return <SearchMission />;
 }

@@ -8,12 +8,10 @@ import { authService } from '@/services/authService';
 import AlertToast from '@/components/AlertToast';
 import * as DocumentPicker from 'expo-document-picker';
 import { Colors } from '@/constants/colors';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Cross from '@/components/Cross';
 
 export default function Register() {
     const router = useRouter();
-    const insets = useSafeAreaInsets();
     const { login } = useAuth();
     const { userType } = useLocalSearchParams<{ userType: string }>();
     const [authTab, setAuthTab] = useState('Inscription');
@@ -156,7 +154,7 @@ export default function Register() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ flex: 1 }}
         >
-        <View style={[styles.container, { paddingTop: isWeb ? 0 : insets.top, backgroundColor: Colors.white}]} >
+        <View style={[styles.container, { backgroundColor: Colors.white}]} >
         <AlertToast visible={toast.visible} title={toast.title} message={toast.message} onClose={() => setToast({...toast, visible: false})} />
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContainer]} bounces={false} keyboardShouldPersistTaps="handled">
             <View style={[styles.mainContainer, !isWeb && styles.columnLayout]}>

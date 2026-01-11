@@ -29,4 +29,6 @@ export const Colors = {
     lightViolet: '#A9A7ED',
     orangeVeryLight: '#FFEFDF',
     colorCream: '#FFF8F2',
+    grayToWhite: '#F5F5F5',
+    grayBorder: '#CCCCCC'
 };

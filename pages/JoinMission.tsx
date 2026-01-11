@@ -24,7 +24,6 @@ import { missionService } from '@/services/missionService';
 import { useAuth } from "@/context/AuthContext"; 
 import { Mission } from "@/models/mission.model";
 import { Colors } from "@/constants/colors";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AlertToast from "@/components/AlertToast";
 
 export default function JoinMissionPage() {
@@ -33,8 +32,6 @@ export default function JoinMissionPage() {
   const isWeb = Platform.OS === 'web';
   const isSmallScreenWeb = isWeb && width < 900;
   const { userType } = useAuth();
-
-  const insets = useSafeAreaInsets();
 
   const [mission, setMission] = useState<Mission | null>(null);
   const [loading, setLoading] = useState(true);
@@ -175,7 +172,7 @@ export default function JoinMissionPage() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: isWeb ? 0 : insets.top, backgroundColor: Colors.white}]} >
+    <View style={[styles.container, { backgroundColor: Colors.white }]} >
       <AlertToast 
         visible={toast.visible} 
         title={toast.title} 
