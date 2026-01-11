@@ -73,13 +73,16 @@ export default function Register() {
             }
         } catch (err) {
             console.log("Erreur selection fichier", err);
-        }
+            showToast("Erreur", "La sélection du fichier a échoué.");
+         }
+
     };
 
     const validateForm = () => {
         // 1. Common Validation (User)
         if (!username.trim()) return "Le nom d'utilisateur est requis.";
         if (!email.trim()) return "L'adresse email est requise.";
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "L'adresse email n'est pas valide.";
         if (!phone_number.trim()) return "Le numéro de téléphone est requis.";
         if (!password) return "Le mot de passe est requis.";
         if (!confirmPassword) return "La confirmation du mot de passe est requise.";
@@ -90,6 +93,7 @@ export default function Register() {
             if (!lastName.trim()) return "Le nom est requis.";
             if (!firstName.trim()) return "Le prénom est requis.";
             if (!birthdate.trim()) return "La date de naissance est requise.";
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(birthdate)) return "Le format de date doit être YYYY-MM-DD.";
             // Bio & Skills are optional for the volunteer
         }    
         else { // Association
@@ -131,12 +135,14 @@ export default function Register() {
                     rna_code: rnaCode, 
                     country, 
                     description,
-                    //file: attachment
                 };
+                // Note: File upload likely requires FormData instead of JSON
+                // payload.file = attachment;
             }
             const response = await authService.register(payload);
             await login(response.access_token, response.refresh_token);
             console.log("Inscription lancée");
+            router.replace(`/(${payload.type})/home` as any);
         } catch (e: any) {
             console.error(e);
             showToast("Échec de l'inscription", e.message || "Une erreur est survenue.");
@@ -313,7 +319,11 @@ export default function Register() {
                             <TextInput placeholder="Mot de passe *" placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} secureTextEntry={true}  value={password} onChangeText={setPassword} />
                             <TextInput placeholder="Confirmer mot de passe *" placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} secureTextEntry={true}  value={confirmPassword} onChangeText={setConfirmPassword} />
 
-                            <TouchableOpacity style={styles.submitBtn} onPress={handleRegister}>
+                            <TouchableOpacity 
+                                style={[styles.submitBtn, loading && { opacity: 0.6 }]} 
+                                onPress={handleRegister}
+                                disabled={loading}
+                            >
                                 {loading ? (
                                     <ActivityIndicator color="#fff" />
                                 ) : (

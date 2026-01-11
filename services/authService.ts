@@ -7,6 +7,27 @@ import { AssociationCreate } from '@/models/association.model';
 import { UserType } from "@/models/enums";
 import { associationService } from './associationService';
 
+interface RegisterPayload {
+  email: string;
+  password: string;
+  username: string;
+  type: 'volunteer' | 'association';
+  // Volunteer fields
+  first_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  birthdate?: string;
+  // Association fields
+  name?: string;
+  company_name?: string;
+  rna_code?: string;
+  address?: string;
+  zip_code?: string;
+  country?: string;
+  description?: string;
+  skills?: string;
+  bio?: string;
+}
 export const authService = {
   // Corresponds to @router.post("/token")
   login: async (username: string, password: string) => {
@@ -35,18 +56,28 @@ export const authService = {
     return access_token;
   },
 
-  register: async (payload: any) => {
+  register: async (payload: RegisterPayload) => {
     try {
+      if (!payload.email || !payload.password || !payload.type) {
+        throw new Error('Missing required fields: email, password, and type');
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(payload.email)) {
+        throw new Error('Invalid email format');
+      }
       const { email, password, username, type } = payload;
 
       const userIn: UserCreate = {
         email: email,
         password: password,
         username: username || email.split('@')[0],
-        user_type: type === 'volunteer' ? UserType.VOLUNTEER : UserType.ASSOCIATION
+        user_type: type === UserType.VOLUNTEER ? UserType.VOLUNTEER : UserType.ASSOCIATION
       };
 
       if (type === 'volunteer') {
+        if (!payload.first_name || !payload.phone_number || !payload.last_name || !payload.birthdate) {
+          throw new Error('Volunteer registration requires first_name, last_name, birthdate and phone_number');
+        }
         const volunteerIn: VolunteerCreate = {
           first_name: payload.first_name,
           last_name: payload.last_name,
@@ -61,6 +92,9 @@ export const authService = {
         await volunteerService.register(userIn, volunteerIn);
 
       } else {
+        if (!payload.name || !payload.phone_number || !payload.company_name || !payload.rna_code || !payload.address || !payload.address || !payload.zip_code || !payload.country || !payload.description) {
+          throw new Error('Association registration requires name, company_name, rna_code, phone_number, address, zip_code, country, description');
+        }
         const associationIn: AssociationCreate = {
           name: payload.name,
           company_name: payload.company_name,
@@ -77,10 +111,15 @@ export const authService = {
 
       // --- AUTO-LOGIN ---
       console.log(`✅ Création ${type} réussie, tentative de connexion...`);
-      return await authService.login(username, password);
+      return await authService.login(userIn.username, password);
 
     } catch (error: any) {
-      console.error("Erreur Inscription:", error.response?.data || error.message);
+      const sanitizedError = {
+        message: error.message,
+        status: error.response?.status,
+        errorData: error.response?.data
+      };
+      console.error("Registration error:", sanitizedError);
       throw error;
     }
   }

@@ -33,11 +33,12 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme} >
         <AuthProvider>
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.white }, animation: 'fade'}}>
-                <Stack.Screen name="index" />
+            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colorScheme === 'dark' ? Colors.black : Colors.white }, animation: 'fade'}}>                <Stack.Screen name="index" />
             </Stack>
-            <StatusBar barStyle="dark-content" backgroundColor="white" />
-        </AuthProvider>
+            <StatusBar 
+              barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+              backgroundColor={colorScheme === 'dark' ? Colors.black : Colors.white} 
+            />        </AuthProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
