@@ -8,7 +8,7 @@ import { View, TouchableOpacity, Text, StyleProp, ViewStyle } from 'react-native
 import { useRouter } from 'expo-router';
 import { styles, THEMES } from '@/styles/components/SwitchButton.styles';
 
-export type SwitchVariant = 'mission' | 'auth' | 'userType';
+export type SwitchVariant = 'mission' | 'auth' | 'userType' | 'activityVolunteer' | 'activityAssociation';
 
 export interface SwitchButtonProps {
     variant?: SwitchVariant; // Colors
@@ -34,7 +34,7 @@ export default function SwitchButton({
         mission: {
             left: 'Mission',
             right: 'Association',
-            routes: { left: '/mission', right: '/association' },
+            routes: { left: '/(volunteer)/search/mission', right: '/(volunteer)/search/association' },
             theme: THEMES.mission
         },
         auth: {
@@ -49,21 +49,25 @@ export default function SwitchButton({
             routes: { left: '/(auth)/register/', right: '/(auth)/login' },
             theme: THEMES.userType
         },
-        activity : {
+        activityVolunteer : {
             left: 'A venir',
             right: 'Historique',
-            routes: { left: '/(auth)/register/', right: '/(auth)/login' },
+            routes: { left: '/(volunteer)/library/upcoming', right: '/(volunteer)/library/history' },
+            theme: THEMES.mission
+        },
+        activityAssociation : {
+            left: 'A venir',
+            right: 'Historique',
+            routes: { left: '/(association)/library/upcoming', right: '/(association)/library/history' },
             theme: THEMES.mission
         },
     };
 
     const currentConfig = config[variant] || config.mission;
     
-    // Si des labels personnalisés sont fournis, on les utilise. Sinon on prend ceux de la config.
     const finalLeftLabel = labelLeft || currentConfig.left;
     const finalRightLabel = labelRight || currentConfig.right;
 
-    // État interne
     const initialTab = defaultValue || finalLeftLabel;
     const [internalActiveTab, setInternalActiveTab] = useState<string>(initialTab);
     const router = useRouter();
@@ -77,11 +81,8 @@ export default function SwitchButton({
         }
         
         if (onChange) {
-            // Si on a fourni une fonction onChange, on l'utilise (Cas "À venir/Favoris")
             onChange(tabName);
         } else if (!labelLeft && !labelRight) {
-            // Navigation auto SEULEMENT si on utilise les presets par défaut
-            // Si on a mis des labels custom, on ne veut probablement pas naviguer vers les routes par défaut
             const route = currentConfig.routes[side];
             if (route) {
                 // @ts-ignore

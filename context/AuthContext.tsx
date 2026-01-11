@@ -123,25 +123,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 continue;
               }
               standardUser = {
+                ...restOfData,
                 id_user: user.id_user,
                 email: user.email,
                 username: user.username,
                 user_type: type,
-                ...restOfData 
               };
             } else {
+              if (typeof rawData.id_admin === 'undefined' || !rawData.email || !rawData.username) {
+                console.warn(`⚠️ Unexpected response structure for admin: missing required fields`);
+                continue;
+              }
               standardUser = {
+                  ...rawData,
                   id_user: rawData.id_admin,
                   email: rawData.email,
                   username: rawData.username,
                   user_type: type,
-                  ...rawData
               };
             }
             setUser(standardUser);
             setUserType(type);
             await AsyncStorage.setItem('cached_user', JSON.stringify(standardUser));
-            console.log(`✅ ${type} profile loaded:`, standardUser);
+            console.log(`✅ ${type} profile loaded: for user ID: ${standardUser.id_user}`);
             success = true;
             break;
           }

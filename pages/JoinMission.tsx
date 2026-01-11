@@ -61,7 +61,11 @@ export default function JoinMissionPage() {
         const data = await missionService.getById(numericId);
         if (!data) throw new Error('Mission not found');
         setMission(data);
-        // Ici vous pourriez vérifier si c'est déjà un favori si l'utilisateur est connecté
+        if (userType && userType !== 'volunteer_guest') {
+          const favorites = await volunteerService.getFavorites();
+          const isAlreadyFavorite = favorites.some(fav => fav.id_mission === numericId);
+          setIsFavorite(isAlreadyFavorite);
+        }
       } catch (e) {
         console.error("Erreur chargement mission:", e);
         setError(true);
@@ -154,7 +158,10 @@ export default function JoinMissionPage() {
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-          router.push(`/(guest)/search/association/${mission.id_asso}` as any);
+        const route = userType === 'volunteer_guest' 
+          ? `/(guest)/search/association/${mission.id_asso}`
+          : `/(volunteer)/search/association/${mission.id_asso}`;
+        router.push(route as any);
       }
   };
 
@@ -243,10 +250,16 @@ export default function JoinMissionPage() {
                     <View style={{flex: 1, marginRight: 10}}>
                         <ButtonAuth text="Rejoindre la mission" onPress={handleJoinMission} />
                     </View>
-                    <TouchableOpacity onPress={toggleFavorite}>
+                    <TouchableOpacity
+                      onPress={toggleFavorite}
+                      accessibilityRole="button"
+                      accessibilityLabel={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
+                      accessibilityState={{ checked: isFavorite }}
+                    >
                         <Image
                             source={isFavorite ? require("@/assets/images/red_heart.png") : require("@/assets/images/gray_heart.png")}
                             style={styles.heartIcon}
+                            accessibilityIgnoresInvertColors
                         />
                     </TouchableOpacity>
                 </View>

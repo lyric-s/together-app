@@ -126,10 +126,28 @@ export default function Login() {
                                 placeholderTextColor="rgba(255,255,255,0.7)"
                                 style={styles.input}
                                 value={username} onChangeText={setUsername}
+                                accessibilityLabel="Nom d'utilisateur"
+                                accessibilityHint="Entrez votre nom d'utilisateur"
+                             
                             />
-                            <TextInput placeholder="Mot de passe *" placeholderTextColor="rgba(255,255,255,0.7)" style={styles.input} secureTextEntry={true}  value={password} onChangeText={setPassword} />
-                            
-                            <TouchableOpacity style={styles.submitBtn} onPress={handleLogin}>
+                            <TextInput 
+                                placeholder="Mot de passe *" 
+                                placeholderTextColor="rgba(255,255,255,0.7)" 
+                                style={styles.input} 
+                                secureTextEntry={true}  
+                                value={password} 
+                                onChangeText={setPassword}
+                                accessibilityLabel="Mot de passe"
+                                accessibilityHint="Entrez votre mot de passe"
+                            />
+
+                            <TouchableOpacity 
+                                style={styles.submitBtn} 
+                                onPress={handleLogin}
+                                accessibilityLabel="Se connecter"
+                                accessibilityHint="Appuyez pour vous connecter"
+                                accessibilityRole="button"
+                            >
                                 {loading ? (
                                     <ActivityIndicator color="#fff" />
                                 ) : (
@@ -139,7 +157,7 @@ export default function Login() {
                             
                             { !isWeb &&
                             <View style={styles.bottomLinksContainer}>
-                                <Text style={styles.bottomText}> Un compte ?</Text>
+                                <Text style={styles.bottomText}> Pad de compte ?</Text>
                                 <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
                                     <Text style={styles.bottomLinkText}>
                                         S'inscrire

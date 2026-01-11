@@ -17,36 +17,36 @@ export default function AboutUsAssociation() {
   const [association, setAssociation] = useState<Association | null>(null);
   const [loading, setLoading] = useState(true);
   
-   const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
 
-   const [error, setError] = useState(false);
+  const [error, setError] = useState(false);
 
-    useEffect(() => {
-        if (!id) return;
-    
-        const numericId = Number(id);
-        if (isNaN(numericId)) {
+  useEffect(() => {
+    if (!id) return;
+
+    const numericId = Number(id);
+    if (isNaN(numericId)) {
+        setError(true);
+        setLoading(false);
+        return;
+    }
+
+    const fetchAssociation = async () => {
+        setLoading(true);
+        setError(false);
+        try {
+            const data = await associationService.getById(numericId);
+            if (!data) throw new Error('Association not found');
+            setAssociation(data);
+        } catch (e) {
+            console.error("Erreur chargement association:", e);
             setError(true);
+        } finally {
             setLoading(false);
-            return;
         }
-
-        const fetchAssociation = async () => {
-            setLoading(true);
-            setError(false);
-            try {
-                const data = await associationService.getById(numericId);
-                if (!data) throw new Error('Association not found');
-                setAssociation(data);
-            } catch (e) {
-                console.error("Erreur chargement association:", e);
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAssociation();
-    }, [id]);
+    };
+    fetchAssociation();
+  }, [id]);
   
   if (loading) {
     return (
@@ -67,14 +67,16 @@ export default function AboutUsAssociation() {
                 <BackButton name_page="Retour" />
             </View>
             <View>
-                <Text style={{ textAlign: 'center', marginTop: 20 }}>Association introuvable</Text>
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>
+                    {error ? "Erreur lors du chargement de l'association" : "Association introuvable"}
+                </Text>
             </View>
         </View>
     );
   }
 
   return (
-    <View style={[styles.container, { paddingTop: isWeb ? 0 : insets.top, backgroundColor: Colors.white}]} >
+    <View style={[styles.container, { paddingTop: isWeb ? 0 : insets.top, backgroundColor: Colors.white }]} >
 
         <View style={[
             styles.header,

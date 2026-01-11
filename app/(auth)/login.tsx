@@ -3,7 +3,6 @@ import React from 'react';
 //import LoginMobile from '@/pages/LoginMobile';
 //import LoginWeb from '@/pages/LoginWeb';
 import Login from '@/pages/Login'
-import { Platform } from 'react-native';
 
 /**
  * Render the platform-appropriate login component.

@@ -11,6 +11,7 @@ export const missionService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      return [];
     }
   },
 
@@ -21,7 +22,8 @@ export const missionService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
-  
+
 };

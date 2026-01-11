@@ -1,7 +1,9 @@
 import { Colors } from '@/constants/colors';
 import { StyleSheet, Dimensions } from 'react-native';
+import { useWindowDimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = useWindowDimensions();
+const dynamicStyles = { minHeight: height };
 
 export const styles = StyleSheet.create({
     container: {
