@@ -114,8 +114,8 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     volunteer: [
       { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(volunteer)/home" },
       { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(volunteer)/search" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(volunteer)/upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(volunteer)/history" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(volunteer)/library/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(volunteer)/library/history" },
       { icon: require("../assets/images/user.png"), label: "Profil", route: "/(volunteer)/profile" },
     ],
     volunteer_guest: [
@@ -125,8 +125,8 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
     association: [
       { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(association)/home" },
       { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "/(association)/mission_creation" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(association)/upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(association)/history" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(association)/library/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(association)/library/history" },
       { icon: require("../assets/images/user.png"), label: "Profil", route: "/(association)/profile" },
     ],
     admin: [

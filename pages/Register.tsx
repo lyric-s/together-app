@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Platform, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Image, Platform, ActivityIndicator, useWindowDimensions } from 'react-native';
 import SwitchButton from '../components/SwitchButton'; 
 import { styles } from '../styles/pages/RegisterCSS';
 import { useLocalSearchParams, useRouter } from 'expo-router';
