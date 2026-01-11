@@ -35,7 +35,7 @@ export default function ActivityGuest() {
       />
 
       <Text style={styles.mainText}>
-        Vous n’avez pas encore de compte, créez en un !
+        Vous n’avez pas encore de compte, créez-en un !
       </Text>
 
       <ButtonAuth

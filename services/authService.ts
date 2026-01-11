@@ -92,7 +92,7 @@ export const authService = {
         await volunteerService.register(userIn, volunteerIn);
 
       } else {
-        if (!payload.name || !payload.phone_number || !payload.company_name || !payload.rna_code || !payload.address || !payload.address || !payload.zip_code || !payload.country || !payload.description) {
+        if (!payload.name || !payload.phone_number || !payload.company_name || !payload.rna_code || !payload.address || !payload.zip_code || !payload.country || !payload.description) {
           throw new Error('Association registration requires name, company_name, rna_code, phone_number, address, zip_code, country, description');
         }
         const associationIn: AssociationCreate = {

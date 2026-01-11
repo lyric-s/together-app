@@ -75,7 +75,7 @@ export default function JoinMissionPage() {
     };
 
     fetchMission();
-  }, [id]);
+  }, [id, userType]);
 
   const showToast = useCallback((title: string, message: string) => {
     setToast({ visible: true, title, message });

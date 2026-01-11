@@ -2,9 +2,9 @@
 import React from 'react';
 import Register from '@/pages/Register'
 /**
- * Registration page component for user sign-up; currently renders no UI.
+ * Registration page route that renders the Register component for user sign-up.
  *
- * @returns `undefined` — the component currently does not return any JSX (renders nothing)
+ * @returns The Register component JSX
  */
 
 export default function RegisterPage() {

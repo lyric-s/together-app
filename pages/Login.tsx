@@ -157,7 +157,7 @@ export default function Login() {
                             
                             { !isWeb &&
                             <View style={styles.bottomLinksContainer}>
-                                <Text style={styles.bottomText}> Pad de compte ?</Text>
+                                <Text style={styles.bottomText}> Pas de compte ?</Text>
                                 <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
                                     <Text style={styles.bottomLinkText}>
                                         S'inscrire
