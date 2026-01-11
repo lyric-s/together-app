@@ -2,6 +2,7 @@
 import React from 'react';
 //import LoginMobile from '@/pages/LoginMobile';
 //import LoginWeb from '@/pages/LoginWeb';
+import Login from '@/pages/Login'
 import { Platform } from 'react-native';
 
 /**
@@ -12,5 +13,6 @@ import { Platform } from 'react-native';
  * @returns A JSX element containing the platform-specific login UI
  */
 export default function LoginPage() {
-//    return Platform.OS === 'web' ? <LoginWeb /> : <LoginMobile />;
+    //return Platform.OS === 'web' ? <LoginWeb /> : <LoginMobile />;
+    return <Login />
 }

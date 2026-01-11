@@ -1,6 +1,7 @@
 // pages/HomeGuest.tsx
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'expo-router'
+import { useRouter } from 'expo-router';
+import * as Linking from 'expo-linking';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 import {
   View,
@@ -10,17 +11,19 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   Platform,
+  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { Colors } from '@/constants/colors';
-import { styles } from '@/styles/pages/AccountWithoutCo';
+import { styles } from '@/styles/pages/AccountWithoutCoCSS';
 import { Mission } from '@/models/mission.model';
 import { missionService } from '@/services/missionService';
 
 export default function HomeGuest() {
   const { width } = useWindowDimensions();
   const router = useRouter();
-  const isMobile = Platform.OS !== 'web';
+  const isWeb = Platform.OS === 'web';
+  const isMobile = !isWeb;
   const isSmallScreen = width < 900;
 
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -46,7 +49,21 @@ export default function HomeGuest() {
   };
 
   const handleJoinRegister = () => {
-    router.push('/(auth)/register');
+    router.push('/(auth)/register?userType=volunteer');
+  };
+
+  const handleJoinRegisterAssociation = () => {
+    if (isWeb) {
+        router.push('/(auth)/register?userType=association');
+    } else {
+        Alert.alert(
+            "Inscription Association",
+            "Pour des raisons administratives (envoi de documents), l'inscription d'une association se fait uniquement sur notre site web.",
+            [
+                { text: "D'accord", style: "default" }
+            ]
+        );
+    }
   };
 
   if (loading) {
@@ -143,7 +160,7 @@ export default function HomeGuest() {
                 isMobile ? styles.ctaButtonMobile : styles.ctaButtonWeb, 
                 isMobile ? styles.ctaButtonLavender : styles.ctaButtonBlueWeb
             ]}
-            onPress={handleJoinRegister}
+            onPress={handleJoinRegisterAssociation}
           >
             <Text style={isMobile ? styles.ctaButtonText : styles.ctaButtonTextWeb}>
               REJOINDRE EN TANT QU'ASSOCIATION

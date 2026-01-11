@@ -15,17 +15,23 @@ import { Colors } from '@/constants/colors';
  */
 export const THEMES = {
     mission: {
-        background: Colors.brightOrange,
-        activeButton: Colors.lightOrange,        // Selected button color
-        activeText: Colors.white,
-        inactiveText: Colors.white,
+        background: Colors.lightOrange,
+        activeButton: Colors.white,        // Selected button color
+        activeText: Colors.black,
+        inactiveText: Colors.black,
     },
     auth: {
         background: Colors.inputBackground, // Track background color
         activeButton: Colors.lightViolet,  // Specific violet color for Auth
         activeText: Colors.white,
         inactiveText: Colors.white,
-    }
+    },
+    userType: {
+        background: Colors.brightOrange,
+        activeButton: Colors.lightOrange,        // Selected button color
+        activeText: Colors.white,
+        inactiveText: Colors.white,
+    },
 };
 
 export const styles = StyleSheet.create({
@@ -37,8 +43,8 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         borderRadius: 100,
         padding: 4,
-        width: 300,
-        height: 50,
+        width: 250,
+        height: 35,
         // backgroundColor is handled dynamically by the component based on the theme
     },
     button: {
@@ -57,7 +63,7 @@ export const styles = StyleSheet.create({
         elevation: 2,
     },
     text: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '600',
     }
 });

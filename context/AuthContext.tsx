@@ -118,8 +118,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             let standardUser: AuthUser;
             if (type === 'volunteer' || type === 'association') {
               const { user, ...restOfData } = rawData;
-              if (!user || typeof user.id_user === 'undefined') {
-                console.warn(`⚠️ Unexpected response structure for ${type}`);
+              if (!user || typeof user.id_user === 'undefined' || !user.email || !user.username) {
+                console.warn(`⚠️ Unexpected response structure for ${type}: missing required user fields`);
                 continue;
               }
               standardUser = {

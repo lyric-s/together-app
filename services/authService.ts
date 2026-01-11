@@ -1,19 +1,11 @@
 import api from './api';
-
-// Types basés sur vos modèles Python (UserCreate, User)
-export interface UserCreate {
-  username: string;
-  email: string;
-  password: string;
-}
-
-export interface UserResponse {
-  id_user: number;
-  username: string;
-  email: string;
-}
-
 import { storageService } from './storageService';
+import { volunteerService } from './volunteerService';
+import { UserCreate } from '@/models/user.model';
+import { VolunteerCreate } from '@/models/volunteer.model';
+import { AssociationCreate } from '@/models/association.model';
+import { UserType } from "@/models/enums";
+import { associationService } from './associationService';
 
 export const authService = {
   // Corresponds to @router.post("/token")
@@ -41,5 +33,55 @@ export const authService = {
     const { access_token } = response.data;
     await storageService.saveTokens(access_token, refreshToken);
     return access_token;
+  },
+
+  register: async (payload: any) => {
+    try {
+      const { email, password, username, type } = payload;
+
+      const userIn: UserCreate = {
+        email: email,
+        password: password,
+        username: username || email.split('@')[0],
+        user_type: type === 'volunteer' ? UserType.VOLUNTEER : UserType.ASSOCIATION
+      };
+
+      if (type === 'volunteer') {
+        const volunteerIn: VolunteerCreate = {
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          phone_number: payload.phone_number, 
+          birthdate: payload.birthdate,
+          address: payload.address || "",
+          zip_code: payload.zip_code || "",
+          skills: payload.skills || "",
+          bio: payload.bio || ""
+        };
+        
+        await volunteerService.register(userIn, volunteerIn);
+
+      } else {
+        const associationIn: AssociationCreate = {
+          name: payload.name,
+          company_name: payload.company_name,
+          rna_code: payload.rna_code,
+          phone_number: payload.phone_number,
+          address: payload.address,
+          zip_code: payload.zip_code,
+          country: payload.country,
+          description: payload.description
+        };
+
+        await associationService.create(userIn, associationIn);
+      }
+
+      // --- AUTO-LOGIN ---
+      console.log(`✅ Création ${type} réussie, tentative de connexion...`);
+      return await authService.login(username, password);
+
+    } catch (error: any) {
+      console.error("Erreur Inscription:", error.response?.data || error.message);
+      throw error;
+    }
   }
 };

@@ -1,44 +1,35 @@
 /**
  * @file SwitchButton.tsx
- * @description A reusable segmented control component that supports multiple visual variants (Mission/Auth).
- * It handles navigation routing by default but supports controlled mode via callbacks.
+ * @description Composant de contrôle segmenté réutilisable et personnalisable.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleProp, ViewStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { styles, THEMES } from '@/styles/components/SwitchButton.styles';
 
-/**
- * Available visual variants for the switch.
- */
-export type SwitchVariant = 'mission' | 'auth';
+export type SwitchVariant = 'mission' | 'auth' | 'userType';
 
-/**
- * Props for the SwitchButton component.
- */
 export interface SwitchButtonProps {
-    /** The visual and contextual variant (default: 'mission'). */
-    variant?: SwitchVariant;
-    /** Current active value (controlled mode). */
-    value?: string;
-    /** Default active value if uncontrolled. */
+    variant?: SwitchVariant; // Colors
+    labelLeft?: string;
+    labelRight?: string;
+    value?: string; // button value
     defaultValue?: string;
-    /** Callback fired when a tab is selected. */
     onChange?: (tab: string) => void;
-    /** Optional container style. */
     style?: StyleProp<ViewStyle>;
 }
 
 export default function SwitchButton({ 
     variant = 'mission', 
+    labelLeft,
+    labelRight,
     value, 
     defaultValue, 
     onChange, 
     style 
 }: SwitchButtonProps) {
     
-    // Configuration: Labels, Routes, and Themes based on the selected variant
     const config = {
         mission: {
             left: 'Mission',
@@ -49,113 +40,96 @@ export default function SwitchButton({
         auth: {
             left: 'Inscription',
             right: 'Connexion',
-            routes: { left: '/signup', right: '/login' },
+            routes: { left: '/(auth)/register', right: '/(auth)/login' },
             theme: THEMES.auth
-        }
+        },
+        userType : {
+            left: 'Bénévole',
+            right: 'Association',
+            routes: { left: '/(auth)/register/', right: '/(auth)/login' },
+            theme: THEMES.userType
+        },
+        activity : {
+            left: 'A venir',
+            right: 'Historique',
+            routes: { left: '/(auth)/register/', right: '/(auth)/login' },
+            theme: THEMES.mission
+        },
     };
 
-    const currentConfig = config[variant];
-    const initialTab = defaultValue || currentConfig.left;
+    const currentConfig = config[variant] || config.mission;
+    
+    // Si des labels personnalisés sont fournis, on les utilise. Sinon on prend ceux de la config.
+    const finalLeftLabel = labelLeft || currentConfig.left;
+    const finalRightLabel = labelRight || currentConfig.right;
+
+    // État interne
+    const initialTab = defaultValue || finalLeftLabel;
     const [internalActiveTab, setInternalActiveTab] = useState<string>(initialTab);
     const router = useRouter();
 
-    // Determine the active tab (controlled vs internal state)
+    // L'onglet actif est soit celui passé en prop (value), soit l'interne
     const activeTab = value ?? internalActiveTab;
 
-    /**
-     * Handles the press event on a tab segment.
-     * Updates local state and triggers navigation or callback.
-     * * @param tabName - The label of the selected tab.
-     * @param side - The position of the tab ('left' or 'right').
-     */
     const handlePress = (tabName: string, side: 'left' | 'right') => {
         if (value === undefined) {
             setInternalActiveTab(tabName);
         }
         
         if (onChange) {
+            // Si on a fourni une fonction onChange, on l'utilise (Cas "À venir/Favoris")
             onChange(tabName);
-        } else {
-            // @ts-ignore: suppressing strict route typing for generic implementation
-            router.push(currentConfig.routes[side]);
+        } else if (!labelLeft && !labelRight) {
+            // Navigation auto SEULEMENT si on utilise les presets par défaut
+            // Si on a mis des labels custom, on ne veut probablement pas naviguer vers les routes par défaut
+            const route = currentConfig.routes[side];
+            if (route) {
+                // @ts-ignore
+                router.push(route);
+            }
         }
     };
 
-    /**
-     * Helper to determine text style based on active state.
-     */
     const getTextStyle = (isActive: boolean) => ({
         color: isActive ? currentConfig.theme.activeText : currentConfig.theme.inactiveText,
         opacity: isActive ? 1 : 0.7,
+        fontWeight: isActive ? ('600' as const) : ('400' as const),
     });
 
-    /**
-     * Helper to determine button style (including dynamic background color) based on active state.
-     */
     const getButtonStyle = (isActive: boolean) => {
-        if (!isActive) return styles.button;
+        const baseStyle = styles.button;
+        if (!isActive) return baseStyle;
+        
         return [
-            styles.button,
+            baseStyle,
             styles.activeButton,
             { backgroundColor: currentConfig.theme.activeButton }
         ];
     };
 
-    const currentConfig = config[variant];
-    
-    // Définir la valeur par défaut basée sur la config si non fournie
-    const initialTab = defaultValue || currentConfig.left;
-
-    const [internalActiveTab, setInternalActiveTab] = useState<string>(initialTab);
-    const router = useRouter();
-
-    const activeTab = value ?? internalActiveTab;
-
-    const handlePress = (tabName: string, side: 'left' | 'right') => {
-        if (value === undefined) {
-            setInternalActiveTab(tabName);
-        }
-        
-        // Appelle le callback parent s'il existe
-        if (onChange) {
-            onChange(tabName);
-        } else {
-            // Comportement par défaut : navigation automatique si pas de onChange fourni
-            const route = currentConfig.routes[side];
-            // @ts-ignore : router.push attend des chaînes typées spécifiques selon la config Expo, ici on reste générique
-            router.push(route);
-        }
-    };
-
-    // Helper pour le rendu du style conditionnel
-    const getTextStyle = (isActive: boolean) => ({
-        color: isActive ? currentConfig.theme.activeText : currentConfig.theme.inactiveText,
-        opacity: isActive ? 1 : 0.7,
-    });
-
     return (
         <View style={[styles.container, style]}>
             <View style={[styles.segmentedControl, { backgroundColor: currentConfig.theme.background }]}>
                 
-                {/* Left Button */}
+                {/* Bouton Gauche */}
                 <TouchableOpacity
-                    style={getButtonStyle(activeTab === currentConfig.left)}
-                    onPress={() => handlePress(currentConfig.left, 'left')}
+                    style={getButtonStyle(activeTab === finalLeftLabel)}
+                    onPress={() => handlePress(finalLeftLabel, 'left')}
                     activeOpacity={0.8}
                 >
-                    <Text style={[styles.text, getTextStyle(activeTab === currentConfig.left)]}>
-                        {currentConfig.left}
+                    <Text style={[styles.text, getTextStyle(activeTab === finalLeftLabel)]}>
+                        {finalLeftLabel}
                     </Text>
                 </TouchableOpacity>
 
-                {/* Right Button */}
+                {/* Bouton Droit */}
                 <TouchableOpacity
-                    style={getButtonStyle(activeTab === currentConfig.right)}
-                    onPress={() => handlePress(currentConfig.right, 'right')}
+                    style={getButtonStyle(activeTab === finalRightLabel)}
+                    onPress={() => handlePress(finalRightLabel, 'right')}
                     activeOpacity={0.8}
                 >
-                    <Text style={[styles.text, getTextStyle(activeTab === currentConfig.right)]}>
-                        {currentConfig.right}
+                    <Text style={[styles.text, getTextStyle(activeTab === finalRightLabel)]}>
+                        {finalRightLabel}
                     </Text>
                 </TouchableOpacity>
             </View>
