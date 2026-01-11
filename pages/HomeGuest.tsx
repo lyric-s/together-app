@@ -1,7 +1,6 @@
 // pages/HomeGuest.tsx
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
-import * as Linking from 'expo-linking';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 import {
   View,
@@ -112,7 +111,7 @@ export default function HomeGuest() {
             )}
           </View>
 
-          <View style={isMobile ? {} : styles.missionsGrid}>
+          <View style={isMobile ? {alignItems:'center'} : styles.missionsGrid}>
             {missions.slice(0, 3).map((mission) => (
               <View key={mission.id_mission} style={styles.cardWrapper}>
                 <MissionVolunteerCard

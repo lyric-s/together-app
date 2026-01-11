@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react'
 import { styles } from '@/styles/components/AlertToastStyles';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, TouchableOpacity, Animated, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 
 type Props = {
@@ -19,7 +18,6 @@ export default function AlertToast({
   autoCloseDelay = 4000 
 }: Props) {
 
-  const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
 
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -56,7 +54,7 @@ export default function AlertToast({
     <Animated.View 
       style={[
         styles.toastContainer,
-        { top: insets.top + 10, marginRight: 5, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
+        { marginRight: 5, opacity: fadeAnim, transform: [{ translateY: slideAnim }] }
       ]}
     >
       <TouchableOpacity style={styles.toastContent} onPress={onClose} activeOpacity={0.9}>

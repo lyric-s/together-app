@@ -11,12 +11,13 @@
 
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider } from '@/context/AuthContext';
-import { StatusBar } from 'react-native'
+import { StatusBar, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
+
 /**
  * Root layout component that provides theming, authentication context, and the primary navigation stack.
  *
@@ -28,18 +29,51 @@ import { Colors } from '@/constants/colors';
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const backgroundColor = colorScheme === 'dark' ? Colors.black : Colors.white;
+
+  const customDarkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      background: Colors.black,
+      card: Colors.black,
+    },
+  };
+
+  const customLightTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: Colors.white,
+      card: Colors.white,
+    },
+  };
 
   return (
-    <SafeAreaProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme} >
+    <SafeAreaView style={[styles.container, { backgroundColor }]} edges={['top', 'bottom']}>
+      <ThemeProvider value={colorScheme === 'dark' ? customDarkTheme : customLightTheme}>
         <AuthProvider>
-            <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colorScheme === 'dark' ? Colors.black : Colors.white }, animation: 'fade'}}>                <Stack.Screen name="index" />
-            </Stack>
-            <StatusBar 
-              barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
-              backgroundColor={colorScheme === 'dark' ? Colors.black : Colors.white} 
-            />        </AuthProvider>
+          <Stack 
+            screenOptions={{ 
+              headerShown: false, 
+              contentStyle: { backgroundColor }, 
+              animation: 'fade'
+            }}
+          >
+            <Stack.Screen name="index" />
+          </Stack>
+          <StatusBar 
+            barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} 
+            backgroundColor={backgroundColor}
+          />
+        </AuthProvider>
       </ThemeProvider>
-    </SafeAreaProvider>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

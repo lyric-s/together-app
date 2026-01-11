@@ -1,94 +1,111 @@
-import { View, TextInput, Text, TouchableOpacity, Image } from "react-native";
+import { View, TextInput, Text, TouchableOpacity, Image, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { Colors } from "../constants/colors";
-import { styles } from "../styles/components/SearchBarStyle"
+import { styles } from "../styles/components/SearchBarStyle";
 
-// -------- C17 Search bar
+// Interface harmonisée avec la version mobile
+interface SearchFilters {
+  category: string | null;
+  zipCode: string | null;
+  date: Date | null;
+}
+
 interface SearchBarProps {
-  filters_1?: string[];
-  filters_2?: string[];
-  onSearch: (text: string, filter1: string, filter2?: string) => void;
+  categories?: string[]; // Renommé pour la clarté (était filters_1)
+  onSearch: (text: string, filters: SearchFilters) => void;
 }
 
 export default function SearchBar({
-    filters_1 = [],    
-    filters_2 = [],    
+    categories = [],    
     onSearch,
   }: SearchBarProps) {
 
-  const default1 = filters_1[0] ?? "-"; 
-  const default2 = filters_2[0] ?? "-";
-
   const [text, setText] = useState("");
-  const [selected1, setSelected1] = useState(default1);
-  const [selected2, setSelected2] = useState(default2);
+  const [selectedCategory, setSelectedCategory] = useState("-");
+  const [zipCode, setZipCode] = useState("");
+  const [dateText, setDateText] = useState("");
 
   function resetAll() {
     setText("");
-    setSelected1(default1);
-    setSelected2(default2);
-    onSearch("", default1, default2);
+    setSelectedCategory("-");
+    setZipCode("");
+    setDateText("");
+    onSearch("", { category: null, zipCode: null, date: null });
   }
-return (
-  <View style={styles.container}>
-    
-    {/* Input */}
-    <TextInput
-      style={styles.input}
-      placeholder="Rechercher..."
-      placeholderTextColor={Colors.grayPlaceholder}
-      value={text}
-      onChangeText={(t) => setText(t)}
-    />
 
-    {/* Dropdown 1 */}
-    <View style={styles.pickerWrapper}>
-      <Picker
-        selectedValue={selected1}
-        onValueChange={(v) => setSelected1(v)}
-        style={styles.picker}
-        dropdownIconColor={Colors.black}
-      >
-        <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
-        {filters_1.map((f) => (
-          <Picker.Item key={f} label={f} value={f} color={Colors.black} />
-        ))}
-      </Picker>
-    </View>
+  const handleSearch = () => {
+    let dateObj: Date | null = null;
+    if (dateText) {
+        const d = new Date(dateText);
+        if (!isNaN(d.getTime())) {
+            dateObj = d;
+        }
+    }
 
-    {/* Dropdown 2 */}
-    <View style={styles.pickerWrapper}>
-      <Picker
-        selectedValue={selected2}
-        onValueChange={(v) => setSelected2(v)}
-        style={styles.picker}
-        dropdownIconColor={Colors.black}
-      >
-        <Picker.Item label="Choisir…" value="-" color={Colors.grayPlaceholder} />
-        {filters_2.map((f) => (
-          <Picker.Item key={f} label={f} value={f} color={Colors.black} />
-        ))}
-      </Picker>
-    </View>
+    onSearch(text, {
+        category: selectedCategory === "-" ? null : selectedCategory,
+        zipCode: zipCode.trim() === "" ? null : zipCode,
+        date: dateObj
+    });
+  };
 
-     {/* Button Reset */}
-    <TouchableOpacity style={styles.resetButton} onPress={resetAll}>
-      <Text style={styles.resetText}>Réinitialiser</Text>
-    </TouchableOpacity>
-
-    {/* Search button (magnifying glasses) */}
-    <TouchableOpacity
-      onPress={() => onSearch(text, selected1, selected2)}
-    >
-      <Image
-        source={require("../assets/images/loupe.png")}
-        style={styles.searchIcon}
+  return (
+    <View style={styles.container}>
+      
+      <TextInput
+        style={[styles.input, { flex: 2 }]}
+        placeholder="Rechercher une mission..."
+        placeholderTextColor={Colors.grayPlaceholder}
+        value={text}
+        onChangeText={setText}
+        onSubmitEditing={handleSearch}
       />
-    </TouchableOpacity>
-  </View>
-);
 
-  }
+      <View style={[styles.input, styles.pickerContainer,, { flex: 1.5, marginLeft: 10 }]}>
+        <Picker
+          selectedValue={selectedCategory}
+          onValueChange={(v) => setSelectedCategory(v)}
+          style={styles.picker}
+          dropdownIconColor={Colors.black}
+        >
+          <Picker.Item label="Catégorie..." value="-" color={Colors.grayPlaceholder} />
+          {categories.map((f) => (
+            <Picker.Item key={f} label={f} value={f} color={Colors.black} />
+          ))}
+        </Picker>
+      </View>
 
+      <TextInput
+        style={[styles.input, { flex: 1, marginLeft: 10 }]}
+        placeholder="Code Postal"
+        placeholderTextColor={Colors.grayPlaceholder}
+        value={zipCode}
+        onChangeText={setZipCode}
+        keyboardType="numeric"
+        maxLength={5}
+      />
+      
+      <TextInput
+        style={[styles.input, { flex: 1, marginLeft: 10 }]}
+        placeholder="Date début (AAAA-MM-JJ)"
+        placeholderTextColor={Colors.grayPlaceholder}
+        value={dateText}
+        onChangeText={setDateText}
+      />
 
+      {/* Button Reset */}
+      <TouchableOpacity style={styles.resetButton} onPress={resetAll}>
+        <Text style={styles.resetText}>X</Text>
+      </TouchableOpacity>
+
+      {/* Search button */}
+      <TouchableOpacity onPress={handleSearch}>
+        <Image
+          source={require("../assets/images/loupe.png")}
+          style={styles.searchIcon}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+}

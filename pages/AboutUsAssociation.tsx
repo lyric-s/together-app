@@ -6,7 +6,6 @@ import { styles } from '@/styles/pages/AboutAssociationStyle';
 import { Association } from '@/models/association.model';
 import { associationService } from '@/services/associationService';
 import { Colors } from '@/constants/colors';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function AboutUsAssociation() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -16,8 +15,6 @@ export default function AboutUsAssociation() {
     
   const [association, setAssociation] = useState<Association | null>(null);
   const [loading, setLoading] = useState(true);
-  
-  const insets = useSafeAreaInsets();
 
   const [error, setError] = useState(false);
 
@@ -76,7 +73,7 @@ export default function AboutUsAssociation() {
   }
 
   return (
-    <View style={[styles.container, { paddingTop: isWeb ? 0 : insets.top, backgroundColor: Colors.white }]} >
+    <View style={[styles.container, { backgroundColor: Colors.white }]} >
 
         <View style={[
             styles.header,
