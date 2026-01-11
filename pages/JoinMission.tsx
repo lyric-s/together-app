@@ -13,12 +13,11 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { useRouter, Href } from 'expo-router';
+import { Href, router, useLocalSearchParams } from 'expo-router';
 import BackButton from "@/components/BackButton";
 import ButtonAuth from "@/components/Button";
 import CategoryLabel from "@/components/CategoryLabel";
 import { styles } from "@/styles/pages/JoinMissionStyle";
-import { router, useLocalSearchParams } from "expo-router";
 import { isMissionFinished } from '@/utils/mission.utils';
 import { volunteerService } from '@/services/volunteerService';
 import { missionService } from '@/services/missionService';
@@ -163,7 +162,8 @@ export default function JoinMissionPage() {
       if (mission.id_asso) {
         const route = (userType === 'volunteer_guest' 
           ? `/(guest)/search/association/${mission.id_asso}`
-          : `/(volunteer)/search/association/${mission.id_asso}`) as Href;            // Paramètres dynamiques
+          : `/(volunteer)/search/association/${mission.id_asso}`) as Href; 
+          router.push(route);
       };
   };
 
