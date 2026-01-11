@@ -10,7 +10,7 @@ export const missionService = {
       const { data } = await api.get<Mission[]>('/missions/');
       return data;
     } catch (error) {
-      console.error('Failed to fetch missions:', error);
+      handleApiError(error);
       return [];
     }
   },

@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-
+import { useRouter, Href } from 'expo-router';
 import BackButton from "@/components/BackButton";
 import ButtonAuth from "@/components/Button";
 import CategoryLabel from "@/components/CategoryLabel";
@@ -109,8 +109,11 @@ export default function JoinMissionPage() {
   const finished = isMissionFinished(mission);
   const mission_category = mission.category?.label || "Général";
   const mission_category_color = Colors.orange; 
-  const mission_location = mission.location ? `${mission.location.zip_code}, ${mission.location.country}` : "Lieu non précisé";
-  
+  const locationParts = [mission.location?.zip_code, mission.location?.country].filter(Boolean);
+  const mission_location = locationParts.length > 0 
+  ? locationParts.join(', ') 
+  : "Lieu non précisé";
+
   const formatDateRange = (startStr: string, endStr: string) => {
     const start = new Date(startStr);
     const end = new Date(endStr);
@@ -158,11 +161,10 @@ export default function JoinMissionPage() {
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-        const route = userType === 'volunteer_guest' 
+        const route = (userType === 'volunteer_guest' 
           ? `/(guest)/search/association/${mission.id_asso}`
-          : `/(volunteer)/search/association/${mission.id_asso}`;
-        router.push(route as any);
-      }
+          : `/(volunteer)/search/association/${mission.id_asso}`) as Href;            // Paramètres dynamiques
+      };
   };
 
   return (
