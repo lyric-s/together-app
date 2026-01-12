@@ -102,7 +102,7 @@ export default function Register() {
             if (!description.trim()) return "La description est requise.";
             if (!address.trim()) return "L'adresse est requise.";
             if (!zip_code.trim()) return "Le code postal est requis.";
-            if (!attachment) return "Le récépissé préfectoral est obligatoire.";
+            //if (!attachment) return "Le récépissé préfectoral est obligatoire.";
         }
 
         return null;

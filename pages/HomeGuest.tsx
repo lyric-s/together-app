@@ -1,5 +1,5 @@
 // pages/HomeGuest.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 import {
@@ -28,19 +28,25 @@ export default function HomeGuest() {
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const loadMissions = async () => {
-      try {
-        const data = await missionService.getAll();
-        setMissions(data ?? []);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadMissions();
+  const [error, setError] = useState<string | null>(null);
+
+  const loadMissions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await missionService.getAll();
+      setMissions(data ?? []);
+    } catch (e) {
+      console.error(e);
+      setError("Impossible de charger les missions pour le moment.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadMissions();
+  }, [loadMissions]);
 
   const handlePressMission = (missionId: number) => {
     console.log('Mission pressed:', missionId);
@@ -64,14 +70,6 @@ export default function HomeGuest() {
         );
     }
   };
-
-  if (loading) {
-      return (
-          <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
-              <ActivityIndicator size="large" color={Colors.orange} />
-          </View>
-      );
-  }
 
   return (
     <View style={[styles.container, { flex: 1 }]}> 
@@ -110,16 +108,49 @@ export default function HomeGuest() {
               </TouchableOpacity>
             )}
           </View>
-
-          <View style={isMobile ? {alignItems:'center'} : styles.missionsGrid}>
-            {missions.slice(0, 3).map((mission) => (
-              <View key={mission.id_mission} style={styles.cardWrapper}>
-                <MissionVolunteerCard
-                  mission={mission}
-                  onPressMission={() => handlePressMission(mission.id_mission)}
-                />
+          <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+            {loading ? (
+              <View style={{ minHeight: '60%', justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color={Colors.orange} />
               </View>
-            ))}
+            
+            ) : error ? (
+              <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: 'gray', textAlign: 'center', marginBottom: 10 }}>
+                    {error}
+                </Text>
+                <TouchableOpacity 
+                  onPress={loadMissions}
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingVertical: 10,
+                    backgroundColor: Colors.white,
+                    borderWidth: 1,
+                    borderColor: Colors.orange,
+                    borderRadius: 20
+                  }}
+                >
+                  <Text style={{ color: Colors.orange, fontWeight: '600' }}>
+                    ↻ Recharger
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+            <View style={isMobile ? {alignItems:'center'} : styles.missionsGrid}>
+              {missions.length === 0 ? (
+                <Text style={{ color: 'gray', fontStyle: 'italic', padding: 20 }}>Aucune mission disponible.</Text>
+              ) : (
+                missions.slice(0, 3).map((mission) => (
+                  <View key={mission.id_mission} style={styles.cardWrapper}>
+                    <MissionVolunteerCard
+                      mission={mission}
+                      onPressMission={() => handlePressMission(mission.id_mission)}
+                    />
+                  </View>
+                ))
+              )}
+            </View>
+            )}
           </View>
         </View>
 

@@ -1,7 +1,5 @@
 import { Colors } from '@/constants/colors';
-import {Platform, StyleSheet} from 'react-native';
-
-const isWeb = Platform.OS === 'web';
+import { StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -31,10 +29,8 @@ export const styles = StyleSheet.create({
 
   listContent: {
     padding: 16,
-  },
-
-  webRow: {
-    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingBottom: 24,
   },
 
 });

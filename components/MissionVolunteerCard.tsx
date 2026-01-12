@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Platform } from "react-native";
 import CategoryLabel from "./CategoryLabel";
 import { styles } from "../styles/components/MissionVolunteerCardStyle"
 import { Mission } from "@/models/mission.model";
 import { Colors } from "@/constants/colors";
+import { formatMissionDate } from "@/utils/date.utils";
 
 interface MissionCardProps {
   mission: Mission; 
@@ -25,29 +25,25 @@ export default function MissionVolunteerCard({
   onPressFavorite,
 }: MissionCardProps) {
 
+  const isWeb = Platform.OS === 'web';
   const defaultImage = require("../assets/images/volunteering_img.jpg");
   const imageSource = mission.image_url 
     ? { uri: mission.image_url } 
     : defaultImage;
-
-  // date format → jj/mm/aaaa hh:mm
-  const dateObj = new Date(mission.date_start);
-  const isValidDate = !isNaN(dateObj.getTime());
-  const formattedDate =
-    isValidDate ?
-    dateObj.toLocaleDateString("fr-FR") +
-    (dateObj.getHours() !== 0 || dateObj.getMinutes() !== 0 
-      ? ` à ${dateObj.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}` 
-      : ""
-    ) : "Date non disponible";
+  
+  const formattedDate = formatMissionDate(mission.date_start);
 
   const assoName = mission.association?.name || "Association inconnue";
-  const city = mission.location?.zip_code || "";
   const categoryLabel = mission.category?.label || "Général";
   const categoryColor = Colors.orange;
 
+  const locationParts = [mission.location?.zip_code, mission.location?.country].filter(Boolean);
+  const mission_location = locationParts.length > 0 
+  ? locationParts.join(', ') 
+  : "Lieu non précisé";
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPressMission}>
+    <TouchableOpacity style={[styles.card, {width: isWeb ? '80%' : 350, alignSelf: isWeb ? 'center' : 'auto',}]} onPress={onPressMission}>
       
       {/* Image */}
       <View style={styles.imageContainer}>
@@ -63,7 +59,7 @@ export default function MissionVolunteerCard({
 
         {/* Heart  (optional) */}
         {onPressFavorite && (
-            <TouchableOpacity style={styles.heartButton} onPress={onPressFavorite}>
+            <TouchableOpacity style={styles.heartButton} onPress={onPressFavorite} activeOpacity={0.7}>
                 <Image
                     source={
                         isFavorite
@@ -76,15 +72,13 @@ export default function MissionVolunteerCard({
         )}
       </View>
 
-      {/* Text */}
       <View style={styles.content}>
         <Text style={styles.title}>{mission.name}</Text>
         <Text style={styles.association}>{assoName}</Text>
         <Text style={styles.date}>{formattedDate}</Text>
-        {city && <Text style={styles.city}>{city}</Text>}
+        {mission_location && <Text style={styles.city}>{mission_location}</Text>}
       </View>
 
-      {/* Number of ppl */}
       <View style={styles.peopleContainer}>
         <Image
           source={require("../assets/images/people.png")}

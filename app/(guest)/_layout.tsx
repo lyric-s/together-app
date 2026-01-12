@@ -47,7 +47,11 @@ export default function GuestLayout() {
       )}
 
       <View style={{ flex: 1 }}>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack screenOptions={{
+          headerShown: false,
+          animation: 'fade', 
+          animationDuration: 200,
+        }}>
           <Stack.Screen name="home/index" />
           <Stack.Screen name="search/index" />
         </Stack>

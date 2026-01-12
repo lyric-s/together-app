@@ -36,20 +36,20 @@ export default function JoinMissionPage() {
   const [mission, setMission] = useState<Mission | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
-
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
-
   const [error, setError] = useState(false);
 
   // FETCH MISSION
   useEffect(() => {
-    if (!id) {
+    const rawId = Array.isArray(id) ? id[0] : id;
+
+    if (!rawId) {
       setError(true);
       setLoading(false);
       setMission(null);
       return;
     }
-    const numericId = Number(id);
+    const numericId = Number(rawId);
    if (isNaN(numericId)) {
       setError(true);
       setLoading(false);
@@ -117,13 +117,31 @@ export default function JoinMissionPage() {
   ? locationParts.join(', ') 
   : "Lieu non précisé";
 
-  const formatDateRange = (startStr: string, endStr: string) => {
+  const formatDateRange = (startStr: string, endStr?: string) => {
+    if (!startStr) return "Date à définir";
+    const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(startStr);
+    if (isDateOnly) {
+        const [y, m, d] = startStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+    
     const start = new Date(startStr);
-    const end = new Date(endStr);
-    const date = start.toLocaleDateString("fr-FR");
+    const dateFormatted = start.toLocaleDateString("fr-FR");
     const startHour = start.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-    const endHour = end.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
-    return `${date} de ${startHour} à ${endHour}`;
+    if (endStr) {
+      const end = new Date(endStr);
+      const endHour = end.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      
+      const isSameDay = start.toDateString() === end.toDateString();
+      
+      if (isSameDay) {
+          return `${dateFormatted} de ${startHour} à ${endHour}`;
+      } else {
+          const endDateFormatted = end.toLocaleDateString("fr-FR");
+          return `Du ${dateFormatted} au ${endDateFormatted}`;
+      }
+    }
+    return `${dateFormatted} à ${startHour}`;
   };
 
   // HANDLERS (LOGIQUE GUEST)
@@ -137,6 +155,10 @@ export default function JoinMissionPage() {
 
   const handleJoinMission = async () => {
     if (!checkAuthAndRedirect()) return;
+    if (userType !== 'volunteer') {
+      showToast("Action indisponible", "Seuls les bénévoles peuvent rejoindre une mission.");
+      return;
+    }
 
     try {
       await volunteerService.applyToMission(mission.id_mission);
@@ -148,6 +170,10 @@ export default function JoinMissionPage() {
 
   const toggleFavorite = async () => {
     if (!checkAuthAndRedirect()) return;
+      if (userType !== 'volunteer') {
+        showToast("Action indisponible", "Seuls les bénévoles peuvent gérer des favoris.");
+        return;
+      }
 
     try {
       if (isFavorite) {
@@ -230,11 +256,13 @@ export default function JoinMissionPage() {
             <Text style={styles.infoLine}>
                 <Text style={styles.infoLabel}>Association :</Text> {mission.association?.name || "Non spécifiée"}
             </Text>
-            <TouchableOpacity onPress={goToAssociation} style={{ marginLeft: 5 }}>
-                <Text style={{ color: Colors.orange, textDecorationLine: 'underline', fontWeight: '600' }}>
-                    (Voir profil)
-                </Text>
-            </TouchableOpacity>
+            {!!mission.id_asso && (
+              <TouchableOpacity onPress={goToAssociation} style={{ marginLeft: 5 }}>
+                  <Text style={{ color: Colors.orange, textDecorationLine: 'underline', fontWeight: '600' }}>
+                      (Voir profil)
+                  </Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <Text style={styles.infoLine}>

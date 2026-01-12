@@ -19,18 +19,27 @@ export default function AboutUsAssociation() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    const rawId = Array.isArray(id) ? id[0] : id;
 
-    const numericId = Number(id);
+    if (!rawId) {
+      setError(true);
+      setLoading(false);
+      setAssociation(null);
+      return;
+    }
+
+    const numericId = Number(rawId);
     if (isNaN(numericId)) {
         setError(true);
         setLoading(false);
+        setAssociation(null);
         return;
     }
 
     const fetchAssociation = async () => {
         setLoading(true);
         setError(false);
+        setAssociation(null);
         try {
             const data = await associationService.getById(numericId);
             if (!data) throw new Error('Association not found');

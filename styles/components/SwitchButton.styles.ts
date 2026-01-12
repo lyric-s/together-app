@@ -44,8 +44,7 @@ export const styles = StyleSheet.create({
         borderRadius: 100,
         padding: 4,
         width: 250,
-        height: 35,
-        // backgroundColor is handled dynamically by the component based on the theme
+        minHeight: 44,
     },
     button: {
         flex: 1,
@@ -54,8 +53,7 @@ export const styles = StyleSheet.create({
         borderRadius: 100,
     },
     activeButton: {
-        // backgroundColor is overridden dynamically by the component
-        backgroundColor: 'white', 
+        backgroundColor: 'transparent', 
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
