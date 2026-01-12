@@ -8,6 +8,7 @@ import { authService } from '@/services/authService';
 import AlertToast from '@/components/AlertToast';
 import { Colors } from '@/constants/colors';
 import Cross from '@/components/Cross';
+import { UserType } from '@/models/enums'
 
 export default function Login() {
     const router = useRouter();
@@ -46,9 +47,10 @@ export default function Login() {
         setLoading(true);
         try {
             const response = await authService.login(username, password);
-            await login(response.access_token, response.refresh_token);
+            await login(username, password);
             console.log("✅ Connexion réussie");
-            router.replace('/(volunteer)/home');
+            const { user_type } = response.user_type;
+            user_type === UserType.ADMIN ? router.replace(`/(${user_type})/dashboard` as any) : router.replace(`/(${user_type})/home` as any);
         } catch (e: any) {
             console.error(e);
             showToast("Échec de la connexion", "Identifiants incorrects.");

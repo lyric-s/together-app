@@ -11,7 +11,7 @@ interface RegisterPayload {
   email: string;
   password: string;
   username: string;
-  type: 'volunteer' | 'association';
+  type: UserType.VOLUNTEER | UserType.ASSOCIATION;
   // Volunteer fields
   first_name?: string;
   last_name?: string;

@@ -20,6 +20,7 @@ export const volunteerService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
   
@@ -33,6 +34,7 @@ export const volunteerService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -46,6 +48,7 @@ export const volunteerService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -58,6 +61,7 @@ export const volunteerService = {
       await api.delete(`/volunteers/${volunteerId}`);
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -74,6 +78,7 @@ export const volunteerService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -89,6 +94,7 @@ export const volunteerService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -101,6 +107,7 @@ export const volunteerService = {
       await api.post(`/volunteers/me/favorites/${missionId}`);
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -113,6 +120,7 @@ export const volunteerService = {
       await api.delete(`/volunteers/me/favorites/${missionId}`);
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -130,6 +138,7 @@ export const volunteerService = {
       );
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -142,6 +151,7 @@ export const volunteerService = {
       await api.delete(`/volunteers/me/missions/${missionId}/application`);
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
