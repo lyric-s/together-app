@@ -3,13 +3,7 @@ import { Picker } from "@react-native-picker/picker";
 import { useState } from "react";
 import { Colors } from "../constants/colors";
 import { styles } from "../styles/components/SearchBarStyle";
-
-// Interface harmonisée avec la version mobile
-interface SearchFilters {
-  category: string | null;
-  zipCode: string | null;
-  date: Date | null;
-}
+import { SearchFilters } from "../types/search.types";
 
 interface SearchBarProps {
   categories?: string[]; // Renommé pour la clarté (était filters_1)
@@ -40,7 +34,7 @@ export default function SearchBar({
       // Validate YYYY-MM-DD format explicitly
         const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
         if (match) {
-          const d = new Date(dateText);
+          const d = new Date(parseInt(match[1]), parseInt(match[2]) - 1, parseInt(match[3]));
           if (!isNaN(d.getTime())) {
               dateObj = d;
           }
