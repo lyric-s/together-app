@@ -12,7 +12,6 @@ import Cross from '@/components/Cross';
 export default function Login() {
     const router = useRouter();
     const { login } = useAuth();
-    const [authTab, setAuthTab] = useState('Connexion');
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState({ visible: false, title: '', message: '' });
     
@@ -29,8 +28,7 @@ export default function Login() {
         setToast({ visible: true, title, message });
     };
 
-    const handleSwitchChange = (tab: string) => {
-        setAuthTab(tab);
+    const handleAuthSwitch = (tab: string) => {
         if (tab === 'Inscription') {
             router.push('/(auth)/register');
         }
@@ -98,8 +96,8 @@ export default function Login() {
                             <>
                                 <SwitchButton 
                                     variant="auth" 
-                                    value={authTab}
-                                    onChange={handleSwitchChange}
+                                    value={"Connexion"}
+                                    onChange={handleAuthSwitch}
                                 />
                                 <Cross
                                     onClose={handleClose}

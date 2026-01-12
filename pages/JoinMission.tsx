@@ -190,11 +190,11 @@ export default function JoinMissionPage() {
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-        const route = (userType === 'volunteer_guest' 
+        const route = (userType === 'volunteer_guest'
           ? `/(guest)/search/association/${mission.id_asso}`
           : `/(volunteer)/search/association/${mission.id_asso}`) as Href; 
           router.push(route);
-      };
+      }
   };
 
   return (

@@ -215,7 +215,7 @@ export default function MobileSearchBar({
                       style={internalStyles.suggestionItem}
                       onPress={() => handleSelectCity(item)}
                     >
-                      <Text>{item.nom} ({item.codesPostaux[0]})</Text>
+                      <Text>{item.nom} {item.codesPostaux?.[0] ? `(${item.codesPostaux[0]})` : ""}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>

@@ -20,6 +20,7 @@ export const storageService = {
       await AsyncStorage.setItem(key, value);
     } catch (error) {
       console.error(`Failed to set item ${key}:`, error);
+      throw error;
     }
   },
   getItem: async (key: string) => {
@@ -35,6 +36,7 @@ export const storageService = {
       await AsyncStorage.removeItem(key);
     } catch (error) {
       console.error(`Failed to remove item ${key}:`, error);
+      throw error;
     }
   },
   

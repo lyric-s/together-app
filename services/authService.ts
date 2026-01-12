@@ -92,7 +92,7 @@ export const authService = {
         user_type: type === UserType.VOLUNTEER ? UserType.VOLUNTEER : UserType.ASSOCIATION
       };
 
-      if (type === 'volunteer') {
+      if (type === UserType.VOLUNTEER) {
         if (!payload.first_name || !payload.phone_number || !payload.last_name || !payload.birthdate) {
           throw new Error('Volunteer registration requires first_name, last_name, birthdate and phone_number');
         }
