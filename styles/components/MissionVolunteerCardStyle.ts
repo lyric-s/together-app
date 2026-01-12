@@ -8,7 +8,6 @@ const isLargeScreen = screenWidth > 1000;
 
 export const styles = StyleSheet.create({
   card: {
-    width:  350,
     backgroundColor: Colors.white,
     borderRadius: 12,
     marginTop: 5,

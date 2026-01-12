@@ -29,6 +29,13 @@ export default function Login() {
         setToast({ visible: true, title, message });
     };
 
+    const handleSwitchChange = (tab: string) => {
+        setAuthTab(tab);
+        if (tab === 'Inscription') {
+            router.push('/(auth)/register');
+        }
+    };
+
     const handleLogin = async () => {
         if (!username.trim()) {
             showToast("Erreur", "Le nom d'utilisateur est requis.");
@@ -43,6 +50,7 @@ export default function Login() {
             const response = await authService.login(username, password);
             await login(response.access_token, response.refresh_token);
             console.log("✅ Connexion réussie");
+            router.replace('/(volunteer)/home');
         } catch (e: any) {
             console.error(e);
             showToast("Échec de la connexion", "Identifiants incorrects.");
@@ -91,7 +99,7 @@ export default function Login() {
                                 <SwitchButton 
                                     variant="auth" 
                                     value={authTab}
-                                    onChange={(tab) => {if (tab === 'Inscription') router.push('/(auth)/register');}}
+                                    onChange={handleSwitchChange}
                                 />
                                 <Cross
                                     onClose={handleClose}

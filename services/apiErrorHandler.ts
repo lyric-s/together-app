@@ -13,15 +13,28 @@ import { AxiosError } from 'axios';
  */
 export function handleApiError(error: unknown): never {
   if (error instanceof AxiosError) {
-    // Attempts to retrieve the error message from the backend (FastAPI/Django/Node)
-    const message =
-      error.response?.data?.detail ||
-      error.response?.data?.message ||
-      error.message ||
-      "Une erreur inconnue est survenue.";
-    
-    console.error("API Error:", message);
-    throw new Error(message);
+    let message = "Une erreur inconnue est survenue.";
+    const responseData = error.response?.data as any; // Cast explicite pour accès souple
+
+    if (responseData) {
+      if (typeof responseData.detail === 'string') {
+        message = responseData.detail;
+      } else if (Array.isArray(responseData.detail)) {
+        message = responseData.detail.map((e: any) => e.msg || JSON.stringify(e)).join(', ');
+      } else if (typeof responseData.message === 'string') {
+        message = responseData.message;
+      } else if (typeof responseData === 'string') {
+        message = responseData;
+      }
+    } else if (error.message) {
+      message = error.message;
+    }
+
+    console.error("API Error (Full):", error);
+
+    throw new Error(message, { cause: error });
   }
-  throw new Error("Erreur inattendue de connexion.");
+
+  console.error("Non-API Error:", error);
+  throw new Error("Erreur inattendue de connexion.", { cause: error });
 }

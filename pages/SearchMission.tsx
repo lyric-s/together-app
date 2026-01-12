@@ -14,8 +14,9 @@ import { styles } from '@/styles/pages/SearchMissionStyles';
 import { Colors } from '@/constants/colors';
 // Components
 import MobileSearchBar from '@/components/MobileSearchBar';
-import SearchBar from '@/components/SearchBar'; // La version Web fournie précédemment
+import SearchBar from '@/components/SearchBar';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
+import MissionVolunteerCardHorizontal from '@/components/MissionVolunteerCardHorizontal'
 import AlertToast from '@/components/AlertToast';
 
 // Services & Models
@@ -40,8 +41,6 @@ export default function ResearchMission() {
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
 
   const CATEGORIES = ['Social', 'Environnement', 'Éducation', 'Santé', 'Sport', 'Culture'];
-
-  const nbCol = isWeb ? 3 : 1;
 
   useEffect(() => {
     loadData();
@@ -220,10 +219,11 @@ export default function ResearchMission() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
-      <FlatList
+        {!isWeb ? (
+        <FlatList
         data={filteredMissions}
-        numColumns={nbCol}
-        key={`flatlist-${nbCol}`}
+        numColumns={1}
+        key={`flatlist-${1}`}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
@@ -259,6 +259,45 @@ export default function ResearchMission() {
           <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>Aucune mission trouvée.</Text>
         }
       />
+        ) : (
+            <FlatList
+        data={filteredMissions}
+        numColumns={1}
+        key={`flatlist-${1}`}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(item) => item.id_mission.toString()}
+        contentContainerStyle={{
+            ...styles.listContent,
+            gap: 20,
+            paddingHorizontal: isWeb ? 20 : 0,
+            justifyContent: isWeb ? 'flex-start' : 'center',
+        }}
+        renderItem={({ item }) => (
+            <View 
+                style={{ 
+                    flex: 1,
+                    marginBottom: 5,
+                }}
+            >
+                <MissionVolunteerCardHorizontal
+                    mission={item}
+                    isFavorite={favoriteIds.includes(item.id_mission)}
+                    onPressMission={() => handlePressMission(item.id_mission)}
+                    onPressFavorite={
+                    userType === 'volunteer' 
+                        ? () => handleToggleFavorite(item.id_mission) 
+                        : () => checkAuthAndRedirect()
+                    }
+                />
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>Aucune mission trouvée.</Text>
+        }
+        />
+      )}
       </KeyboardAvoidingView>
     </View>
   );
