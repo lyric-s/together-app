@@ -14,9 +14,34 @@ export const storageService = {
   },
   getAccessToken: () => AsyncStorage.getItem('access_token'),
   getRefreshToken: () => AsyncStorage.getItem('refresh_token'),
+  
+  setItem: async (key: string, value: string) => {
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch (error) {
+      console.error(`Failed to set item ${key}:`, error);
+    }
+  },
+  getItem: async (key: string) => {
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch (error) {
+      console.error(`Failed to get item ${key}:`, error);
+      return null;
+    }
+  },
+  removeItem: async (key: string) => {
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch (error) {
+      console.error(`Failed to remove item ${key}:`, error);
+    }
+  },
+  
   clear: async () => {
     try {
-      await AsyncStorage.multiRemove(['access_token', 'refresh_token']);
+      const keys = ['access_token', 'refresh_token', 'cached_user', 'user_type'];
+      await AsyncStorage.multiRemove(keys);
     } catch (error) {
       console.error('Failed to clear tokens:', error);
       throw error;

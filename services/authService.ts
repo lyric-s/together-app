@@ -17,6 +17,8 @@ interface RegisterPayload {
   last_name?: string;
   phone_number?: string;
   birthdate?: string;
+  skills?: string;
+  bio?: string;
   // Association fields
   name?: string;
   company_name?: string;
@@ -25,8 +27,6 @@ interface RegisterPayload {
   zip_code?: string;
   country?: string;
   description?: string;
-  skills?: string;
-  bio?: string;
 }
 export const authService = {
   // Corresponds to @router.post("/token")
@@ -39,8 +39,9 @@ export const authService = {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
 
-    const { access_token, refresh_token } = response.data;
+    const { access_token, refresh_token, user_type } = response.data;
     await storageService.saveTokens(access_token, refresh_token);
+    if(user_type) await storageService.setItem('user_type', user_type);
     return response.data;
   },
 
@@ -52,21 +53,38 @@ export const authService = {
     }
     const response = await api.post('/auth/refresh', { refresh_token: refreshToken });
     const { access_token } = response.data;
-    await storageService.saveTokens(access_token, refreshToken);
+    const newRefresh = response.data.refresh_token || refreshToken;
+    await storageService.saveTokens(access_token, newRefresh);
     return access_token;
   },
 
+  getMe: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  },
+
+  requestPasswordReset: async (email: string) => {
+    return await api.post('/auth/password-reset/request', { email });
+  },
+
+  confirmPasswordReset: async (token: string, newPassword: string) => {
+    return await api.post('/auth/password-reset/confirm', { 
+        token: token, 
+        new_password: newPassword 
+    });
+  },
+  
   register: async (payload: RegisterPayload) => {
     try {
-      if (!payload.email || !payload.password || !payload.type) {
-        throw new Error('Missing required fields: email, password, and type');
+      if (!payload.email || !payload.username || !payload.password || !payload.type) {
+        throw new Error('Missing required fields: email, username, password, and type');
       }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(payload.email)) {
         throw new Error('Invalid email format');
       }
-      const { email, password, username, type } = payload;
 
+      const { email, password, username, type } = payload;
       const userIn: UserCreate = {
         email: email,
         password: password,
@@ -114,12 +132,8 @@ export const authService = {
       return await authService.login(userIn.username, password);
 
     } catch (error: any) {
-      const sanitizedError = {
-        message: error.message,
-        status: error.response?.status,
-        errorData: error.response?.data
-      };
-      console.error("Registration error:", sanitizedError);
+      const errorDetail = error.response?.data?.detail;
+      console.error("Register Error:", errorDetail || error.message);
       throw error;
     }
   }

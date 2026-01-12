@@ -1,13 +1,9 @@
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet } from "react-native";
 import { Colors } from "../../constants/colors";
-
-const screenWidth = Dimensions.get("window").width;
-
-// breakpoint at 900px = PC/tablette large
-const isLargeScreen = screenWidth > 1000;
 
 export const styles = StyleSheet.create({
   card: {
+    width: 350,
     backgroundColor: Colors.white,
     borderRadius: 12,
     marginTop: 5,
@@ -22,7 +18,7 @@ export const styles = StyleSheet.create({
 
   imageContainer: {
     width: "100%",
-    height: 140, // landscape format 
+    height: 140,
   },
 
   image: {

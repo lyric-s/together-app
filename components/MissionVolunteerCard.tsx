@@ -43,7 +43,7 @@ export default function MissionVolunteerCard({
   : "Lieu non précisé";
 
   return (
-    <TouchableOpacity style={[styles.card, {width: isWeb ? '80%' : 350, alignSelf: isWeb ? 'center' : 'auto',}]} onPress={onPressMission}>
+    <TouchableOpacity style={[styles.card, { alignSelf: isWeb ? 'center' : 'auto',}]} onPress={onPressMission}>
       
       {/* Image */}
       <View style={styles.imageContainer}>
