@@ -62,7 +62,7 @@ export default function SearchBar({
         onSubmitEditing={handleSearch}
       />
 
-      <View style={[styles.input, styles.pickerContainer,, { flex: 1.5, marginLeft: 10 }]}>
+      <View style={[styles.input, styles.pickerContainer, { flex: 1.5, marginLeft: 10 }]}>
         <Picker
           selectedValue={selectedCategory}
           onValueChange={(v) => setSelectedCategory(v)}

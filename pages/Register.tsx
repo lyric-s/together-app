@@ -12,9 +12,8 @@ import Cross from '@/components/Cross';
 
 export default function Register() {
     const router = useRouter();
-    const { login } = useAuth();
+    const { login, refetchUser } = useAuth();
     const { userType } = useLocalSearchParams<{ userType: string }>();
-    const [authTab, setAuthTab] = useState('Inscription');
     const [userTypeTab, setUserTypeTab] = useState(userType === 'association' ? 'Association' : 'Bénévole');
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState({ visible: false, title: '', message: '' });
@@ -58,6 +57,17 @@ export default function Register() {
     const showToast = (title: string, message: string) => {
         setToast({ visible: true, title, message });
     };
+
+    const handleAuthSwitch = (tab: string) => {
+        if (tab === 'Connexion') {
+            router.replace('/(auth)/login');
+        }
+    };
+
+    const handleUserTypeSwitch = (tab: string) => {
+        setUserTypeTab(tab);
+    };
+
 
     const handlePickDocument = async () => {
         try {
@@ -138,7 +148,7 @@ export default function Register() {
                 // payload.file = attachment;
             }
             const response = await authService.register(payload);
-            await login(response.access_token, response.refresh_token);
+            await refetchUser();
             console.log("Inscription lancée");
             router.replace(`/(${payload.type})/home` as any);
         } catch (e: any) {
@@ -190,8 +200,8 @@ export default function Register() {
                                 <>
                                     <SwitchButton 
                                         variant="auth" 
-                                        value={authTab}
-                                        onChange={(tab) => {if (tab === 'Connexion') router.push('/(auth)/login');}}
+                                        value={"Inscription"}
+                                        onChange={handleAuthSwitch}
                                     />
                                     <Cross
                                         onClose={handleClose}
@@ -211,7 +221,7 @@ export default function Register() {
                                 <SwitchButton 
                                     variant="userType" 
                                     value={userTypeTab}
-                                    onChange={setUserTypeTab}
+                                    onChange={handleUserTypeSwitch}
                                 />
                             </View>
                         )}

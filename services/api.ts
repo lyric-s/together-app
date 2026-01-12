@@ -27,6 +27,18 @@ const api = axios.create({
   timeout: 10000,
 });
 
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed(token: string) {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+}
+
 // Token interceptor
 api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   const token = await storageService.getAccessToken();
@@ -55,17 +67,34 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+
+      if (isRefreshing) {
+        return new Promise((resolve) => {
+          subscribeTokenRefresh((token: string) => {
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            resolve(api(originalRequest));
+          });
+        });
+      }
+      
+      isRefreshing = true;
       try {
         console.log("🔄 Token expiré. Tentative de refresh...");
         // We import dynamically to avoid import loops
         const { authService } = require('./authService');
         const newToken = await authService.refresh();
+        isRefreshing = false;
+        onRefreshed(newToken);
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }
         console.log("✅ Token rafraîchi avec succès, on relance la requête.");
         return api(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false;
+        refreshSubscribers = [];
         console.error("❌ Échec du refresh token, déconnexion forcée.");
         await storageService.clear();
         return Promise.reject(refreshError);

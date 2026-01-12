@@ -4,8 +4,13 @@ export const formatMissionDate = (dateString: string | Date | undefined | null):
   if (!dateString) return "Date inconnue";
 
   // If it is already a Date object, convert it to an ISO string to process it uniformly.
-  const inputStr = dateString instanceof Date ? dateString.toISOString() : dateString;
-
+  let inputStr: string;
+  if (dateString instanceof Date) {
+    if (isNaN(dateString.getTime())) return "Date invalide";
+    inputStr = dateString.toISOString();
+  } else {
+    inputStr = dateString;
+  }
   // DETECTION: Is this a date alone (YYYY-MM-DD format without “T” or time)?
   // E.g.: ‘2024-01-15’
   const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(inputStr);

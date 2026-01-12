@@ -24,6 +24,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -34,6 +35,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -47,6 +49,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -57,6 +60,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -66,6 +70,7 @@ export const associationService = {
       await api.delete(`/associations/${id}`);
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
   
@@ -76,6 +81,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -86,6 +92,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -96,6 +103,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -105,6 +113,7 @@ export const associationService = {
       await api.delete(`/associations/me/missions/${id}`);
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   }
 };

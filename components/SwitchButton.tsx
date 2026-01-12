@@ -46,7 +46,7 @@ export default function SwitchButton({
         userType : {
             left: 'Bénévole',
             right: 'Association',
-            routes: { left: '/(auth)/register/', right: '/(auth)/login' },
+            routes: { left: '/(auth)/register', right: '/(auth)/register' },
             theme: THEMES.userType
         },
         activityVolunteer : {

@@ -76,7 +76,7 @@ export default function MissionVolunteerCard({
         <Text style={styles.title}>{mission.name}</Text>
         <Text style={styles.association}>{assoName}</Text>
         <Text style={styles.date}>{formattedDate}</Text>
-        {mission_location && <Text style={styles.city}>{mission_location}</Text>}
+        <Text style={styles.city}>{mission_location}</Text>
       </View>
 
       <View style={styles.peopleContainer}>

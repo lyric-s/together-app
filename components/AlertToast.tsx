@@ -41,8 +41,9 @@ export default function AlertToast({
       Animated.parallel([
         Animated.timing(fadeAnim, { toValue: 0, duration: 300, useNativeDriver: true }),
         Animated.timing(slideAnim, { toValue: -100, duration: 300, useNativeDriver: true }),
-      ]).start();
-      setShowComponent(false);
+      ]).start(() => {
+        setShowComponent(false);
+      });
     }
   }, [visible, autoCloseDelay, onClose]);
 

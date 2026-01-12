@@ -62,13 +62,6 @@ export const styles = StyleSheet.create({
     })
   },
 
-  actionsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    minWidth: 80, 
-  },
-
   resetButton: {
     padding: 8,
     backgroundColor: Colors.whiteLittleGray,

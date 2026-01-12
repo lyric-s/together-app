@@ -30,7 +30,7 @@ export default function ResearchMission() {
   const { userType } = useAuth();
   const isWeb = Platform.OS === 'web';
   const { width } = useWindowDimensions();
-  const isSmallSreen = width < 900;
+  const isSmallScreen = width < 900;
 
   // --- DATA ---
   const [allMissions, setAllMissions] = useState<Mission[]>([]);
@@ -152,7 +152,7 @@ export default function ResearchMission() {
       );
       showToast("Erreur", "Impossible de mettre à jour les favoris.");
     }
-  }, [userType, favoriteIds, isWeb]);
+  }, [userType, favoriteIds, showToast]);
 
   const handlePressMission = useCallback((missionId: number) => {
     const rootPath = userType === 'volunteer' ? '/(volunteer)' : '/(guest)';
@@ -191,8 +191,8 @@ export default function ResearchMission() {
         <Text style={[
           styles.titre,
           {
-            paddingLeft: isWeb ? (isSmallSreen ? 60 : 0) : 20,
-            marginTop: isWeb && isSmallSreen ? 40 : 10,
+            paddingLeft: isWeb ? (isSmallScreen ? 60 : 0) : 20,
+            marginTop: isWeb && isSmallScreen ? 40 : 10,
             textAlign: 'left',
           }
         ]}>

@@ -32,7 +32,7 @@ type AuthContextType = {
   user: AuthUser | null;
   userType: UserType;
   isLoading: boolean;
-  login: (accessToken: string, refreshToken: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refetchUser: () => Promise<void>;
 };
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }
 
-    if (data.id_admin || data.email) {
+    if (data.id_admin) {
          return {
             id_user: data.id_admin || 0,
             id_admin: data.id_admin,
