@@ -14,12 +14,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { styles } from "../styles/components/MobileSearchBarStyle";
 import { Colors } from "@/constants/colors";
-
-interface SearchFilters {
-  category: string | null;
-  zipCode: string | null;
-  date: Date | null;
-}
+import { SearchFilters } from "../types/search.types";
 
 interface Props {
   onSearch: (text: string, filters: SearchFilters) => void;
@@ -92,13 +87,6 @@ export default function MobileSearchBar({
   };
 
   const applySearch = () => {
-    console.log("Application des filtres :", { 
-        text: searchText, 
-        cat: selectedCategory, 
-        zip: selectedZipCode,
-        date: selectedDate 
-    });
-
     setFiltersOpen(false);
     onSearch(searchText, {
       category: selectedCategory,
@@ -206,7 +194,6 @@ export default function MobileSearchBar({
                 onChangeText={(text) => {
                   setCityInputText(text);
                   fetchCitySuggestions(text);
-                  if(selectedZipCode) setSelectedZipCode(null);
                 }}
               />
 
