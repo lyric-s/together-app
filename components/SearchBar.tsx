@@ -30,7 +30,6 @@ export default function SearchBar({
     setSelected2(default2);
     onSearch("", default1, default2);
   }
-
 return (
   <View style={styles.container}>
     
@@ -91,6 +90,5 @@ return (
 );
 
   }
-
 
 
