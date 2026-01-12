@@ -54,6 +54,10 @@ export default function GuestLayout() {
         }}>
           <Stack.Screen name="home/index" />
           <Stack.Screen name="search/index" />
+          <Stack.Screen name="search/mission/[id]" />
+          <Stack.Screen name="search/association/[id]" />
+          <Stack.Screen name="library/index" />
+          <Stack.Screen name="profile/index" />
         </Stack>
       </View>
 

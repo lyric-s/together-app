@@ -72,6 +72,9 @@ export default function MobileSearchBar({
       const response = await fetch(
         `https://geo.api.gouv.fr/communes?${param}&fields=nom,codesPostaux&boost=population&limit=5`
       );
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
       const data = await response.json();
       setCitySuggestions(data);
     } catch (error) {

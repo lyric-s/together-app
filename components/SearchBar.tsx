@@ -37,16 +37,20 @@ export default function SearchBar({
   const handleSearch = () => {
     let dateObj: Date | null = null;
     if (dateText) {
-        const d = new Date(dateText);
-        if (!isNaN(d.getTime())) {
-            dateObj = d;
+      // Validate YYYY-MM-DD format explicitly
+        const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (match) {
+          const d = new Date(dateText);
+          if (!isNaN(d.getTime())) {
+              dateObj = d;
+          }
         }
     }
 
     onSearch(text, {
-        category: selectedCategory === "-" ? null : selectedCategory,
-        zipCode: zipCode.trim() === "" ? null : zipCode,
-        date: dateObj
+      category: selectedCategory === "-" ? null : selectedCategory,
+      zipCode: zipCode.trim() === "" ? null : zipCode,
+      date: dateObj
     });
   };
 
