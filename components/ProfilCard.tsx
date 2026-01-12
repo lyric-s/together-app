@@ -3,69 +3,111 @@ import { styles } from '@/styles/components/ProfilCardStyle';
 import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
-import { FormData } from '@/types/ProfileUser';
+import { UserType } from '@/context/AuthContext';
+import { UserProfile, AdminProfile, VolunteerProfile, AssociationProfile } from '@/types/ProfileUser';
 
-type UserType = 'asso' | 'benevole' | 'admin';
-
-type FormLabels = {
-    lastname: string;
-    firstname?: string;
+type ProfileLabels = {
+    username?: string;
+    last_name?: string;
+    first_name?: string;
+    birthdate?: string;
     email?: string;
-    mobile?: string;
-    role?: string;
-    codeRNA?: string;
-    recepisse?: string;
     password: string;
     confirmPassword: string;
+    phone_number?: string;
+    skills?: string;
+    address?: string;
+    zip_code?: string;
+    bio?: string;
+    name?: string;
+    country?: string;
+    rna_code?: string;
+    company_name?: string;
+};
+
+type InputBlockProps = {
+    label: string;
+    value?: string;
+    isEditing: boolean;
+    onChange: (text: string) => void; // On précise ici que la fonction attend une string
+    secure?: boolean;
+    multiline?: boolean;
+    required?: boolean;
 };
 
 type Props = {
     userType: UserType;
-    userData: FormData; // Data of the user from the database
-    onSave?: (data: FormData) => Promise<void>; // Function to save into the database
+    userData: UserProfile; // Data of the user from the database
+    onSave?: (data: UserProfile) => Promise<void>; // Function to save into the database
     showAlert: (title: string, message: string) => void;
 };
 
 const DEFAULT_PHOTO = require('@/assets/images/profil-picture.png');
 
+const isAdmin = (data: UserProfile): data is AdminProfile => data.type === 'admin';
+const isVolunteer = (data: UserProfile): data is VolunteerProfile => data.type === 'volunteer';
+const isAsso = (data: UserProfile): data is AssociationProfile => data.type === 'association';
+
 // Labels according to the type of user
-const getLabels = (userType: UserType): FormLabels => {
+const getLabels = (userType: UserType): ProfileLabels => {
     switch (userType) {
-        case 'benevole':
+        case 'volunteer':
             return {
-                lastname: 'Nom',
-                firstname: 'Prénom',
+                last_name: 'Nom',
+                first_name: 'Prénom',
+                username: 'Nom d\'utilisateur',
+                phone_number: 'N°Tel',
+                birthdate: 'Date de naissance (ex: 2003-04-30)',
                 email: 'Adresse Mail',
+                address: 'Adresse',
+                zip_code: 'Code postal',
+                skills: 'Compétences',
+                bio: 'Biographie',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
             };
-        case 'asso':
+        case 'association':
             return {
-                lastname: 'Nom de l\'association',
-                codeRNA: 'Code RNA',
-                recepisse: 'Récépissé préfectoral',
+                company_name: 'Nom de l\'association',
+                name: 'Nom',
+                username: 'Nom d\'utilisateur',
+                email: 'Adresse Mail',
+                phone_number: 'N°Tel',
+                rna_code: 'Code RNA',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
             };
         case 'admin':
             return {
-                lastname: 'Nom',
-                firstname: 'Prénom',
+                last_name: 'Nom',
+                first_name: 'Prénom',
+                username: 'Nom d\'utilisateur',
                 email: 'Adresse Mail',
-                mobile: 'N° de téléphone',
-                role: 'Rôle',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
             };
         default:
             return {
-                lastname: 'Nom',
+                last_name: 'Nom',
                 password: 'Mot de passe',
                 confirmPassword: 'Confirmez mot de passe',
             };
     }
 };
 
+/**
+ * Render and manage an editable profile card for admin, volunteer, or association users.
+ *
+ * The component displays profile fields appropriate to the user's subtype, allows switching
+ * between view and edit modes, supports picking a profile image, performs per-type validation,
+ * and invokes `onSave` with a sanitized UserProfile payload when changes are saved.
+ *
+ * @param userType - The current user subtype used to derive labels and visible fields
+ * @param userData - The source UserProfile shown and edited in the card
+ * @param onSave - Optional callback invoked with the final UserProfile payload after successful validation
+ * @param showAlert - Function used to present user-facing alert messages for validation or errors
+ * @returns A React element rendering the profile card UI
+ */
 export default function ProfilCard({
     userType,
     userData,
@@ -74,25 +116,23 @@ export default function ProfilCard({
 }: Props) {
     
     const [isEditing, setIsEditing] = useState(false);
+    const labels = getLabels(userType);
 
+    // Original data (immutable copy)
+    const [originalData, setOriginalData] = useState<UserProfile>(userData);
+    // Editable data (working copy)
+    const [formData, setFormData] = useState<UserProfile>(userData);
+    
     const handleEdit = () => {
         // Creation of copy of original data
         setFormData({ ...originalData });
         setIsEditing(true);
     }
 
-    const labels = getLabels(userType);
-    
-    // Original data (immutable copy)
-    const [originalData, setOriginalData] = useState<FormData>(userData);
-    
-    // Editable data (working copy)
-    const [formData, setFormData] = useState<FormData>({ ...userData });
-
     // Update the data when userData change (ex: after a refresh of database)
     useEffect(() => {
         setOriginalData(userData);
-        setFormData({ ...userData });
+        if (!isEditing) setFormData({ ...userData });
     }, [userData]);
 
     const handleChange = (field: string, value: string) => {
@@ -124,109 +164,121 @@ export default function ProfilCard({
 
     const handleCancel = () => {
         // Cancel changes: restore original data
-        setFormData({ ...originalData });
+        setFormData({ ...originalData, password: '', confirmPassword: '' });
         setIsEditing(false);
         console.log('Modifications annulées, données restaurées');
     };
 
     const handleSubmit = async () => {
         try {
-            if (!formData.lastname.trim()) {
-                showAlert('Erreur', 'Le nom est obligatoire');
-                return;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^[0-9]{10}$/;
+
+            const isPasswordChanged = formData.password && formData.password.trim() !== '';
+            let passwordPayload = {};
+
+            if (isPasswordChanged) {
+                const pass = formData.password || '';
+                const confirm = formData.confirmPassword || '';
+
+                if (pass.length < 10) {
+                    return showAlert('Erreur', 'Le mot de passe doit contenir au moins 10 caractères.');
+                }
+
+                if (pass !== confirm) {
+                    return showAlert('Erreur', 'La confirmation du mot de passe ne correspond pas.');
+                }
+
+                passwordPayload = { password: pass };
             }
 
-            if (userType === 'benevole') {
-                if (!formData.firstname.trim()) {
-                    showAlert('Erreur', 'Le prénom est obligatoire');
-                    return;
-                }
-                if (!formData.email.trim()) {
-                    showAlert('Erreur', 'L\'adresse email est obligatoire');
-                    return;
-                }
-            } else if (userType === 'asso') {
-                if (!formData.codeRNA.trim()) {
-                    showAlert('Erreur', 'Le code RNA est obligatoire');
-                    return;
-                }
-                if (!formData.recepisse.trim()) {
-                    showAlert('Erreur', 'Le récépissé préfectoral est obligatoire');
-                    return;
-                }
-            } else if (userType === 'admin') {
-                if (!formData.firstname.trim()) {
-                    showAlert('Erreur', 'Le prénom est obligatoire');
-                    return;
-                }
-                if (!formData.email.trim()) {
-                    showAlert('Erreur', 'L\'adresse email est obligatoire');
-                    return;
-                }
-                if (!formData.mobile.trim()) {
-                    showAlert('Erreur', 'Le numéro de téléphone est obligatoire');
-                    return;
-                }
-                if (!formData.role.trim()) {
-                    showAlert('Erreur', 'Le rôle est obligatoire');
-                    return;
-                }
-            }
+            let finalPayload: UserProfile | null = null;
 
-            if (!formData.password) {
-                showAlert('Erreur', 'Le mot de passe est obligatoire');
-                return;
-            }
-
-            if (formData.password.length < 10) {
-                showAlert('Erreur', 'Le mot de passe doit avoir minimum 10 caractères');
-                return;
-            }
-
-            if (!formData.confirmPassword) {
-                showAlert('Erreur', 'La confirmation du mot de passe est obligatoire');
-                return;
-            }
-
-            // Check password
-            if (formData.password !== formData.confirmPassword) {
-                showAlert('Erreur', 'Les mots de passe ne correspondent pas');
-                return;
-            }
-
-            // Check email
-            if ((userType === 'benevole' || userType === 'admin') && formData.email.trim()) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(formData.email)) {
-                    showAlert('Erreur', 'L\'adresse email n\'est pas valide');
-                    return;
+            if (isVolunteer(formData)) {
+                // Validation Specific Volunteer
+                if (!formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim() || !formData.birthdate?.trim() || !formData.phone_number?.trim()) {
+                    return showAlert('Erreur', 'Champs obligatoires manquants');
                 }
-            }
-
-            // Check mobile number (FR)
-            if (userType === 'admin' && formData.mobile.trim()) {
-                const phoneRegex = /^[0-9]{10}$/;
-                const cleanPhone = formData.mobile.replace(/\s/g, '');
+                if (!emailRegex.test(formData.email.trim())) {
+                    return showAlert('Erreur', "L'adresse email n'est pas valide.");
+                }
+                const birthdateRegex = /^\d{4}-\d{2}-\d{2}$/;
+                if (!birthdateRegex.test(formData.birthdate.trim())) {
+                    return showAlert('Erreur', 'La date de naissance doit être au format AAAA-MM-JJ.');
+                }
+                const dateObj = new Date(formData.birthdate.trim());
+                if (isNaN(dateObj.getTime())) {
+                    return showAlert('Erreur', 'La date de naissance n\'est pas valide.');
+                }
+                const cleanPhone = formData.phone_number.replace(/[\s\-\(\)]/g, '');
                 if (!phoneRegex.test(cleanPhone)) {
-                    showAlert('Erreur', 'Le numéro de téléphone doit contenir 10 chiffres');
-                    return;
+                    return showAlert('Erreur', "Le numéro de téléphone n'est pas valide.");
                 }
-            }
 
-            // Save in database
-            if (onSave) {
-                await onSave(formData);
+                finalPayload = {
+                    ...formData, // Keep ID, type, etc.
+                    last_name: formData.last_name.trim(),
+                    first_name: formData.first_name.trim(),
+                    email: formData.email.trim(),
+                    phone_number: formData.phone_number.replace(/\s/g, ''),
+                    birthdate: formData.birthdate.trim(),
+                    address: (formData.address ?? '').trim(),
+                    zip_code: (formData.zip_code ?? '').trim(),
+                    skills: (formData.skills ?? '').trim(),
+                    bio: (formData.bio ?? '').trim(),
+                    ...passwordPayload
+                };
             }
+            else if (isAdmin(formData)) {
+                // Validation Specific Admin
+                if (!formData.last_name?.trim() || !formData.first_name?.trim() || !formData.email?.trim()) {
+                    return showAlert('Erreur', 'Champs obligatoires manquants');
+                }
+                if (!emailRegex.test(formData.email.trim())) {
+                    return showAlert('Erreur', "L'adresse email n'est pas valide.");
+                }
 
-            // Update original data with new data saved
-            setOriginalData({ ...formData });
-            setIsEditing(false);
+                finalPayload = {
+                    ...formData,
+                    last_name: formData.last_name.trim(),
+                    first_name: formData.first_name.trim(),
+                    email: formData.email.trim(),
+                    ...passwordPayload
+                };
+            }
+            else if (isAsso(formData)) {
+                // Validation Association
+                if (!formData.name?.trim() || !formData.company_name?.trim() || !formData.rna_code?.trim() || !formData.phone_number?.trim() || !formData.email?.trim()) {
+                    return showAlert('Erreur', 'Champs obligatoires manquants');
+                }
+                if (!emailRegex.test(formData.email.trim())) {
+                    return showAlert('Erreur', "L'adresse email n'est pas valide.");
+                }
+                const cleanPhone = formData.phone_number.replace(/[\s\-\(\)]/g, '');
+                if (!phoneRegex.test(cleanPhone)) {
+                    return showAlert('Erreur', "Le numéro de téléphone n'est pas valide.");
+                }
+                finalPayload = {
+                    ...formData,
+                    name: formData.name.trim(),
+                    email: formData.email.trim(),
+                    company_name: formData.company_name.trim(),
+                    rna_code: formData.rna_code.trim(),
+                    phone_number: (formData.phone_number || '').replace(/\s/g, ''),
+                    ...passwordPayload
+                };
+            }
             
-            showAlert('Succès', 'Profil enregistré avec succès');
-            console.log('Données sauvegardées:', formData);
+            if (finalPayload && onSave) {
+                await onSave(finalPayload);
+                setOriginalData(finalPayload);
+                setFormData({...finalPayload, password: '', confirmPassword: ''});
+                setIsEditing(false);
+            }
+
         } catch (error) {
-            showAlert('Erreur', 'Impossible de sauvegarder les modifications');
-            console.error('Erreur de sauvegarde:', error);
+            showAlert('Erreur', 'Sauvegarde impossible');
+            console.error(error);
         }
     };
 
@@ -236,297 +288,136 @@ export default function ProfilCard({
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
         >
-            {isEditing ? (
-                <>
-                    <View>
-                        <TouchableOpacity onPress={handleImagePick}>
-                            <Image 
-                                source={formData.picture || DEFAULT_PHOTO} 
-                                style={styles.photo} 
-                            />
-                            <View style={styles.editIconContainer}>
-                                <Text style={styles.editIcon}>📷</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.lastname}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder={labels.lastname}
-                                value={formData.lastname}
-                                onChangeText={(text) => handleChange('lastname', text)}
-                            />
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.firstname && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.firstname}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={labels.firstname}
-                                    value={formData.firstname}
-                                    onChangeText={(text) => handleChange('firstname', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
+            <View>
+                <TouchableOpacity onPress={isEditing ? handleImagePick : undefined} disabled={!isEditing}>
+                    <Image source={formData.picture || DEFAULT_PHOTO} style={styles.photo} />
+                    {isEditing && (
+                        <View style={styles.editIconContainer}><Text style={styles.editIcon}>📷</Text></View>
                     )}
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.email && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.email}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="exemple@gmail.com"
-                                    value={formData.email}
-                                    onChangeText={(text) => handleChange('email', text)}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'admin' && labels.mobile && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.mobile}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="06 85 54 23 81"
-                                    value={formData.mobile}
-                                    onChangeText={(text) => handleChange('mobile', text)}
-                                    keyboardType="phone-pad"
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'admin' && labels.role && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.role}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Administrateur"
-                                    value={formData.role}
-                                    onChangeText={(text) => handleChange('role', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'asso' && labels.codeRNA && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.codeRNA}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="W123456789"
-                                    value={formData.codeRNA}
-                                    onChangeText={(text) => handleChange('codeRNA', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'asso' && labels.recepisse && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.recepisse}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="N° de récépissé"
-                                    value={formData.recepisse}
-                                    onChangeText={(text) => handleChange('recepisse', text)}
-                                />
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.password}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="••••••••••"
-                                value={formData.password}
-                                onChangeText={(text) => handleChange('password', text)}
-                                secureTextEntry
-                            />
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
-
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.confirmPassword}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <TextInput
-                                style={styles.input}
-                                placeholder="••••••••••"
-                                value={formData.confirmPassword}
-                                onChangeText={(text) => handleChange('confirmPassword', text)}
-                                secureTextEntry
-                            />
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
-
-                    <View style={styles.buttonContainer}>
-                        <View style={styles.buttonWrapper}>
-                            <CustomButton
-                                image={require('@/assets/images/return.png')}
-                                onPress={handleCancel}
-                                style={{width:130, height:36, marginBottom: 20,}}
-                            />
-                        </View>
-                        <View style={styles.buttonWrapper}>
-                            <CustomButton
-                                image={require('@/assets/images/validate.png')}
-                                onPress={handleSubmit}
-                                style={{width:130, height:36, marginBottom: 20,}}
-                            />
-                        </View>
-                    </View>
-                </>
-            ) : (
-                <>
-                    <Image
-                        source={formData.picture || DEFAULT_PHOTO} 
-                        style={styles.photo}
-                    />
-                    
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.lastname}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.text}>{formData.lastname}</Text>
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.firstname && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.firstname}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.firstname}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {(userType === 'benevole' || userType === 'admin') && labels.email && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.email}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.email}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'admin' && labels.mobile && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.mobile}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.mobile}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'admin' && labels.role && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.role}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.role}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'asso' && labels.codeRNA && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.codeRNA}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.codeRNA}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    {userType === 'asso' && labels.recepisse && (
-                        <View style={styles.inputRow}>
-                            <View style={styles.labelContainer}>
-                                <Text style={styles.label}>{labels.recepisse}</Text>
-                            </View>
-                            <View style={styles.inputWrapper}>
-                                <Text style={styles.text}>{formData.recepisse}</Text>
-                                <View style={styles.separator} />
-                            </View>
-                        </View>
-                    )}
-
-                    <View style={styles.inputRow}>
-                        <View style={styles.labelContainer}>
-                            <Text style={styles.label}>{labels.password}</Text>
-                        </View>
-                        <View style={styles.inputWrapper}>
-                            <Text style={styles.text}>{'•'.repeat(formData.password.length || 10)}</Text>
-                            <View style={styles.separator} />
-                        </View>
-                    </View>
+                </TouchableOpacity>
+            </View>
             
-                    <View style={{ width: '100%', marginTop: 20, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', }}>
-                        <CustomButton
-                            image={require('@/assets/images/edit.png')}
-                            onPress={handleEdit}
-                            style={{width:150, height:36, marginBottom: 20,}}
-                        />
-                    </View>
+            {(isAdmin(formData) || isVolunteer(formData)) && (
+                <>
+                    {labels.last_name && (isEditing || formData.last_name) && (
+                        <InputBlock label={labels.last_name} value={formData.last_name} isEditing={isEditing} onChange={(t) => handleChange('last_name', t)} required />
+                    )}
+                    {labels.first_name && (isEditing || formData.first_name) && (
+                        <InputBlock label={labels.first_name} value={formData.first_name} isEditing={isEditing} onChange={(t) => handleChange('first_name', t)} required/>
+                    )}
                 </>
             )}
+
+            {(isAdmin(formData) || isAsso(formData) || isVolunteer(formData)) && (
+                <>
+                    {labels.username && (
+                        <InputBlock label={labels.username} value={formData.username} isEditing={false} onChange={() => {}} />
+                    )}
+                    {labels.email && (isEditing || formData.email) && (
+                        <InputBlock label={labels.email} value={formData.email} isEditing={isEditing} onChange={(t) => handleChange('email', t)} required />
+                    )}
+                </>
+            )}
+
+            {isVolunteer(formData) && (
+                <>
+                    {labels.birthdate && (isEditing || formData.birthdate) && (
+                        <InputBlock label={labels.birthdate} value={formData.birthdate} isEditing={isEditing} onChange={(t) => handleChange('birthdate', t)} required />
+                    )}
+                    {labels.phone_number && (isEditing || formData.phone_number) && (
+                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} required />
+                    )}
+                    {labels.address && (isEditing || formData.address) && (
+                        <InputBlock label={labels.address} value={formData.address} isEditing={isEditing} onChange={(t) => handleChange('address', t)} />
+                    )}
+                    {labels.zip_code && (isEditing || formData.zip_code) && (
+                        <InputBlock label={labels.zip_code} value={formData.zip_code} isEditing={isEditing} onChange={(t) => handleChange('zip_code', t)} />
+                    )}
+                    {/* Multilines */}
+                    {labels.skills && (isEditing || formData.skills) && (
+                        <InputBlock label={labels.skills} value={formData.skills} isEditing={isEditing} onChange={(t) => handleChange('skills', t)} multiline />
+                    )}
+                    {labels.bio && (isEditing || formData.bio) && (
+                        <InputBlock label={labels.bio} value={formData.bio} isEditing={isEditing} onChange={(t) => handleChange('bio', t)} multiline />
+                    )}
+                </>
+            )}
+
+            {isAsso(formData) && (
+                <>
+                    {labels.company_name && (isEditing || formData.company_name) && (
+                        <InputBlock label={labels.company_name} value={formData.company_name} isEditing={isEditing} onChange={(t) => handleChange('company_name', t)} required />
+                    )}
+                    {labels.name && (isEditing || formData.name) && (
+                        <InputBlock label={labels.name} value={formData.name} isEditing={isEditing} onChange={(t) => handleChange('name', t)} required />
+                    )}
+                    {labels.rna_code && (isEditing || formData.rna_code) && (
+                        <InputBlock label={labels.rna_code} value={formData.rna_code} isEditing={isEditing} onChange={(t) => handleChange('rna_code', t)} required />
+                    )}
+                    {labels.phone_number && (isEditing || formData.phone_number) && (
+                        <InputBlock label={labels.phone_number} value={formData.phone_number} isEditing={isEditing} onChange={(t) => handleChange('phone_number', t)} required />
+                    )}
+                </>
+            )}
+
+            {isEditing && (
+                <>
+                    <InputBlock label={labels.password} value={formData.password || ''} isEditing={true} onChange={(t) => handleChange('password', t)} secure />
+                    <InputBlock label={labels.confirmPassword} value={formData.confirmPassword || ''} isEditing={true} onChange={(t) => handleChange('confirmPassword', t)} secure />
+                </>
+            )}
+            
+            <View style={styles.buttonContainer}>
+                {isEditing ? (
+                    <>
+                        <View style={styles.buttonWrapper}>
+                            <CustomButton image={require('@/assets/images/return.png')} onPress={handleCancel} style={{width:130, height:36}} />
+                        </View>
+                        <View style={styles.buttonWrapper}>
+                            <CustomButton image={require('@/assets/images/validate.png')} onPress={handleSubmit} style={{width:130, height:36}} />
+                        </View>
+                    </>
+                ) : (
+                    <View style={{ width: '100%', alignItems: 'flex-end', marginTop: 20 }}>
+                        <CustomButton image={require('@/assets/images/edit.png')} onPress={handleEdit} style={{width:150, height:36}} />
+                    </View>
+                )}
+            </View>
         </ScrollView>
     );
 }
+
+const InputBlock = ({ label, value, isEditing, onChange, secure, multiline, required }: InputBlockProps) => {
+    const hasValue = value && value.trim().length > 0;
+
+    if (!isEditing && !hasValue) {
+        return null;
+    }
+
+    return (
+    <View style={styles.inputRow}>
+        <View style={styles.labelContainer}>
+            <Text style={styles.label}>
+                {label}
+                {isEditing && required && <Text style={{ color: 'red' }}> *</Text>}
+            </Text>
+        </View>
+        <View style={styles.inputWrapper}>
+            {isEditing ? (
+                <TextInput
+                    style={[styles.input, multiline && { minHeight: 100 }]}
+                    value={value}
+                    onChangeText={onChange}
+                    placeholder={label + (required ? '*' : '')}
+                    secureTextEntry={secure}
+                    multiline={multiline}
+                    numberOfLines={multiline ? 4 : 1}
+                />
+            ) : (
+                <Text style={styles.text}>{secure ? '********' : value}</Text>
+            )}
+            <View style={styles.separator} />
+        </View>
+    </View>
+    );
+};
