@@ -9,7 +9,7 @@ import {
   Image,
   KeyboardAvoidingView
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import { styles } from '@/styles/pages/SearchMissionStyles';
 import { Colors } from '@/constants/colors';
 import { SearchFilters } from '@/types/search.types';
@@ -87,7 +87,7 @@ export default function ResearchMission() {
    * @param text - Texte de recherche (nom de la mission)
    * @param filters - Objet contenant category, zipCode, date
    */
-  const performFilter = (text: string, filters: { category?: string | null, zipCode?: string | null, date?: Date | null }) => {
+  const performFilter = (text: string, filters: Partial<SearchFilters>) => {
     const lowerText = text.toLowerCase();
 
     const filtered = allMissions.filter(mission => {
@@ -166,12 +166,12 @@ export default function ResearchMission() {
       );
       showToast("Erreur", "Impossible de mettre à jour les favoris.");
     }
-  }, [userType, favoriteIds, showToast]);
+  }, [checkAuthAndRedirect, favoriteIds, showToast]);
 
   const handlePressMission = useCallback((missionId: number) => {
     const rootPath = userType === 'volunteer' ? '/(volunteer)' : '/(guest)';
-    // @ts-ignore
-    router.push(`${rootPath}/search/mission/${missionId}`);
+    const route = `${rootPath}/search/mission/${missionId}` as Href;
+    router.push(route);
   }, [userType, router]);
 
   if (loading && allMissions.length === 0) {
