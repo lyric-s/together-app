@@ -47,6 +47,30 @@ export default function IndexDispatcher() {
     );
   }
 
-  // Web platform: redirect to main home page
-  return <Redirect href="/(main)/library/history/assos_history" />;
+  // --- FROM HERE ON, EVERYTHING IS LOADED AND THE ANIMATION IS FINISHED ---
+
+  // User not logged in -> Guest Area
+  if (!user) {
+    return <Redirect href="/(guest)/home" />;
+  }
+
+  // Switching according to the new routes
+  switch (userType) {
+    
+    // Volunteer (Mobile & Web)
+    case 'volunteer':
+      return <Redirect href="/(volunteer)/home" />;
+
+    // Admin (Web Only)
+    case 'admin':
+      return <Redirect href="/(admin)/dashboard" />; 
+
+    // Association (Web Only)
+    case 'association':
+      return <Redirect href="/(association)/home" />;
+
+    case 'volunteer_guest':
+    default:
+      return <Redirect href="/(guest)/home" />;
+  }
 }

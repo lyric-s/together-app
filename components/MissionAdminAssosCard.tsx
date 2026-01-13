@@ -1,78 +1,54 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, ImageSourcePropType, useWindowDimensions  } from "react-native";
+import { View, Text, Image, TouchableOpacity, ImageSourcePropType } from "react-native";
 import { styles } from "../styles/components/MissionAdminAssosCardStyle";
-import Button from "./Button";
+import { Mission } from "@/models/mission.model";
+import { formatMissionDate } from "@/utils/date.utils";
+import { router } from "expo-router";
 
 interface MissionAdminAssosCardProps {
-    mission_title: string;
-    association_name: string;
-    date: Date;
-    image: ImageSourcePropType;
-    onPressDetail: () => void;
+    mission: Mission;
 }
+
 /**
  * Renders an admin/association mission card.
  *
- * This card is used in the admin/association dashboard to display mission information.
- * It shows:
- *  - A fixed-size header image
- *  - The mission title
- *  - The association name
- *  - The mission date (formatted with the "fr-FR" locale)
- *  - A bottom-right "Voir détail" button
- *
- * The card is responsive and intended to be used inside a parent container
- * with horizontal layout (row + wrap) so that multiple cards can appear side by side.
- *
- * @param mission_title        Title of the mission.
- * @param association_name     Name of the association.
- * @param date                 Mission date. The time part is shown only if hour or minute is non-zero.
- * @param image                Image displayed at the top of the card (require(...)).
- * @param onPressDetail        Callback executed when the "Voir détail" button is pressed.
- *
- * @returns A styled mission card component dedicated to admin/association interfaces.
+ * Same visual behavior as before, but now based on Mission model
  */
 export default function MissionAdminAssosCard({
-    mission_title,
-    association_name,
-    date,
-    image,
-    onPressDetail,
+    mission,
 }: MissionAdminAssosCardProps) {
-    const { width } = useWindowDimensions();
-    //const cardWidth = width > 1000 ? '30%' : '100%';
 
-    const formattedDate =
-        date.toLocaleDateString("fr-FR") +
-        (date.getHours() !== 0 || date.getMinutes() !== 0
-            ? ` à ${date.toLocaleTimeString("fr-FR", {
-                hour: "2-digit",
-                minute: "2-digit",
-            })}`
-            : "");
+    const missionTitle = mission.name;
+    const associationName = mission.association?.name || "Association inconnue";
+    const defaultImage = require("../assets/images/volunteering_img.jpg");
+    const imageSource = mission.image_url 
+    ? { uri: mission.image_url } 
+    : defaultImage;
+
+    const formattedDate = formatMissionDate(mission.date_start);
 
     return (
-        //<View style={[styles.card, { width: cardWidth }]}>
         <View style={styles.card}>
             {/* Image */}
             <View style={styles.imageContainer}>
-                <Image source={image} style={styles.image} />
+                <Image source={imageSource} style={styles.image} />
             </View>
 
-            {/* Texte + bouton alignés */}
+            {/* Text + button */}
             <View style={styles.bottomRow}>
                 <View style={styles.textContainer}>
-                    <Text style={styles.title}>{mission_title}</Text>
-                    <Text style={styles.association}>{association_name}</Text>
+                    <Text style={styles.title}>{missionTitle}</Text>
+                    <Text style={styles.association}>{associationName}</Text>
                     <Text style={styles.date}>{formattedDate}</Text>
                 </View>
 
-                {/* Bouton "Voir détail" */}
-                <TouchableOpacity style={styles.detailButton} onPress={onPressDetail}>
+                <TouchableOpacity
+                    style={styles.detailButton}
+                    onPress={() => router.push('/')} // TODO
+                >
                     <Text style={styles.detailButtonText}>Voir détails</Text>
                 </TouchableOpacity>
             </View>
-
         </View>
     );
 }
