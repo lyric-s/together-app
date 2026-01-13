@@ -2,6 +2,7 @@ import { Engagement } from '@/models/engagement.model';
 import api from './api';
 import { Association, AssociationCreate, AssociationUpdate } from '@/models/association.model';
 import { Mission, MissionCreate, MissionUpdate } from '@/models/mission.model';
+import { Notification } from '@/models/notif.model';
 import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler';
 
@@ -109,7 +110,7 @@ export const associationService = {
   },
 
   // GET /associations/notifications
-  getNotifications: async (offset: number, limit: number, unread_only?: boolean, ): 
+  getNotifications: async (offset: number, limit: number, unread_only?: boolean): 
     Promise<Notification[]> => {
       try {
         const { data } = await api.get<Notification[]>(`/associations/notifications`, 
