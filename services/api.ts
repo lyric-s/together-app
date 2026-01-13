@@ -28,14 +28,19 @@ const api = axios.create({
 });
 
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: { resolve: (token: string) => void; reject: (error: unknown) => void }[] = [];
 
-function subscribeTokenRefresh(cb: (token: string) => void) {
-  refreshSubscribers.push(cb);
+function subscribeTokenRefresh(resolve: (token: string) => void, reject: (error: unknown) => void) {
+  refreshSubscribers.push({ resolve, reject });
 }
 
 function onRefreshed(token: string) {
-  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers.forEach(({ resolve }) => resolve(token));
+  refreshSubscribers = [];
+}
+
+function onRefreshFailed(error: unknown) {
+  refreshSubscribers.forEach(({ reject }) => reject(error));
   refreshSubscribers = [];
 }
 
@@ -69,13 +74,16 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          subscribeTokenRefresh((token: string) => {
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            resolve(api(originalRequest));
-          });
+        return new Promise((resolve, reject) => {
+          subscribeTokenRefresh(
+            (token: string) => {
+              if (originalRequest.headers) {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
+              resolve(api(originalRequest));
+            },
+            reject
+          );
         });
       }
       
@@ -94,7 +102,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;
-        refreshSubscribers = [];
+        onRefreshFailed(refreshError);
         console.error("❌ Échec du refresh token, déconnexion forcée.");
         await storageService.clear();
         return Promise.reject(refreshError);

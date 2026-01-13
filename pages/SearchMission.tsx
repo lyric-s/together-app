@@ -12,6 +12,8 @@ import {
 import { useRouter } from 'expo-router';
 import { styles } from '@/styles/pages/SearchMissionStyles';
 import { Colors } from '@/constants/colors';
+import { SearchFilters } from '@/types/search.types';
+
 // Components
 import MobileSearchBar from '@/components/MobileSearchBar';
 import SearchBar from '@/components/SearchBar';
@@ -43,30 +45,35 @@ export default function ResearchMission() {
   const CATEGORIES = ['Social', 'Environnement', 'Éducation', 'Santé', 'Sport', 'Culture'];
 
   useEffect(() => {
-    loadData();
-  }, [userType]);
+    let cancelled = false;
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const missionsData = await missionService.getAll();
-      setAllMissions(missionsData || []);
-      setFilteredMissions(missionsData || []);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const missionsData = await missionService.getAll();
+        if (cancelled) return;
+        setAllMissions(missionsData || []);
+        setFilteredMissions(missionsData || []);
 
-      if (userType === 'volunteer') {
-        const favoritesData = await volunteerService.getFavorites();
-        const ids = favoritesData.map((m) => m.id_mission);
-        setFavoriteIds(ids);
-      } else {
-        setFavoriteIds([]);
+        if (userType === 'volunteer') {
+          const favoritesData = await volunteerService.getFavorites();
+          if (cancelled) return;
+          const ids = favoritesData.map((m) => m.id_mission);
+          setFavoriteIds(ids);
+        } else {
+          setFavoriteIds([]);
+        }
+      } catch (error) {
+        if (cancelled) return;
+        console.error(error);
+        setToast({ visible: true, title: "Erreur", message: "Impossible de charger les missions." });
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } catch (error) {
-      console.error(error);
-      setToast({ visible: true, title: "Erreur", message: "Impossible de charger les missions." });
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    loadData();
+    return () => { cancelled = true; };
+  }, [userType]);
 
   /**
    * Logique de filtrage unifiée
@@ -107,12 +114,12 @@ export default function ResearchMission() {
   };
 
   // --- HANDLER WEB ---
-  const handleWebSearch = (text: string, filters: { category: string | null, zipCode: string | null, date: Date | null }) => {
+  const handleWebSearch = (text: string, filters: SearchFilters) => {
     performFilter(text, filters);
   };
 
   // --- HANDLER MOBILE ---
-  const handleMobileSearch = (text: string, filters: any) => {
+  const handleMobileSearch = (text: string, filters: SearchFilters) => {
     performFilter(text, filters);
   };
 
@@ -120,13 +127,13 @@ export default function ResearchMission() {
     setToast({ visible: true, title, message });
   }, []);
   
-  const checkAuthAndRedirect = () => {
+  const checkAuthAndRedirect = useCallback(() => {
     if (!userType || userType === 'volunteer_guest') {
       showToast("Connexion requise", "Vous devez être connecté pour effectuer cette action.");
       return false;
     }
     return true;
-  };
+  }, [userType, showToast]);
 
   // --- FAVORITES & NAV ---
   const handleToggleFavorite = useCallback(async (missionId: number) => {
@@ -201,7 +208,7 @@ export default function ResearchMission() {
       </View>
 
       {/* --- SWITCH BARRES DE RECHERCHE --- */}
-      <View style={styles.searchbar}>
+      <View style={[styles.searchbar, {zIndex: 9999}] }>
         {isWeb ? (
           <SearchBar
             categories={CATEGORIES}

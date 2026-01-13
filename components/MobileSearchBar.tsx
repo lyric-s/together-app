@@ -102,6 +102,7 @@ export default function MobileSearchBar({
     setSelectedDate(null);
     setCityInputText("");
     setCitySuggestions([]);
+    setShowDatePicker(false);
   };
 
   const handleDateChange = (event: any, date?: Date) => {

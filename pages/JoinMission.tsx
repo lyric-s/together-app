@@ -62,12 +62,15 @@ export default function JoinMissionPage() {
       setMission(null);
       try {
         const data = await missionService.getById(numericId);
-        if (!data) throw new Error('Mission not found');
         setMission(data);
         if (userType === 'volunteer') {
-          const favorites = await volunteerService.getFavorites();
-          const isAlreadyFavorite = favorites.some(fav => fav.id_mission === numericId);
-          setIsFavorite(isAlreadyFavorite);
+          try {
+            const favorites = await volunteerService.getFavorites();
+            const isAlreadyFavorite = favorites.some(fav => fav.id_mission === numericId);
+            setIsFavorite(isAlreadyFavorite);
+          } catch (favError) {
+            console.warn("Could not load favorites:", favError);
+          }
         }
       } catch (e) {
         console.error("Erreur chargement mission:", e);
@@ -190,9 +193,10 @@ export default function JoinMissionPage() {
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-        const route = (userType === 'volunteer_guest'
+        const isGuest = !userType || userType === 'volunteer_guest';
+        const route = (isGuest
           ? `/(guest)/search/association/${mission.id_asso}`
-          : `/(volunteer)/search/association/${mission.id_asso}`) as Href; 
+          : `/(volunteer)/search/association/${mission.id_asso}`) as Href;
           router.push(route);
       }
   };

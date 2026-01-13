@@ -5,12 +5,13 @@ export const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     backgroundColor: "white",
     borderRadius: 25,
     padding: 10,
     gap: 10,
+    zIndex: 1000,
     
     // Shadow
     shadowColor: Colors.black,
@@ -38,7 +39,15 @@ export const styles = StyleSheet.create({
     minWidth: 140,
   },
 
+  flexContainer: {
+    flexGrow: 1, // Prend l'espace disponible
+    minWidth: 180, // Si l'écran est trop petit (< 180px dispo), ça passe à la ligne
+    position: 'relative', // Nécessaire pour positionner la liste en absolu par rapport à ce champ
+    zIndex: 2000, // Doit être plus haut que les voisins pour que la liste passe dessus
+  },
+
   pickerContainer: {
+    padding: 0,
     justifyContent: 'center',
     overflow: 'hidden',
     paddingHorizontal: 0,
@@ -78,4 +87,30 @@ export const styles = StyleSheet.create({
     height: 28,
     tintColor: Colors.orange,
   },
+  suggestionsContainer: {
+  position: 'absolute',
+  top: 45, // Just below the input
+  left: 0,
+  right: 0,
+  backgroundColor: 'white',
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: Colors.grayToWhite,
+  zIndex: 9999, // Important for overlay
+  maxHeight: 200,
+  shadowColor: Colors.black,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 3.84,
+  elevation: 5,
+},
+suggestionItem: {
+  padding: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: '#F0F0F0',
+},
+suggestionText: {
+  color: Colors.black,
+  fontSize: 14,
+},
 });
