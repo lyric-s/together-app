@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { styles } from '@/styles/components/ProfilCardStyle';
-import { ScrollView, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Image, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import CustomButton from './ImageButton';
 import { UserType } from '@/context/AuthContext';
@@ -114,7 +114,9 @@ export default function ProfilCard({
     onSave,
     showAlert,
 }: Props) {
-    
+    const { width, height } = useWindowDimensions();
+    const cardWidth = Math.min(width * 0.8, 500);
+    const contentPadding = width < 380 ? 15 : 30;
     const [isEditing, setIsEditing] = useState(false);
     const labels = getLabels(userType);
 
@@ -284,11 +286,12 @@ export default function ProfilCard({
 
     return (
         <ScrollView
-            style={styles.card}
-            contentContainerStyle={styles.scrollContent}
+            style={[styles.card, { width: cardWidth }]}
+            contentContainerStyle={[styles.scrollContent, { padding: contentPadding }]}
             showsVerticalScrollIndicator={false}
+            alwaysBounceVertical={false}
         >
-            <View>
+            <View style={styles.photoContainer}>
                 <TouchableOpacity onPress={isEditing ? handleImagePick : undefined} disabled={!isEditing}>
                     <Image source={formData.picture || DEFAULT_PHOTO} style={styles.photo} />
                     {isEditing && (
@@ -371,10 +374,10 @@ export default function ProfilCard({
                 {isEditing ? (
                     <>
                         <View style={styles.buttonWrapper}>
-                            <CustomButton image={require('@/assets/images/return.png')} onPress={handleCancel} style={{width:130, height:36}} />
+                            <CustomButton image={require('@/assets/images/return.png')} onPress={handleCancel} style={styles.responsiveButton} />
                         </View>
                         <View style={styles.buttonWrapper}>
-                            <CustomButton image={require('@/assets/images/validate.png')} onPress={handleSubmit} style={{width:130, height:36}} />
+                            <CustomButton image={require('@/assets/images/validate.png')} onPress={handleSubmit} style={styles.responsiveButton} />
                         </View>
                     </>
                 ) : (

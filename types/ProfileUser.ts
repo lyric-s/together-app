@@ -34,6 +34,10 @@ export interface AssociationProfile extends BaseProfile {
   phone_number: string;
   rna_code: string;
   company_name: string;
+  description?: string;
+  address?: string;
+  zip_code?: string;
+  country?: string;
 }
 
 export type UserProfile = AdminProfile | VolunteerProfile | AssociationProfile;
