@@ -1,6 +1,5 @@
-import { View, TextInput, Text, TouchableOpacity, Image, Platform, FlatList, ActivityIndicator } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { useRef, useState } from "react";
+import { View, TextInput, Text, TouchableOpacity, Image, FlatList, ActivityIndicator } from "react-native";
+import { useRef, useState, useEffect } from "react";
 import { Colors } from "../constants/colors";
 import { styles } from "../styles/components/SearchBarStyle";
 import { SearchFilters } from "../types/search.types";
@@ -47,6 +46,13 @@ export default function SearchBar({
   const [isLoadingLoc, setIsLoadingLoc] = useState(false);
 
   const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  
+  useEffect(() => {
+    return () => {
+      if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    };
+  }, []);
+
   function resetAll() {
     setText("");
     setSelectedCategory("-");
@@ -66,7 +72,7 @@ export default function SearchBar({
 
     setIsLoadingLoc(true);
     try {
-      const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&type=municipality&limit=5`);
+      const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=municipality&limit=5`);
       const data = await response.json();
       setSuggestions(data.features || []);
     } catch (error) {
@@ -186,7 +192,7 @@ export default function SearchBar({
           <View style={styles.suggestionsContainer}>
             <FlatList
               data={suggestions}
-              keyExtractor={(item) => item.properties.label + Math.random()}
+              keyExtractor={(item) => `${item.properties.city}-${item.properties.postcode}`}
               keyboardShouldPersistTaps="handled"
               renderItem={({ item }) => (
                 <TouchableOpacity 
