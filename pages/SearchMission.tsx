@@ -25,6 +25,13 @@ import { volunteerService } from '@/services/volunteerService';
 import { useAuth } from '@/context/AuthContext';
 import { Mission } from '@/models/mission.model';
 
+/**
+ * Screen component that loads missions, provides searchable and filterable results, manages user favorites, and navigates to mission details.
+ *
+ * Displays a responsive (web and mobile) list of missions, applies text/category/zip/date filters, optimistically updates and persists favorite state for authenticated volunteers, and shows toast messages for errors or required authentication.
+ *
+ * @returns A React element rendering the mission search UI.
+ */
 export default function ResearchMission() {
   const router = useRouter();
   const { userType } = useAuth();

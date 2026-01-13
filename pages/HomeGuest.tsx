@@ -18,6 +18,13 @@ import { styles } from '@/styles/pages/AccountWithoutCoCSS';
 import { Mission } from '@/models/mission.model';
 import { missionService } from '@/services/missionService';
 
+/**
+ * Render the guest home page showing recent missions and CTAs for volunteers and associations.
+ *
+ * Displays a responsive, scrollable UI that fetches and shows up to three recent missions with loading and error states, and provides buttons to register as a volunteer or as an association (association registration opens on web only; non-web shows an alert).
+ *
+ * @returns The JSX element for the guest home screen containing the mission list, loading/error handling, and registration CTAs.
+ */
 export default function HomeGuest() {
   const { width } = useWindowDimensions();
   const router = useRouter();

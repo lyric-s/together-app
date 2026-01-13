@@ -10,6 +10,15 @@ interface SearchBarProps {
   onSearch: (text: string, filters: SearchFilters) => void;
 }
 
+/**
+ * Render a search bar with inputs for query text, category, postal code, and start date, plus controls to execute or reset the search.
+ *
+ * The component calls `onSearch` when the user submits a search or presses the search button, passing the current text and a `SearchFilters` object where empty fields are represented as `null` and a valid `dateText` is parsed to a `Date`.
+ *
+ * @param categories - Optional list of category labels displayed in the category picker; the picker shows a default "Catégorie..." option mapped to `null`.
+ * @param onSearch - Callback invoked with `(text: string, filters: SearchFilters)` when a search is triggered. `filters` has the shape `{ category: string | null; zipCode: string | null; date: Date | null }`.
+ * @returns The rendered search bar React element containing inputs and action buttons.
+ */
 export default function SearchBar({
     categories = [],    
     onSearch,

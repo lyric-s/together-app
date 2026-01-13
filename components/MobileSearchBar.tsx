@@ -28,6 +28,16 @@ interface City {
   codesPostaux: string[];
 }
 
+/**
+ * Render a mobile search bar that provides text search plus a modal-based filter panel for city/ZIP autocomplete, category selection, and start-date selection.
+ *
+ * The component manages local UI and filter state, applies or resets filters, and calls `onSearch` with the current search text and filters when the user submits.
+ *
+ * @param onSearch - Callback invoked with the current search text and selected filters: `{ category, zipCode, date }`
+ * @param category_list - List of category names to display as selectable filter options
+ * @param default_city - Optional default city name to prefill the city input and selected city
+ * @returns The rendered React element for the mobile search bar and its filters modal
+ */
 export default function MobileSearchBar({
   onSearch,
   category_list,

@@ -13,9 +13,15 @@ interface MissionCardProps {
 }
 
 /**
- * Renders a touchable mission card with image, category badge, optional favorite toggle, mission details, and volunteer counts.
+ * Render a touchable mission card showing an image, category badge, mission details, and volunteer counts.
  *
- * Displays the provided image with an overlaid category label and an optional heart button that toggles local favorite state and calls the provided callback. Shows title, association name, date (formatted for "fr-FR" and includes time when hours ≠ 0), optional city, and current/maximum volunteers.
+ * The card invokes `onPressMission` when pressed and, if `onPressFavorite` is provided, displays a favorite toggle reflecting `isFavorite`.
+ *
+ * @param mission - Mission object whose data populates the card
+ * @param onPressMission - Callback invoked when the card is pressed
+ * @param isFavorite - Whether the mission is currently favorited (defaults to `false`)
+ * @param onPressFavorite - Optional callback invoked when the favorite toggle is pressed
+ * @returns The rendered mission card element
  */
 
 export default function MissionVolunteerCard({

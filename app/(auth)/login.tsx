@@ -5,11 +5,11 @@ import React from 'react';
 import Login from '@/pages/Login'
 
 /**
- * Render the platform-appropriate login component.
+ * Render the application's login screen.
  *
- * Renders <LoginWeb /> when running on web and <LoginMobile /> on other platforms. Currently the implementation is commented out and the component returns no UI.
+ * Currently returns the shared `Login` component unconditionally; platform-specific selection is disabled.
  *
- * @returns A JSX element containing the platform-specific login UI
+ * @returns A JSX element containing the login UI
  */
 export default function LoginPage() {
     //return Platform.OS === 'web' ? <LoginWeb /> : <LoginMobile />;

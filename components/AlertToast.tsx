@@ -10,6 +10,18 @@ type Props = {
   autoCloseDelay?: number; // delay in ms
 };
 
+/**
+ * Renders a dismissible toast message with a title and message.
+ *
+ * Shows the toast when `visible` is true, hides it when `visible` is false, and automatically invokes `onClose` after `autoCloseDelay` milliseconds. The toast can also be dismissed immediately by tapping it.
+ *
+ * @param visible - Whether the toast should be shown
+ * @param title - Title text displayed in the toast
+ * @param message - Message text displayed in the toast
+ * @param onClose - Callback invoked when the toast is dismissed
+ * @param autoCloseDelay - Delay in milliseconds before the toast auto-closes (defaults to 4000)
+ * @returns The toast element when visible, or `null` when hidden
+ */
 export default function AlertToast({ 
   visible, 
   title, 

@@ -7,6 +7,11 @@ import { Association } from '@/models/association.model';
 import { associationService } from '@/services/associationService';
 import { Colors } from '@/constants/colors';
 
+/**
+ * Displays details for an association identified by the `id` route parameter, handling loading, error, and not-found states.
+ *
+ * @returns A React element that renders a loading indicator while fetching, an error or not-found message when appropriate, or the association details (header, description, and information fields) when available.
+ */
 export default function AboutUsAssociation() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();

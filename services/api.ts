@@ -30,10 +30,20 @@ const api = axios.create({
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
+/**
+ * Registers a callback to be invoked with a new access token when a refresh completes.
+ *
+ * @param cb - Callback that will be called with the refreshed access token
+ */
 function subscribeTokenRefresh(cb: (token: string) => void) {
   refreshSubscribers.push(cb);
 }
 
+/**
+ * Invokes all queued subscriber callbacks with the refreshed access token and clears the subscriber queue.
+ *
+ * @param token - The refreshed access token to supply to each subscriber callback
+ */
 function onRefreshed(token: string) {
   refreshSubscribers.forEach(cb => cb(token));
   refreshSubscribers = [];
