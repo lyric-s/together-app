@@ -1,15 +1,9 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Platform } from 'react-native';
 import { Redirect } from 'expo-router';
 import { useAuth } from '@/context/AuthContext';
 import * as SplashScreen from 'expo-splash-screen';
 import AnimatedSplashScreen from '@/components/AnimatedSplash';
-=======
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { RelativePathString, useRouter } from 'expo-router';
->>>>>>> 42af247e (fix: TA-10 Add validation for maxVolunteers numeric value.)
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,7 +18,6 @@ export default function IndexDispatcher() {
   
   const isWeb = Platform.OS === 'web';
 
-<<<<<<< HEAD
    const handleAnimationFinish = useCallback(() => {
     setIsAnimationFinished(true);
   }, []);
@@ -80,14 +73,4 @@ export default function IndexDispatcher() {
     default:
       return <Redirect href="/(guest)/home" />;
   }
-=======
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push(('/mission_creation') as RelativePathString)} // chemin relatif à app/
-      >
-        <Text style={styles.buttonText}>Créer une mission</Text>
-      </TouchableOpacity>
-    </View>
-  );
->>>>>>> 7b016dc1 (fix: TA-10 datepicker with time)
 }
