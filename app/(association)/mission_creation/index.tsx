@@ -1,4 +1,5 @@
 // app/(association)/mission_creation/index.tsx
+import MissionCreation from '@/pages/MissionCreation';
 import React from 'react';
 /**
  * Page component for the association's mission creation flow.
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function MissionCreationPage() {
-//    return <MissionCreation />;
+    return <MissionCreation />;
 }
