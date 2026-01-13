@@ -67,21 +67,11 @@ export const styles = StyleSheet.create({
 
   buttonsRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
 
-//   draftButton: {
-//     backgroundColor: "#DDD",
-//     padding: 12,
-//     borderRadius: 8,
-//     flex: 1,
-//     marginRight: 10,
-//   },
-
-//   draftText: { textAlign: "center" },
 
   publishButton: {
     backgroundColor: Colors.brightOrange,
     padding: 12,
     borderRadius: 8,
-    flex: 1,
     width: "30%",
   },
 
