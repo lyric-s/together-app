@@ -19,13 +19,12 @@ import { StatusBar, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/colors';
 
 /**
- * Root layout component that provides theming, authentication context, and the primary navigation stack.
+ * Provide the app's root layout with theming, authentication context, and the primary navigation stack.
  *
- * The theme switches between dark and light based on the device color scheme. All screens in the stack
- * are rendered without headers and the layout includes a StatusBar configured with automatic style.
+ * The active theme follows the device color scheme; the navigation stack renders screens without headers
+ * and the StatusBar adapts its style and background to the selected theme.
  *
- * @returns The root JSX element composing SafeAreaProvider, ThemeProvider, AuthProvider, the navigation Stack
- *          (containing the `index` screen with headers hidden), and a StatusBar.
+ * @returns The root JSX element containing SafeAreaView, ThemeProvider, AuthProvider, the navigation Stack (including the `index` screen), and a StatusBar
  */
 export default function RootLayout() {
   const colorScheme = useColorScheme();

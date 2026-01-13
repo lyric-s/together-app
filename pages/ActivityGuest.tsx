@@ -11,14 +11,11 @@ import ButtonAuth from '@/components/Button';
 import { styles } from '@/styles/pages/ActivityGuestStyles';
 
 /**
+ * Renders a screen prompting unauthenticated users to log in or create an account.
  *
- * Screen displayed when the user is not authenticated.
- * It informs the user that they must be logged in to access their activity
- * and provides navigation buttons to:
- * - Log in
- * - Create a new account (sign up)
+ * Displays two calls-to-action that navigate to the login and registration screens.
  *
- * Uses the router to redirect the user to the appropriate authentication screens.
+ * @returns The component view for the unauthenticated activity screen.
  */
 export default function ActivityGuest() {
   const router = useRouter();

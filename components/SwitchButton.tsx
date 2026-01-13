@@ -20,6 +20,20 @@ export interface SwitchButtonProps {
     style?: StyleProp<ViewStyle>;
 }
 
+/**
+ * Render a two-option segmented control that can be themed and either controlled or uncontrolled.
+ *
+ * The control uses a per-variant theme and optional built-in navigation routes. When `value` is provided the component is controlled; otherwise it manages its own active tab starting from `defaultValue` (or the left label). If `onChange` is supplied it is called on tab change. If `onChange` is not supplied and both `labelLeft` and `labelRight` are omitted, the component will navigate to the variant's configured route for the selected side.
+ *
+ * @param variant - Visual and routing variant to use (affects labels, colors, and default routes)
+ * @param labelLeft - Optional override for the left button label; when provided disables automatic routing
+ * @param labelRight - Optional override for the right button label; when provided disables automatic routing
+ * @param value - Controlled active tab label; when set, internal state is ignored
+ * @param defaultValue - Initial active tab label for uncontrolled usage
+ * @param onChange - Optional callback invoked with the new active tab label on user selection
+ * @param style - Optional container style override
+ * @returns The rendered segmented switch component
+ */
 export default function SwitchButton({ 
     variant = 'mission', 
     labelLeft,

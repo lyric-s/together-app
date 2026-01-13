@@ -10,6 +10,13 @@ import { Colors } from '@/constants/colors';
 import Cross from '@/components/Cross';
 import { UserType } from '@/models/enums'
 
+/**
+ * Renders the login screen and manages credential entry, validation, authentication, and post-login navigation.
+ *
+ * The component displays username and password inputs, shows a loading state and toast messages for validation or authentication failures, calls the authentication service and auth context to persist the session, and navigates to the admin dashboard or the appropriate user home after successful login.
+ *
+ * @returns The rendered JSX element for the login screen.
+ */
 export default function Login() {
     const router = useRouter();
     const { login } = useAuth();
