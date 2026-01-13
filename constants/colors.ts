@@ -30,5 +30,7 @@ export const Colors = {
     orangeVeryLight: '#FFEFDF',
     colorCream: '#FFF8F2',
     grayToWhite: '#F5F5F5',
-    grayBorder: '#CCCCCC'
+    grayBorder: '#CCCCCC',
+    lightPurple: '#CDCCEB',
+    orangeWhite: '#FFF5F0',
 };

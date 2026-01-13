@@ -1,4 +1,5 @@
 // app/(association)/upcoming/index.tsx
+import ActivityAssos from '@/pages/ActivityAssos';
 import React from 'react';
 /**
  * Page component for the association's upcoming events.
@@ -9,5 +10,5 @@ import React from 'react';
  */
 
 export default function UpcomingAssoPage() {
-//    return <UpcomingAsso />;
+   return <ActivityAssos />;
 }

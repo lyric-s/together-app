@@ -1,4 +1,5 @@
 // app/(association)/profile/index.tsx
+import ProfilAssos from '@/pages/ProfilAssos';
 import React from 'react';
 /**
  * Placeholder page component for an association profile.
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function ProfileAssoPage() {
-//    return <ProfileAsso />;
+    return <ProfilAssos />;
 }
