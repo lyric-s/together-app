@@ -1,4 +1,5 @@
 // app/(association)/home/index.tsx
+import AssosHomePage from '@/pages/AssosHomePage';
 import React from 'react';
 /**
  * Association home page component.
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function HomeAssoPage() {
-//    return <HomeAsso />;
+   return <AssosHomePage />;
 }
