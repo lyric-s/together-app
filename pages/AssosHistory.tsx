@@ -111,7 +111,6 @@ export const MOCK_COMPLETED_MISSIONS: Mission[] = [
     description: "Soutien scolaire hebdomadaire pour enfants de familles monoparentales ou en difficulté.",
     capacity_min: 4,
     capacity_max: 12,
-    image_url: "/images/aide-scolaire.jpg",
     id_location: 4,
     id_categ: 4,
     id_asso: 4,
@@ -160,10 +159,10 @@ export default function AssosHistory() {
             <View style={styles.cardsContainer}>
                 {MOCK_COMPLETED_MISSIONS.map((mission) => (
                 <MissionAdminAssosCard
+                    key={mission.id_mission}
                     mission={mission}
                 />
-                ))}
-            </View>
+                ))}            </View>
             )}
         </ScrollView>
       </View>
