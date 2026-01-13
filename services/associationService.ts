@@ -1,3 +1,4 @@
+import { Engagement } from '@/models/engagement.model';
 import api from './api';
 import { Association, AssociationCreate, AssociationUpdate } from '@/models/association.model';
 import { Mission, MissionCreate, MissionUpdate } from '@/models/mission.model';
@@ -13,7 +14,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -24,7 +24,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -35,7 +34,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -49,7 +47,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -60,7 +57,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -70,7 +66,6 @@ export const associationService = {
       await api.delete(`/associations/${id}`);
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
   
@@ -81,7 +76,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -92,7 +86,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -103,7 +96,6 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
   },
 
@@ -113,7 +105,59 @@ export const associationService = {
       await api.delete(`/associations/me/missions/${id}`);
     } catch (error) {
       handleApiError(error);
-      throw error;
     }
-  }
+  },
+
+  // GET /associations/notifications
+  getNotifications: async (offset: number, limit: number, unread_only?: boolean, ): 
+    Promise<Notification[]> => {
+      try {
+        const { data } = await api.get<Notification[]>(`/associations/notifications`, 
+          {
+            params: {
+              unread_only,
+              offset,
+              limit,
+            },
+          }
+        );
+        return data;
+      } catch (error) {
+        handleApiError(error);
+      }
+  },
+
+  // PATCH /associations/me/engagements/{volunteer_id}/{mission_id}/approve
+  approveEngagement: async (volunteerId: number, missionId: number
+  ): Promise<Engagement> => {
+    try {
+      const { data } = await api.patch<Engagement>(
+        `/associations/me/engagements/${volunteerId}/${missionId}/approve`
+      );
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+  // PATCH /associations/me/engagements/{volunteer_id}/{mission_id}/reject
+  rejectEngagement: async (
+    volunteerId: number,
+    missionId: number,
+    rejectionReason: string
+  ): Promise<Engagement> => {
+    try {
+      const { data } = await api.patch<Engagement>(
+        `/associations/me/engagements/${volunteerId}/${missionId}/reject`,
+        {
+          rejection_reason: rejectionReason,
+        }
+      );
+      return data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
+
 };
