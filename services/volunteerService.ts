@@ -82,6 +82,57 @@ export const volunteerService = {
     }
   },
 
+  /**
+   * Missions À VENIR (Date de début >= Aujourd'hui)
+   * Utilisé pour la page: (volunteer)/library/upcoming
+   */
+  getEnrolledMissions: async (): Promise<Mission[]> => {
+    try {
+      const allMissions = await volunteerService.getMyMissions();
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const upcoming = allMissions.filter(mission => {
+        const missionDate = new Date(mission.date_start);
+        return missionDate >= today;
+      });
+
+      return upcoming.sort((a, b) => 
+        new Date(a.date_start).getTime() - new Date(b.date_start).getTime()
+      );
+
+    } catch (error) {
+      console.error("Erreur getEnrolledMissions", error);
+      return [];
+    }
+  },
+
+  /**
+   * Missions PASSÉES (Date de début < Aujourd'hui)
+   */
+  getHistoryMissions: async (): Promise<Mission[]> => {
+    try {
+      const allMissions = await volunteerService.getMyMissions();
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const history = allMissions.filter(mission => {
+        const missionDate = new Date(mission.date_start);
+        return missionDate < today;
+      });
+
+      return history.sort((a, b) => 
+        new Date(b.date_start).getTime() - new Date(a.date_start).getTime()
+      );
+
+    } catch (error) {
+      console.error("Erreur getHistoryMissions", error);
+      return [];
+    }
+  },
+
   // --- FAVOURITES MANAGEMENT ---
 
   /**

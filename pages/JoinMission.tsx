@@ -127,6 +127,8 @@ export default function JoinMissionPage() {
   ? locationParts.join(', ') 
   : "Lieu non précisé";
 
+  const isFull = mission.is_full || (mission.available_slots !== undefined && mission.available_slots <= 0);
+
   const formatDateRange = (startStr: string, endStr?: string) => {
     if (!startStr) return "Date à définir";
     const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(startStr);
@@ -254,9 +256,10 @@ export default function JoinMissionPage() {
             <View style={styles.row}>
               <Text style={styles.label}>Nombre de bénévoles :</Text>
               <View style={styles.volunteerRow}>
-                <Text style={styles.volunteerText}>{mission.capacity_min} / {mission.capacity_max}</Text>
+                <Text style={styles.volunteerText}>{mission.volunteers_enrolled} / {mission.capacity_max}</Text>
                 <Image source={require("@/assets/images/people.png")} style={styles.peopleIcon} />
               </View>
+              <Text style={styles.volunteerText}>Nombre minimum : {mission.capacity_min}</Text>
             </View>
           </View>
         </View>
@@ -293,7 +296,13 @@ export default function JoinMissionPage() {
             {!finished ? (
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                     <View style={{flex: 1, marginRight: 10}}>
-                        <ButtonAuth text="Rejoindre la mission" onPress={handleJoinMission} />
+                      {isFull ? (
+                          <View style={[styles.buttonDisabled]}>
+                              <Text style={{ color: Colors.orange, fontSize: 20, fontWeight: '500', }}>Complet</Text>
+                          </View>
+                      ) : (
+                          <ButtonAuth text="Rejoindre la mission" onPress={handleJoinMission} />
+                      )}
                     </View>
                     <TouchableOpacity
                       onPress={toggleFavorite}

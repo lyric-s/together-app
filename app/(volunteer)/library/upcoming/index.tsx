@@ -1,5 +1,6 @@
 // app/(volunteer)/upcoming/index.tsx
 import React from 'react';
+import UpcomingVolunteer from '@/pages/UpcomingVolunteer';
 /**
  * Page component for the Upcoming Volunteer view.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function UpcomingVolunteerPage() {
-//    return <UpcomingVolunteer />;
+    return <UpcomingVolunteer />;
 }

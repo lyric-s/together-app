@@ -17,6 +17,7 @@ import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCoCSS';
 import { Mission } from '@/models/mission.model';
 import { missionService } from '@/services/missionService';
+import Footer from '@/components/footer';
 
 /**
  * Render the guest home page showing recent missions and CTAs for volunteers and associations.
@@ -204,6 +205,8 @@ export default function HomeGuest() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {isWeb && <Footer />}
 
       </ScrollView>
     </View>

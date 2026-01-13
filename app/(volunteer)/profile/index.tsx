@@ -1,5 +1,6 @@
 // app/(volunteer)/profile/index.tsx
 import React from 'react';
+import ProfileVolunteer from '@/pages/ProfileVolunteer';
 /**
  * Profile page component for volunteer users.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function ProfileVolunteerPage() {
-//    return <ProfileVolunteer />;
+    return <ProfileVolunteer />;
 }

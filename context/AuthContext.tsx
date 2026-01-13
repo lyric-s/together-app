@@ -3,6 +3,22 @@ import { storageService } from '@/services/storageService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authService } from '@/services/authService';
 
+
+const MOCK_VOLUNTEER_USER: AuthUser = {
+  id_user: 999,
+  email: 'test@volunteer.com',
+  username: 'VolunteerTest',
+  user_type: 'volunteer',
+  first_name: 'Jean',
+  last_name: 'Dupont',
+  birthdate: '1990-01-01',
+  phone_number: '0600000000',
+  address: '1 rue du test',
+  zip_code: '75000',
+  bio: 'Ceci est un compte de test simulé.',
+  skills: 'Dev, React Native',
+};
+
 // Types (gardez votre AuthUser)
 export type UserType = "volunteer" | "association" | "admin" | "volunteer_guest";
 export type AuthUser = {
@@ -39,6 +55,8 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+
+const IS_DEBUG_MODE = true;
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -48,10 +66,20 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
-  const [userType, setUserType] = useState<UserType>('volunteer_guest');
-  const [isLoading, setIsLoading] = useState(true);
+  //const [user, setUser] = useState<AuthUser | null>(null);
+  //const [userType, setUserType] = useState<UserType>('volunteer_guest');
+  //const [isLoading, setIsLoading] = useState(true);
 
+  const [user, setUser] = useState<AuthUser | null>(
+    IS_DEBUG_MODE ? MOCK_VOLUNTEER_USER : null
+  );
+  
+  const [userType, setUserType] = useState<UserType>(
+    IS_DEBUG_MODE ? 'volunteer' : 'volunteer_guest'
+  );
+
+  const [isLoading, setIsLoading] = useState(!IS_DEBUG_MODE);
+  
   // Logout
   const logout = useCallback(async () => {
     setIsLoading(true);
@@ -111,6 +139,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const refetchUser = useCallback(async () => {
+    if (IS_DEBUG_MODE) {
+        console.log("⚠️ MODE DEBUG : Connexion forcée en tant que bénévole");
+        // On simule un délai réseau pour le réalisme
+        return; // On arrête la fonction ici, on ne cherche pas de vrai token
+      }
+      
     try {
       setIsLoading(true);
       
@@ -149,7 +183,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     } finally {
-      setIsLoading(false);
+      if (!IS_DEBUG_MODE) {
+        setIsLoading(false);
+      }
     }
   }, [logout]);
 

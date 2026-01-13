@@ -142,6 +142,7 @@ export default function MobileSearchBar({
         <TextInput
           style={styles.input}
           placeholder="Rechercher une mission..."
+          placeholderTextColor={Colors.grayPlaceholder}
           value={searchText}
           onChangeText={setSearchText}
           onSubmitEditing={applySearch}

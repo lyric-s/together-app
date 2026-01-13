@@ -3,58 +3,81 @@ import { Colors } from '@/constants/colors';
 
 export const styles = StyleSheet.create({
   footer: {
-    width: '100%',
-    backgroundColor: Colors.whiteLittleGray,
+    backgroundColor: Colors.modernGray,
     borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
-    paddingVertical: 30,
-  },
-
-  /* Container of sections */
-  sectionsContainer: {
+    borderTopColor: Colors.grayToWhite,
+    paddingTop: 20,
     width: '100%',
-    paddingHorizontal: 20,
+    alignSelf: 'stretch',
   },
-
-  /* Web layout */
-    sectionsContainerWeb: {
-    maxWidth: 1200,
-    width: '100%',
-    alignSelf: 'center',
+  
+  contentContainer: {
     flexDirection: 'row',
-    justifyContent: 'center', 
-    gap: 80,                  
-    },
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    paddingHorizontal: 40,
+    paddingBottom: 20,
+    maxWidth: 1200,
+    alignSelf: 'center',
+    width: '100%',
+    flexWrap: 'wrap',
+    gap: 20,
+  },
+
+  contentContainerMobile: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 25,
+  },
 
   section: {
-    flex: 1,
-    minWidth: 200,
+    minWidth: 150,
+    alignItems: Platform.OS === 'web' ? 'flex-start' : 'center',
   },
 
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: Colors.purpleBackground,
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.black,
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    opacity: 0.8,
+  },
+
+  linksGroup: {
+    gap: 6,
+    alignItems: Platform.OS === 'web' ? 'flex-start' : 'center',
   },
 
   link: {
-    fontSize: 16,
-    color: Colors.black,
-    marginBottom: 8,
-    cursor: Platform.OS === 'web' ? 'pointer' : 'default',
+    fontSize: 13,
+    color: Colors.grayText,
+    marginBottom: 2,
   },
 
-  bottom: {
-    marginTop: 30,
-    paddingTop: 15,
+  linkHover: {
+    color: Colors.orange,
+    textDecorationLine: 'underline',
+  },
+
+  contactText: {
+    fontSize: 13,
+    color: Colors.grayText,
+    marginBottom: 2,
+  },
+
+  bottomBar: {
     borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
+    borderTopColor: Colors.whiteLittleGray,
+    paddingVertical: 12,
     alignItems: 'center',
+    backgroundColor: Colors.modernMoreGray,
+    width: '100%',
   },
 
   copyright: {
-    fontSize: 14,
-    color: Colors.gray,
+    fontSize: 11,
+    color: Colors.grayText,
   },
 });
