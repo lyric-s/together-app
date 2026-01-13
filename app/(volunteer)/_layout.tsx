@@ -32,7 +32,7 @@ export default function VolunteerLayout() {
   }
 
   if (userType !== 'volunteer') {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href="/(guest)/home" />;
   }
 
   return (

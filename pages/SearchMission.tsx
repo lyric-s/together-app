@@ -174,14 +174,6 @@ export default function ResearchMission() {
     router.push(route);
   }, [userType, router]);
 
-  if (loading && allMissions.length === 0) {
-    return (
-      <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
-        <ActivityIndicator size="large" color={Colors.orange} />
-      </View>
-    );
-  }
-
   return (
     <View style={[styles.container, { backgroundColor: Colors.white }]} >
       <AlertToast 
@@ -270,11 +262,17 @@ export default function ResearchMission() {
           </View>
         )}
         ListEmptyComponent={
-          <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>Aucune mission trouvée.</Text>
+          loading ? (
+                    <View style={{flex: 1, justifyContent:'center', alignItems:'center', marginTop: 50}}>
+                        <ActivityIndicator size="large" color={Colors.orange} />
+                    </View>
+                ) : (
+                    <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>Aucune mission trouvée.</Text>
+                )
         }
       />
         ) : (
-            <FlatList
+        <FlatList
         data={filteredMissions}
         numColumns={1}
         key={`flatlist-${1}`}

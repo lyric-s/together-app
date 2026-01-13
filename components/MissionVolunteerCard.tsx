@@ -91,7 +91,7 @@ export default function MissionVolunteerCard({
           style={styles.peopleIcon}
         />
         <Text style={styles.peopleText}>
-          {mission.capacity_min} / {mission.capacity_max}
+          {mission.volunteers_enrolled} / {mission.capacity_max}
         </Text>
       </View>
     </TouchableOpacity>

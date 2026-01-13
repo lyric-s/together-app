@@ -17,6 +17,9 @@ export interface Association {
   rna_code: string;
   company_name: string;
   description: string;
+  verification_status: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  active_missions_count: number;
+  finished_missions_count: number;
   user?: User;
 }
 

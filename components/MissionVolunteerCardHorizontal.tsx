@@ -97,7 +97,7 @@ export default function MissionVolunteerCard({
 
         <View style={styles.peopleContainer}>
           <Text style={styles.peopleText}>
-            {mission.capacity_min} / {mission.capacity_max}
+            {mission.volunteers_enrolled} / {mission.capacity_max}
           </Text>
           <Image
             source={require("../assets/images/people.png")}
