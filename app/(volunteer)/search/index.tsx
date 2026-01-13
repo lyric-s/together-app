@@ -1,5 +1,6 @@
 // app/(volunteer)/search/index.tsx
 import React from 'react';
+import SearchMission from '@/pages/SearchMission';
 /**
  * Volunteer search page component.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function SearchVolunteerPage() {
-//    return <SearchVolunteer />;
+    return <SearchMission />;
 }
