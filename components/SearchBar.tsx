@@ -72,11 +72,23 @@ export default function SearchBar({
 
     setIsLoadingLoc(true);
     try {
-      const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=municipality&limit=5`);
+      const controller = new AbortController();
+     const timeoutId = setTimeout(() => controller.abort(), 5000);
+     
+     const response = await fetch(
+       `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=municipality&limit=5`,
+       { signal: controller.signal }
+     );
+     clearTimeout(timeoutId);
+     
+     if (!response.ok) {
+       throw new Error(`HTTP ${response.status}`);
+     }
       const data = await response.json();
       setSuggestions(data.features || []);
     } catch (error) {
       console.error("Error fetching cities", error);
+      setSuggestions([]);
     } finally {
       setIsLoadingLoc(false);
     }
@@ -111,11 +123,18 @@ export default function SearchBar({
     let dateObj: Date | null = null;
     if (dateText) {
       // Validate YYYY-MM-DD format explicitly
-        const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-        if (match) {
-          const d = new Date(parseInt(match[1]), parseInt(match[2]) - 1, parseInt(match[3]));
-          if (!isNaN(d.getTime())) {
-              dateObj = d;
+      const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (match) {
+        const year = parseInt(match[1]);
+        const month = parseInt(match[2]) - 1;
+        const day = parseInt(match[3]);
+        const d = new Date(year, month, day);
+        // Verify the date didn't roll over (e.g., Feb 31 -> Mar 2)
+        if (!isNaN(d.getTime()) && 
+          d.getFullYear() === year && 
+          d.getMonth() === month && 
+          d.getDate() === day) {
+            dateObj = d;
           }
         }
     }
