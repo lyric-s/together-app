@@ -10,6 +10,15 @@ import * as DocumentPicker from 'expo-document-picker';
 import { Colors } from '@/constants/colors';
 import Cross from '@/components/Cross';
 
+/**
+ * Renders the registration screen for both volunteer ("Bénévole") and association sign‑up flows.
+ *
+ * The component provides forms for shared and type‑specific fields, client‑side validation, optional
+ * document attachment for associations, and submission handling that registers the user and navigates
+ * to the appropriate home route.
+ *
+ * @returns The registration screen UI component for volunteer or association sign‑up.
+ */
 export default function Register() {
     const router = useRouter();
     const { login, refetchUser } = useAuth();

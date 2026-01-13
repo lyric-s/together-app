@@ -2,9 +2,9 @@
 import React from 'react';
 import SearchMission from '@/pages/SearchMission'
 /**
- * Page component for the guest search route.
+ * Guest page component that renders the search UI.
  *
- * @returns The React element for the guest search page, or `null` if nothing is rendered.
+ * @returns The React element for the guest search page
  */
 
 export default function SearchGuestPage() {

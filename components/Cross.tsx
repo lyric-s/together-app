@@ -7,6 +7,13 @@ type Props = {
     containerStyle?: StyleProp<ViewStyle>;
 };
 
+/**
+ * Renders a tappable close (X) icon.
+ *
+ * @param onClose - Optional callback invoked when the close button is pressed
+ * @param containerStyle - Optional style to merge with the component's outer container
+ * @returns The rendered close button element
+ */
 export default function Cross({ onClose, containerStyle }: Props) {
     return (
         <View style={[styles.container, containerStyle]}>

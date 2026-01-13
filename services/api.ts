@@ -34,6 +34,11 @@ function subscribeTokenRefresh(resolve: (token: string) => void, reject: (error:
   refreshSubscribers.push({ resolve, reject });
 }
 
+/**
+ * Invokes all queued subscriber callbacks with the refreshed access token and clears the subscriber queue.
+ *
+ * @param token - The refreshed access token to supply to each subscriber callback
+ */
 function onRefreshed(token: string) {
   refreshSubscribers.forEach(({ resolve }) => resolve(token));
   refreshSubscribers = [];

@@ -1,7 +1,11 @@
 import { Mission } from '@/models/mission.model';
 
 /**
- * Check if a mission is already finished
+ * Determine whether a mission's end date is in the past.
+ *
+ * Returns `false` if `mission.date_end` is missing or cannot be parsed as a valid date.
+ *
+ * @returns `true` if the mission's end date is earlier than the current time, `false` otherwise.
  */
 export function isMissionFinished(mission: Mission): boolean {
   if (!mission.date_end) {

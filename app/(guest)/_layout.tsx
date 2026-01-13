@@ -11,16 +11,13 @@ import { useAuth } from '@/context/AuthContext';
 import { Colors } from '@/constants/colors';
 
 /**
- * Layout component for the guest area that adapts presentation for web and mobile.
+ * Renders the guest layout and adapts presentation for web and mobile.
  *
- * When authentication is loading, renders a centered loading indicator. Once loaded,
- * renders the guest UI: on web it displays a sidebar (with guest user info) alongside
- * the main content stack; on mobile it displays the main content stack with a bottom
- * navigation bar.
+ * While authentication is loading, displays a centered loading indicator. After loading,
+ * shows the main content stack; on web also renders a Sidebar with guest user info, on
+ * mobile also renders a BottomNavBar.
  *
- * @returns A React element representing the guest layout, including loading state,
- *          a Stack with "home/index" and "search/index" screens, an optional Sidebar
- *          on web, and an optional BottomNavBar on mobile.
+ * @returns The React element for the guest layout.
  */
 export default function GuestLayout() {
   const { user, isLoading } = useAuth();

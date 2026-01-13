@@ -2,9 +2,9 @@
 import React from 'react';
 import ActivityGuest from '@/pages/ActivityGuest';
 /**
- * Guest activity route component.
+ * Renders the guest activity route.
  *
- * @returns The ActivityGuest component displaying login/register.
+ * @returns The ActivityGuest JSX element shown to unauthenticated users for login or registration.
  */
 
 export default function ActivityGuestPage() {
