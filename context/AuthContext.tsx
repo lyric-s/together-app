@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       setUserType('volunteer_guest');
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   }, []);
 
@@ -94,26 +94,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         name: data.name,             // Asso
         company_name: data.company_name, // Asso
         rna_code: data.rna_code,     // Asso
-        };
+      };
     }
 
     if (data.id_admin) {
-         return {
-            id_user: data.id_admin || 0,
-            id_admin: data.id_admin,
-            email: data.email,
-            username: data.username,
-            user_type: 'admin',
-         };
+      return {
+        id_user: data.id_admin || 0,
+        id_admin: data.id_admin,
+        email: data.email,
+        username: data.username,
+        user_type: 'admin',
+      };
     }
 
     return null;
   };
-  
+
   const refetchUser = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+
       const token = await storageService.getAccessToken();
       if (!token) {
         setUser(null);
@@ -132,12 +132,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log(`✅ Profil chargé: ${mappedUser.username} (${mappedUser.user_type})`);
       } else {
         throw new Error("Format de profil inconnu");
-      }    
+      }
     } catch (error: any) {
       console.error("Refetch Error:", error);
 
       if (error.response?.status === 401) {
-         await logout();
+        await logout();
       } else {
         // Fallback Cache
         const cached = await AsyncStorage.getItem('cached_user');
@@ -170,15 +170,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [refetchUser]);
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      userType,
-      isLoading,
-      login,
-      logout,
-      refetchUser
-    }}>
-      {children}
-    </AuthContext.Provider>
+      <AuthContext.Provider value={{
+        user,
+        userType,
+        isLoading,
+        login,
+        logout,
+        refetchUser
+      }}>
+        {children}
+      </AuthContext.Provider>
   );
 };
