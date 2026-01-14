@@ -8,87 +8,135 @@
  * - ouvrir un popup de détails pour accepter ou rejeter le document.
  */
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import {
     View,
     Text,
     ScrollView,
     TouchableOpacity,
     TextInput,
+    ActivityIndicator,
 } from "react-native";
 
 import Sidebar from "@/components/SideBar";
 import styles from "@/styles/pages/AssociationProfileVerificationStyles";
 
+import { adminService } from "@/services/adminService";
+
+// --------------------
+// Types UI (pour la page)
+// --------------------
 type StatutTraitement = "pending" | "accepted" | "rejected";
 
 type AssociationDocument = {
     idDoc: number;
     docName: string;
     urlDoc: string | null;
-    dateUpload: string;
+    dateUpload: string; // déjà formaté pour affichage
     verifState: StatutTraitement;
     idAsso: number;
     assoName: string;
     rnaCode: string;
 };
 
-const MOCK_DOCUMENTS: AssociationDocument[] = [
-    {
-        idDoc: 1,
-        docName: "Récépissé préfectoral 2025.pdf",
-        urlDoc: null,
-        dateUpload: "05/10/2025 11:32",
-        verifState: "pending",
-        idAsso: 10,
-        assoName: "Solidarité Jeune",
-        rnaCode: "W751234567",
-    },
-    {
-        idDoc: 2,
-        docName: "Récépissé préfectoral 2024.pdf",
-        urlDoc: null,
-        dateUpload: "03/10/2025 09:18",
-        verifState: "accepted",
-        idAsso: 11,
-        assoName: "Les Amis des Animaux",
-        rnaCode: "W921234890",
-    },
-    {
-        idDoc: 3,
-        docName: "Justificatif association 2025.pdf",
-        urlDoc: null,
-        dateUpload: "01/10/2025 14:02",
-        verifState: "rejected",
-        idAsso: 12,
-        assoName: "Mains Solidaires",
-        rnaCode: "W331004200",
-    },
-    {
-        idDoc: 4,
-        docName: "Récépissé préfectoral 2025.pdf",
-        urlDoc: null,
-        dateUpload: "06/10/2025 16:47",
-        verifState: "pending",
-        idAsso: 13,
-        assoName: "Education Pour Tous",
-        rnaCode: "W751998877",
-    },
-];
+// --------------------
+// Helpers
+// --------------------
+const mapApiStateToUiState = (
+    state: "PENDING" | "APPROVED" | "REJECTED"
+): StatutTraitement => {
+    if (state === "PENDING") return "pending";
+    if (state === "APPROVED") return "accepted";
+    return "rejected";
+};
+
+const formatDateFR = (iso: string) => {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return iso;
+    return d.toLocaleString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+};
 
 export default function DocumentsVerification() {
-    const [documents, setDocuments] =
-        useState<AssociationDocument[]>(MOCK_DOCUMENTS);
-
-    const [selectedDoc, setSelectedDoc] =
-        useState<AssociationDocument | null>(MOCK_DOCUMENTS[0] ?? null);
-
+    const [documents, setDocuments] = useState<AssociationDocument[]>([]);
+    const [selectedDoc, setSelectedDoc] = useState<AssociationDocument | null>(
+        null
+    );
     const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false);
 
     const [search, setSearch] = useState("");
     const [selectedState, setSelectedState] =
         useState<StatutTraitement | null>("pending");
 
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    // --------------------
+    // Load data (docs + associations) and join
+    // --------------------
+    const fetchDocuments = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            setErrorMsg(null);
+
+            const [docsApi, assosApi] = await Promise.all([
+                adminService.getAllDocuments(0, 100),
+                adminService.getAllAssociationsInternal(),
+            ]);
+
+            const assoMap = new Map<
+                number,
+                { assoName: string; rnaCode: string }
+            >(
+                (assosApi || []).map((a: any) => [
+                    a.id_asso,
+                    { assoName: a.name, rnaCode: a.rna_code },
+                ])
+            );
+
+            const joined: AssociationDocument[] = (docsApi || []).map((doc: any) => {
+                const asso = assoMap.get(doc.id_asso);
+
+                return {
+                    idDoc: doc.id_doc,
+                    docName: doc.doc_name,
+                    urlDoc: doc.url_doc ?? null,
+                    dateUpload: formatDateFR(doc.date_upload),
+                    verifState: mapApiStateToUiState(doc.verif_state),
+                    idAsso: doc.id_asso,
+                    assoName: asso?.assoName ?? `Association #${doc.id_asso}`,
+                    rnaCode: asso?.rnaCode ?? "—",
+                };
+            });
+
+            setDocuments(joined);
+
+            // si aucun doc sélectionné, on prend le premier (optionnel)
+            if (!selectedDoc && joined.length > 0) {
+                setSelectedDoc(joined[0]);
+            }
+        } catch (e: any) {
+            console.error("Erreur chargement documents:", e);
+            setErrorMsg(
+                "Impossible de charger les documents. Vérifie ta connexion ou ton token admin."
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    }, [selectedDoc]);
+
+    useEffect(() => {
+        fetchDocuments();
+    }, [fetchDocuments]);
+
+    // --------------------
+    // Counts
+    // --------------------
     const counts = useMemo(() => {
         let pending = 0;
         let accepted = 0;
@@ -103,6 +151,9 @@ export default function DocumentsVerification() {
         return { pending, accepted, rejected };
     }, [documents]);
 
+    // --------------------
+    // Filtered docs
+    // --------------------
     const filteredDocuments = useMemo(
         () =>
             documents.filter((doc) => {
@@ -121,6 +172,9 @@ export default function DocumentsVerification() {
         [documents, search, selectedState]
     );
 
+    // --------------------
+    // Labels
+    // --------------------
     const getStatusLabel = (state: StatutTraitement) => {
         if (state === "pending") return "en attente";
         if (state === "accepted") return "accepté";
@@ -134,6 +188,9 @@ export default function DocumentsVerification() {
         return "Rejetés";
     };
 
+    // --------------------
+    // UI handlers
+    // --------------------
     const handleToggleStateFilter = () => {
         const order: (StatutTraitement | null)[] = [
             null,
@@ -156,38 +213,52 @@ export default function DocumentsVerification() {
         setIsDetailOpen(true);
     };
 
-    const updateDocumentState = (
-        docId: number,
-        newState: StatutTraitement
-    ) => {
-        const updatedDocuments: AssociationDocument[] = documents.map(
-            (d): AssociationDocument =>
-                d.idDoc === docId ? { ...d, verifState: newState } : d
-        );
-
-        setDocuments(updatedDocuments);
-
-        if (selectedDoc && selectedDoc.idDoc === docId) {
-            setSelectedDoc({ ...selectedDoc, verifState: newState });
-        }
-    };
-
-    const handleAccept = () => {
-        if (!selectedDoc) return;
-        updateDocumentState(selectedDoc.idDoc, "accepted");
-        setIsDetailOpen(false);
-    };
-
-    const handleReject = () => {
-        if (!selectedDoc) return;
-        updateDocumentState(selectedDoc.idDoc, "rejected");
-        setIsDetailOpen(false);
-    };
-
     const handleCloseModal = () => {
         setIsDetailOpen(false);
     };
 
+    // --------------------
+    // Approve/Reject (API + refetch)
+    // --------------------
+    const handleAccept = async () => {
+        if (!selectedDoc) return;
+
+        try {
+            setIsLoading(true);
+            await adminService.approveDocument(selectedDoc.idDoc);
+            setIsDetailOpen(false);
+            await fetchDocuments();
+        } catch (e) {
+            console.error("Erreur approve:", e);
+            setErrorMsg("Erreur lors de la validation du document.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleReject = async () => {
+        if (!selectedDoc) return;
+
+        try {
+            setIsLoading(true);
+
+            // Tu peux remplacer par un input plus tard
+            const reason = "Document invalide ou illisible";
+
+            await adminService.rejectDocument(selectedDoc.idDoc, reason);
+            setIsDetailOpen(false);
+            await fetchDocuments();
+        } catch (e) {
+            console.error("Erreur reject:", e);
+            setErrorMsg("Erreur lors du rejet du document.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // --------------------
+    // Render
+    // --------------------
     return (
         <View style={styles.page}>
             <Sidebar
@@ -205,67 +276,54 @@ export default function DocumentsVerification() {
                     <View style={styles.contentWrapper}>
                         <Text style={styles.title}>Vérification des documents</Text>
                         <Text style={styles.subtitle}>
-                            Récépissés préfectoraux envoyés par les associations.
-                            Validez ou rejetez les documents après vérification.
+                            Récépissés préfectoraux envoyés par les associations. Validez ou
+                            rejetez les documents après vérification.
                         </Text>
+
+                        {/* Loading / Error */}
+                        {isLoading && (
+                            <View style={{ marginTop: 12 }}>
+                                <ActivityIndicator />
+                            </View>
+                        )}
+
+                        {errorMsg && (
+                            <Text style={{ marginTop: 12, color: "red" }}>{errorMsg}</Text>
+                        )}
 
                         {/* Résumé */}
                         <View style={styles.summaryRow}>
                             <View
-                                style={[
-                                    styles.summaryCard,
-                                    styles.summaryCardPending,
-                                ]}
+                                style={[styles.summaryCard, styles.summaryCardPending]}
                             >
                                 <Text
-                                    style={[
-                                        styles.summaryLabel,
-                                        styles.summaryLabelPending,
-                                    ]}
+                                    style={[styles.summaryLabel, styles.summaryLabelPending]}
                                 >
                                     En attente
                                 </Text>
-                                <Text style={styles.summaryValue}>
-                                    {counts.pending}
-                                </Text>
+                                <Text style={styles.summaryValue}>{counts.pending}</Text>
                             </View>
 
                             <View
-                                style={[
-                                    styles.summaryCard,
-                                    styles.summaryCardAccepted,
-                                ]}
+                                style={[styles.summaryCard, styles.summaryCardAccepted]}
                             >
                                 <Text
-                                    style={[
-                                        styles.summaryLabel,
-                                        styles.summaryLabelAccepted,
-                                    ]}
+                                    style={[styles.summaryLabel, styles.summaryLabelAccepted]}
                                 >
                                     Acceptés
                                 </Text>
-                                <Text style={styles.summaryValue}>
-                                    {counts.accepted}
-                                </Text>
+                                <Text style={styles.summaryValue}>{counts.accepted}</Text>
                             </View>
 
                             <View
-                                style={[
-                                    styles.summaryCard,
-                                    styles.summaryCardRejected,
-                                ]}
+                                style={[styles.summaryCard, styles.summaryCardRejected]}
                             >
                                 <Text
-                                    style={[
-                                        styles.summaryLabel,
-                                        styles.summaryLabelRejected,
-                                    ]}
+                                    style={[styles.summaryLabel, styles.summaryLabelRejected]}
                                 >
                                     Rejetés
                                 </Text>
-                                <Text style={styles.summaryValue}>
-                                    {counts.rejected}
-                                </Text>
+                                <Text style={styles.summaryValue}>{counts.rejected}</Text>
                             </View>
                         </View>
 
@@ -295,60 +353,28 @@ export default function DocumentsVerification() {
                                     style={styles.resetButton}
                                     onPress={handleResetFilters}
                                 >
-                                    <Text style={styles.resetButtonText}>
-                                        Réinitialiser
-                                    </Text>
+                                    <Text style={styles.resetButtonText}>Réinitialiser</Text>
                                 </TouchableOpacity>
                             </View>
 
                             {/* header */}
                             <View style={styles.tableHeaderRow}>
-                                <Text
-                                    style={[
-                                        styles.headerCell,
-                                        styles.headerCellAsso,
-                                    ]}
-                                >
+                                <Text style={[styles.headerCell, styles.headerCellAsso]}>
                                     Association
                                 </Text>
-                                <Text
-                                    style={[
-                                        styles.headerCell,
-                                        styles.headerCellRNA,
-                                    ]}
-                                >
+                                <Text style={[styles.headerCell, styles.headerCellRNA]}>
                                     Code RNA
                                 </Text>
-                                <Text
-                                    style={[
-                                        styles.headerCell,
-                                        styles.headerCellDoc,
-                                    ]}
-                                >
+                                <Text style={[styles.headerCell, styles.headerCellDoc]}>
                                     Document
                                 </Text>
-                                <Text
-                                    style={[
-                                        styles.headerCell,
-                                        styles.headerCellDate,
-                                    ]}
-                                >
+                                <Text style={[styles.headerCell, styles.headerCellDate]}>
                                     Date d&apos;upload
                                 </Text>
-                                <Text
-                                    style={[
-                                        styles.headerCell,
-                                        styles.headerCellStatus,
-                                    ]}
-                                >
+                                <Text style={[styles.headerCell, styles.headerCellStatus]}>
                                     Statut
                                 </Text>
-                                <Text
-                                    style={[
-                                        styles.headerCell,
-                                        styles.headerCellActions,
-                                    ]}
-                                >
+                                <Text style={[styles.headerCell, styles.headerCellActions]}>
                                     Actions
                                 </Text>
                             </View>
@@ -357,40 +383,24 @@ export default function DocumentsVerification() {
                             {filteredDocuments.map((doc) => (
                                 <View key={doc.idDoc} style={styles.tableRow}>
                                     <Text
-                                        style={[
-                                            styles.cellText,
-                                            styles.cellAsso,
-                                        ]}
+                                        style={[styles.cellText, styles.cellAsso]}
                                         numberOfLines={1}
                                     >
                                         {doc.assoName}
                                     </Text>
 
-                                    <Text
-                                        style={[
-                                            styles.cellText,
-                                            styles.cellRNA,
-                                        ]}
-                                    >
+                                    <Text style={[styles.cellText, styles.cellRNA]}>
                                         {doc.rnaCode}
                                     </Text>
 
                                     <Text
-                                        style={[
-                                            styles.cellText,
-                                            styles.cellDoc,
-                                        ]}
+                                        style={[styles.cellText, styles.cellDoc]}
                                         numberOfLines={1}
                                     >
                                         {doc.docName}
                                     </Text>
 
-                                    <Text
-                                        style={[
-                                            styles.cellText,
-                                            styles.cellDate,
-                                        ]}
-                                    >
+                                    <Text style={[styles.cellText, styles.cellDate]}>
                                         {doc.dateUpload}
                                     </Text>
 
@@ -406,12 +416,8 @@ export default function DocumentsVerification() {
                                                 styles.statusBadgeRejected,
                                             ]}
                                         >
-                                            <Text
-                                                style={styles.statusBadgeText}
-                                            >
-                                                {getStatusLabel(
-                                                    doc.verifState
-                                                )}
+                                            <Text style={styles.statusBadgeText}>
+                                                {getStatusLabel(doc.verifState)}
                                             </Text>
                                         </View>
                                     </View>
@@ -419,21 +425,20 @@ export default function DocumentsVerification() {
                                     <View style={styles.cellActions}>
                                         <TouchableOpacity
                                             style={styles.actionButton}
-                                            onPress={() =>
-                                                handleSelectDoc(doc)
-                                            }
+                                            onPress={() => handleSelectDoc(doc)}
                                         >
-                                            <Text
-                                                style={
-                                                    styles.actionButtonText
-                                                }
-                                            >
-                                                Voir
-                                            </Text>
+                                            <Text style={styles.actionButtonText}>Voir</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
                             ))}
+
+                            {/* petit cas vide */}
+                            {!isLoading && filteredDocuments.length === 0 && (
+                                <Text style={{ marginTop: 16, color: "#6B7280" }}>
+                                    Aucun document ne correspond aux filtres.
+                                </Text>
+                            )}
                         </View>
                     </View>
                 </ScrollView>
@@ -445,71 +450,50 @@ export default function DocumentsVerification() {
                     <View style={styles.modalContainer}>
                         {/* header popup */}
                         <View style={styles.modalHeaderRow}>
-                            <Text style={styles.modalTitle}>
-                                Détails du document
-                            </Text>
+                            <Text style={styles.modalTitle}>Détails du document</Text>
                             <TouchableOpacity
                                 onPress={handleCloseModal}
                                 style={styles.modalCloseButton}
                             >
-                                <Text style={styles.modalCloseButtonText}>
-                                    ×
-                                </Text>
+                                <Text style={styles.modalCloseButtonText}>×</Text>
                             </TouchableOpacity>
                         </View>
 
                         {/* infos */}
                         <View style={styles.detailInfoBlock}>
                             <View style={styles.detailLine}>
-                                <Text style={styles.detailLabel}>
-                                    Association
-                                </Text>
-                                <Text
-                                    style={styles.detailValue}
-                                    numberOfLines={1}
-                                >
+                                <Text style={styles.detailLabel}>Association</Text>
+                                <Text style={styles.detailValue} numberOfLines={1}>
                                     {selectedDoc.assoName}
                                 </Text>
                             </View>
 
                             <View style={styles.detailLine}>
                                 <Text style={styles.detailLabel}>Code RNA</Text>
-                                <Text style={styles.detailValue}>
-                                    {selectedDoc.rnaCode}
-                                </Text>
+                                <Text style={styles.detailValue}>{selectedDoc.rnaCode}</Text>
                             </View>
 
                             <View style={styles.detailLine}>
-                                <Text style={styles.detailLabel}>
-                                    Nom du fichier
-                                </Text>
-                                <Text
-                                    style={styles.detailValue}
-                                    numberOfLines={1}
-                                >
+                                <Text style={styles.detailLabel}>Nom du fichier</Text>
+                                <Text style={styles.detailValue} numberOfLines={1}>
                                     {selectedDoc.docName}
                                 </Text>
                             </View>
 
                             <View style={styles.detailLine}>
-                                <Text style={styles.detailLabel}>
-                                    Date d&apos;upload
-                                </Text>
-                                <Text style={styles.detailValue}>
-                                    {selectedDoc.dateUpload}
-                                </Text>
+                                <Text style={styles.detailLabel}>Date d&apos;upload</Text>
+                                <Text style={styles.detailValue}>{selectedDoc.dateUpload}</Text>
                             </View>
                         </View>
 
                         {/* aperçu */}
                         <View style={styles.previewContainer}>
                             <View style={styles.previewPage}>
-                                <Text style={styles.previewTitle}>
-                                    Aperçu document
-                                </Text>
+                                <Text style={styles.previewTitle}>Aperçu document</Text>
                                 <Text style={styles.previewHint}>
-                                    (Ici, le backend fournira soit une
-                                    miniature, soit un lien vers le PDF.)
+                                    {selectedDoc.urlDoc
+                                        ? "Un lien vers le PDF est disponible via urlDoc (à brancher dans un viewer)."
+                                        : "(Le backend ne fournit pas encore d’URL exploitable pour l’aperçu.)"}
                                 </Text>
                             </View>
                         </View>
@@ -519,19 +503,17 @@ export default function DocumentsVerification() {
                             <TouchableOpacity
                                 style={styles.rejectButton}
                                 onPress={handleReject}
+                                disabled={isLoading}
                             >
-                                <Text style={styles.rejectButtonText}>
-                                    Rejeter
-                                </Text>
+                                <Text style={styles.rejectButtonText}>Rejeter</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={styles.acceptButton}
                                 onPress={handleAccept}
+                                disabled={isLoading}
                             >
-                                <Text style={styles.acceptButtonText}>
-                                    Accepter
-                                </Text>
+                                <Text style={styles.acceptButtonText}>Accepter</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
