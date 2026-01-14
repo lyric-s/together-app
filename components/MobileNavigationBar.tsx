@@ -3,7 +3,7 @@ import { View, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, usePathname } from 'expo-router';
 import { styles } from '@/styles/components/MobileNavigationBarStyles';
-import {Colors} from "@/constants/colors";
+import { Colors } from "@/constants/colors";
 import { useAuth } from '@/context/AuthContext';
 import { normalizePath } from '@/utils/path.utils';
 
@@ -42,7 +42,7 @@ const BottomNavBar: React.FC = () => {
   const volunteerTabs: TabItem[] = [
     { id: 'home', route: '/(volunteer)/home', iconName: 'home', iconOutline: 'home-outline', label: 'Accueil' },
     { id: 'search', route: '/(volunteer)/search', iconName: 'search', iconOutline: 'search-outline', label: 'Recherche' },
-    { id: 'library', route: '/(volunteer)/library', iconName: 'book', iconOutline: 'book-outline', label: 'Activité' },
+    { id: 'upcoming', route: '/(volunteer)/upcoming', iconName: 'book', iconOutline: 'book-outline', label: 'Mes missions' },
     { id: 'profile', route: '/(volunteer)/profile', iconName: 'person', iconOutline: 'person-outline', label: 'Profil' },
   ];
 
@@ -70,10 +70,19 @@ const BottomNavBar: React.FC = () => {
           <TouchableOpacity
             key={tab.id}
             style={styles.tabButton}
-            onPress={() => router.push(tab.route as any)}
+            onPress={() => {
+              // CORRECTIF ICI :
+              // Si on clique sur Accueil, on vide la pile de navigation pour revenir à la base (index).
+              // Cela évite la page blanche quand on vient des Paramètres.
+              if (tab.id === 'home') {
+                router.dismissAll();
+              } else {
+                router.push(tab.route as any);
+              }
+            }}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityLabel={ `Go to ${tab.id}`} 
+            accessibilityLabel={`Go to ${tab.id}`} 
             accessibilityState={{ selected: isActive }}
           >
             {isActive && <View style={styles.activeIndicator} />}
