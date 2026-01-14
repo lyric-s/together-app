@@ -1,7 +1,21 @@
 import api from './api';
 import { AxiosError } from 'axios';
 import { Volunteer,} from '@/models/volunteer.model';
-import { Admin, AdminCreate, AdminUpdate } from '@/models/admin.model';
+import {
+    Admin,
+    AdminCreate,
+    AdminUpdate,
+    DocumentPublic,
+    AssociationPublic,
+    GetReportsParams,
+    ReportPublic,
+    ReportProcessingState,
+    ReportStatsResponse,
+    MonthlyDataPoint,
+    OverviewStatsResponse,
+    formatMonthLabel,
+} from '@/models/admin.model';
+
 
 /**
  * Normalize and rethrow API errors as user-friendly Error instances.
@@ -68,5 +82,197 @@ export const adminService = {
       } catch (error) {
       handleApiError(error);
       }
-  }
+  },
+    // GET /internal/admin/documents
+    getAllDocuments: async (offset = 0, limit = 100): Promise<DocumentPublic[]> => {
+        try {
+            const { data } = await api.get<DocumentPublic[]>('/internal/admin/documents', {
+                params: { offset, limit },
+            });
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // POST /internal/admin/documents/{document_id}/approve
+    approveDocument: async (documentId: number): Promise<DocumentPublic> => {
+        try {
+            const { data } = await api.post<DocumentPublic>(
+                `/internal/admin/documents/${documentId}/approve`
+            );
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // POST /internal/admin/documents/{document_id}/reject
+    rejectDocument: async (
+        documentId: number,
+        rejectionReason?: string
+    ): Promise<DocumentPublic> => {
+        try {
+            const body = rejectionReason ? { rejection_reason: rejectionReason } : {};
+            const { data } = await api.post<DocumentPublic>(
+                `/internal/admin/documents/${documentId}/reject`,
+                body
+            );
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // ==========================
+    // ASSOCIATIONS (INTERNAL ADMIN)
+    // ==========================
+
+    // GET /internal/admin/associations
+    getAllAssociationsInternal: async (): Promise<AssociationPublic[]> => {
+        try {
+            const { data } = await api.get<AssociationPublic[]>(
+                '/internal/admin/associations'
+            );
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // ==========================
+    // REPORTS (INTERNAL ADMIN)
+    // ==========================
+
+    // GET /internal/admin/reports
+    getReports: async (params: GetReportsParams = {}): Promise<ReportPublic[]> => {
+        try {
+            const { offset = 0, limit = 100 } = params;
+            const { data } = await api.get<ReportPublic[]>("/internal/admin/reports", {
+                params: { offset, limit },
+            });
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // PATCH /internal/admin/reports/{report_id}
+    updateReportState: async (
+        reportId: number,
+        state: ReportProcessingState
+    ): Promise<ReportPublic> => {
+        try {
+            const { data } = await api.patch<ReportPublic>(
+                `/internal/admin/reports/${reportId}`,
+                { state }
+            );
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // GET /internal/admin/reports/stats
+    getReportStats: async (): Promise<ReportStatsResponse> => {
+        try {
+            const { data } = await api.get<ReportStatsResponse>(
+                "/internal/admin/reports/stats"
+            );
+
+            // Swagger bug: parfois "string"
+            if (typeof data === "string") {
+                throw new Error("Réponse invalide pour /internal/admin/reports/stats");
+            }
+
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // ==========================
+    // DASHBOARD – STATS
+    // ==========================
+
+    // GET /internal/admin/stats/overview
+    getDashboardOverview: async (): Promise<OverviewStatsResponse> => {
+        try {
+            const { data } = await api.get<OverviewStatsResponse>(
+                "/internal/admin/stats/overview"
+            );
+
+            if (typeof data === "string") {
+                throw new Error("Réponse invalide pour /internal/admin/stats/overview");
+            }
+
+            return data;
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // GET /internal/admin/stats/volunteers-by-month
+    getVolunteersByMonth: async (months = 7): Promise<MonthlyDataPoint[]> => {
+        try {
+            const { data } = await api.get<MonthlyDataPoint[]>(
+                "/internal/admin/stats/volunteers-by-month",
+                { params: { months } }
+            );
+
+            if (typeof data === "string") {
+                throw new Error("Réponse invalide pour /internal/admin/stats/volunteers-by-month");
+            }
+
+            return data.map((item) => ({
+                month: formatMonthLabel(item.month),
+                value: item.value,
+            }));
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    // GET /internal/admin/stats/missions-by-month
+    getMissionsByMonth: async (months = 7): Promise<MonthlyDataPoint[]> => {
+        try {
+            const { data } = await api.get<MonthlyDataPoint[]>(
+                "/internal/admin/stats/missions-by-month",
+                { params: { months } }
+            );
+
+            if (typeof data === "string") {
+                throw new Error("Réponse invalide pour /internal/admin/stats/missions-by-month");
+            }
+
+            return data.map((item) => ({
+                month: formatMonthLabel(item.month),
+                value: item.value,
+            }));
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
+
+    getDashboardStats: async (months = 7) => {
+        try {
+            const [overview, volunteers, missions] = await Promise.all([
+                adminService.getDashboardOverview(),
+                adminService.getVolunteersByMonth(months),
+                adminService.getMissionsByMonth(months),
+            ]);
+
+            return {
+                associationsCount: overview.validated_associations_count,
+                completedMissionsCount: overview.completed_missions_count,
+                usersCount: overview.total_users_count,
+                pendingReportsCount: overview.pending_reports_count,
+                pendingAssociationsCount: overview.pending_associations_count,
+                volunteersPerMonth: volunteers,
+                missionsPerMonth: missions,
+            };
+        } catch (error) {
+            handleApiError(error);
+        }
+    },
 };
