@@ -5,7 +5,7 @@ import Constants from 'expo-constants';
 // 1. Extract the host's IP dynamically via Expo
 // debuggerHost looks like "192.168.1.15:8081"
 const debuggerHost = Constants.expoConfig?.hostUri || Constants.experienceUrl || '';
-const localhost = debuggerHost.split(':')[0] || 'localhost';
+const localhost = debuggerHost.split('//')[1]?.split(':')[0] || 'localhost';
 
 // 2. Définition of URL
 // If you are in ‘production’ (published app), use the URL of your actual server.
@@ -16,7 +16,7 @@ if (__DEV__ && !localhost) {
 }
 
 const BASE_URL = __DEV__ 
-  ? `http://${localhost}:3000`
+  ? `http://${localhost}:8000`
   : 'https://together-api.out-online.net';
 
 const api = axios.create({

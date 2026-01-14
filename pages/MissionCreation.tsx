@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,12 +12,15 @@ import DatePickerField from "@/components/DatePickerFields";
 import {styles} from "@/styles/pages/CreationMissionStyle";
 import {associationService} from "@/services/associationService";
 import { router } from "expo-router";
+import { categoryService } from "@/services/category.service";
+import { Category } from "@/models/category.model";
+import { Association } from "@/models/association.model";
 
 
 export default function MissionCreation() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState<Category[]>([]);
   const [image, setImage] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null); 
@@ -25,37 +28,35 @@ export default function MissionCreation() {
   const [minVolunteers, setMinVolunteers] = useState("");
   const [maxVolunteers, setMaxVolunteers] = useState("");
   const [skills, setSkills] = useState("");
-  // const [imageName, setImageName] = useState<string | null>(null);
-  const categories = ["Environnement", "Social", "Sport", "Santé", "Animaux"] //TODO  
+  const [association, setAssociation] = useState<Association>();
 
 
-  // --- Image Picker ---
-// const pickImage = async () => {
-//   try {
-//     const result = await ImagePicker.launchImageLibraryAsync({
-//       quality: 1,
-//       allowsEditing: false,
-//       mediaTypes: ["images"],
-//     });
+  // --- Fetch categories from API ---
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await categoryService.getAll();
+        setCategory(data);
+      } catch (error) {
+        console.error("Erreur lors du chargement des catégories :", error);
+        setCategory([]); // fallback
+      }
+    };
+    loadCategories();
+  }, []);
 
-//     if (result.canceled) return;
-
-//     const asset = result.assets?.[0];
-//     if (!asset) return;
-
-//     const uri = asset.uri;
-
-//     const safeFileName: string =
-//     asset.fileName ??
-//     (uri ? uri.split("/").pop() || "image" : "image");
-
-//     setImage(uri);
-//     setImageName(safeFileName);
-
-//   } catch (error) {
-//     console.error("Erreur lors du choix d'image :", error);
-//   }
-// };
+   // --- Fetch connected association ---
+  useEffect(() => {
+    const loadAssociation = async () => {
+      try {
+        const data = await associationService.getMe();
+        if (data) setAssociation(data);
+      } catch (error) {
+        console.error("Erreur lors du chargement de l'association :", error);
+      }
+    };
+    loadAssociation();
+  }, []);
 
   const toIsoDate = (date: Date) => date.toISOString().split("T")[0];
 
@@ -108,11 +109,10 @@ export default function MissionCreation() {
       capacity_max: max,
       date_start: toIsoDate(startDate),
       date_end: endDate ? toIsoDate(endDate) : toIsoDate(startDate),
-
       // ⚠️ TODO : à brancher dynamiquement plus tard
       id_location: 1,
-      id_categ: 1,
-      id_asso: 1,
+      id_categ: Number(category),
+      id_asso: Number(association?.id_asso),
     };
 
     const mission = await associationService.createMission(payload);
@@ -167,8 +167,8 @@ export default function MissionCreation() {
             >
               <Picker.Item label="Sélectionnez une catégorie" value="" />
 
-              {categories.map((c, i) => (
-                <Picker.Item key={i} label={c} value={c} />
+              {category.map((c) => (
+                <Picker.Item key={c.id_categ} label={c.label} value={c.id_categ} />
               ))}
             </Picker>
           </View>
@@ -245,11 +245,6 @@ export default function MissionCreation() {
 
         {/* BUTTONS */}
         <View style={styles.buttonsRow}>
-          {/* // TODO or delete */}
-          {/* <TouchableOpacity style={styles.draftButton}>
-            <Text style={styles.draftText}>Enregistrer le brouillon</Text>
-          </TouchableOpacity> */}
-
           
           <TouchableOpacity style={styles.publishButton} onPress={handlePublish}>
             <Text style={styles.publishText}>Publier la mission</Text>

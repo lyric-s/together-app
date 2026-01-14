@@ -44,7 +44,7 @@ export default function MissionAdminAssosCard({
 
                 <TouchableOpacity
                     style={styles.detailButton}
-                    onPress={() => router.push('/')} // TODO
+                    onPress={() => () => router.push(`/(association)/library/history/${mission.id_mission.toString()}`)} 
                 >
                     <Text style={styles.detailButtonText}>Voir détails</Text>
                 </TouchableOpacity>

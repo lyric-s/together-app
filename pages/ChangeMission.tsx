@@ -24,69 +24,11 @@ import { associationService } from '@/services/associationService';
 import BackButton from '@/components/BackButton';
 import AlertToast from '@/components/AlertToast';
 import DatePickerField from '@/components/DatePickerFields';
-import { UserType } from '@/models/enums';
 import { missionService } from '@/services/missionService';
+import { mapMissionPublicToMission } from '@/utils/mission.utils';
 
 // Default image placeholder
 const DEFAULT_MISSION_IMAGE = require("@/assets/images/volunteering_img.jpg");
-
-// Mock mission for fallback or local testing
-const MOCK_MISSION: Mission = {
-  id_mission: 1,
-  name: "Nettoyage de la plage de la Concurrence",
-  date_start: "2026-08-01T09:00:00.000Z",
-  date_end: "2026-08-01T17:00:00.000Z",
-  skills: "Aucune compétence particulière requise.",
-  description: "Rejoignez-nous pour une journée de nettoyage de la plage...",
-  capacity_min: 10,
-  capacity_max: 50,
-  id_location: 1,
-  id_categ: 2,
-  id_asso: 1,
-  location: { id_location: 1, address: "Plage de la Concurrence", zip_code: "17000", country: "France" },
-  category: { id_categ: 2, label: "Environnement" },
-  association: {
-    id_asso: 1,
-    id_user: 42,
-    name: "Les Mains Solidaires",
-    address: "12 rue de la Solidarité",
-    zip_code: "75010",
-    country: "France",
-    phone_number: "+33 6 12 34 56 78",
-    rna_code: "W751234567",
-    company_name: "Association Les Mains Solidaires",
-    description: "Association engagée dans l'aide aux personnes en difficulté...",
-    user: {
-        id_user: 42,
-        email: "contact@lesmainssolidaires.fr",
-        date_creation: "2023-04-12T09:30:00.000Z",
-        username: '',
-        user_type: UserType.ASSOCIATION
-    },
-  },
-};
-
-/**
- * Maps a MissionPublic (read-only) object to an editable Mission model.
- * This helps unify data structures for the edit form.
- */
-const mapMissionPublicToMission = (mission: MissionPublic): Mission => ({
-  id_mission: mission.id_mission,
-  name: mission.name,
-  description: mission.description,
-  skills: mission.skills,
-  date_start: mission.date_start,
-  date_end: mission.date_end,
-  capacity_min: mission.capacity_min,
-  capacity_max: mission.capacity_max,
-  image_url: mission.image_url,
-  id_location: mission.id_location,
-  id_categ: mission.id_categ,
-  id_asso: mission.id_asso,
-  location: mission.location,
-  category: mission.category,
-  association: mission.association,
-});
 
 
 /**
@@ -125,7 +67,7 @@ export default function ChangeMission() {
   useEffect(() => {
     const fetchMission = async () => {
       try {
-        const mp = await missionService.getById(Number(missionId) || MOCK_MISSION.id_mission);
+        const mp = await missionService.getById(Number(missionId));
         setMissionPublic(mp);
         const editableMission = mapMissionPublicToMission(mp);
         setMission(editableMission);
@@ -146,32 +88,15 @@ export default function ChangeMission() {
    */
   useEffect(() => {
     if (mission?.category?.label) setCategoriePlaceholder(mission.category.label);
-    else setCategoriePlaceholder("Category not specified (TODO API)");
+    else setCategoriePlaceholder("Category not specified");
     
     if (mission?.location?.address) {
       setLieuPlaceholder(`${mission.location.address}, ${mission.location.zip_code}`);
     } else {
-      setLieuPlaceholder("Location not specified (TODO API)");
+      setLieuPlaceholder("Location not specified");
     }
   }, [mission]);
 
-  /**
-   * Backup fallback in case mission ID is invalid (e.g., local testing).
-   */
-  useEffect(() => {
-    if (isNaN(missionId)) {
-      setMission(MOCK_MISSION);
-      setOriginalMission(MOCK_MISSION);
-      setRegisteredCount(registeredCount);
-      setLoading(false);
-    } else {
-      // Placeholder for real API fetch with batch requests
-      setMission(MOCK_MISSION);
-      setOriginalMission(MOCK_MISSION);
-      setRegisteredCount(registeredCount);
-      setLoading(false);
-    }
-  }, [id]);
 
 
   // ====== ALERT HANDLING ======

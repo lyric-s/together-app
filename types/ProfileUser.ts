@@ -38,6 +38,7 @@ export interface AssociationProfile extends BaseProfile {
   address?: string;
   zip_code?: string;
   country?: string;
+  id_user: number;
 }
 
 export type UserProfile = AdminProfile | VolunteerProfile | AssociationProfile;
