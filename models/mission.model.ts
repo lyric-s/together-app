@@ -54,3 +54,12 @@ export interface MissionUpdate {
   capacity_max?: number;
   image_url?: string;
 }
+
+export interface MissionPublic extends Mission {
+  volunteers_enrolled: number;
+  available_slots: number;
+  is_full: boolean;
+  categories?: Category[];
+  association?: Association;
+}
+

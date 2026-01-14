@@ -290,7 +290,7 @@ export default function JoinMissionPage() {
 
         {/* ACTIONS BUTTONS */}
         <View style={styles.actionsRow}>
-            {!finished ? (
+            {!finished && (userType === 'volunteer' || userType === 'volunteer_guest') ? (
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                     <View style={{flex: 1, marginRight: 10}}>
                         <ButtonAuth text="Rejoindre la mission" onPress={handleJoinMission} />
@@ -309,7 +309,11 @@ export default function JoinMissionPage() {
                     </TouchableOpacity>
                 </View>
             ) : (
-                <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>Cette mission est terminée.</Text>
+                finished ? (
+                    <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>Cette mission est terminée.</Text>
+                ) : (
+                    <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>Seules les bénévoles peuvent interagir avec cette mission.</Text>
+                )
             )}
         </View>
       </ScrollView>

@@ -8,14 +8,13 @@ import {
   useWindowDimensions,
   Image,
 } from 'react-native';
-import { router } from 'expo-router';
-import Sidebar from '@/components/SideBar';
 import CategoryLabel from '@/components/CategoryLabel';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ActivityAssosCSS';
 import ListeBenevolesModal from '@/components/ListBenevolesModal';
 import { Mission } from '@/models/mission.model';
 import { Volunteer } from '@/models/volunteer.model';
+import { router } from 'expo-router';
 
 export default function ActivityAssos() {
   const { width } = useWindowDimensions();
@@ -165,6 +164,7 @@ export default function ActivityAssos() {
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={[styles.button, { backgroundColor: '#E8D5FF' }]}
+            onPress={() => router.push(`/(association)/library/upcoming/${mission.id_mission.toString()}`)}
           >
             <Text style={[styles.buttonText, { color: '#7C3AED' }]}>Voir la mission</Text>
           </TouchableOpacity>
@@ -191,7 +191,7 @@ export default function ActivityAssos() {
   );
 
   return (
-    <View style={{ flex: 1, flexDirection: 'row' }}>
+    <View style={{ flex: 1, flexDirection: 'row', backgroundColor: Colors.darkerWhite }}>
       <View style={{ flex: 1 }}>
         <ScrollView style={styles.content}>
           <Text style={[styles.pageTitle, isSmallScreen && { paddingLeft: 55 }]}>
