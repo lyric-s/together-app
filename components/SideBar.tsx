@@ -123,11 +123,11 @@ export default function Sidebar({ userType, userName, onNavigate }: SidebarProps
       { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(guest)/search" },
     ],
     association: [
-      { icon: require("../assets/images/home.png"), label: "Accueil", route: "assos_home_page" },
-      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "mission_creation" },
-      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "upcoming" },
-      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "history" },
-      { icon: require("../assets/images/user.png"), label: "Profil", route: "profile" },
+      { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(association)/home" },
+      { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "/(association)/mission_creation" },
+      { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(association)/library/upcoming" },
+      { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(association)/library/history" },
+      { icon: require("../assets/images/user.png"), label: "Profil", route: "/(association)/profile" },
     ],
     admin: [
       { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "/(admin)/dashboard" },

@@ -1,4 +1,5 @@
 // app/(association)/history/index.tsx
+import AssosHistory from '@/pages/AssosHistory';
 import React from 'react';
 /**
  * Placeholder React component for the association history page.
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function HistoryAssoPage() {
-//    return <HistoryAsso />;
+   return <AssosHistory />;
 }
