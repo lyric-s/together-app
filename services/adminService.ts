@@ -180,9 +180,15 @@ export const adminService = {
                 "/internal/admin/reports/stats"
             );
 
-            // Swagger bug: parfois "string"
+            // Bug/inconsistency: API might return a string-encoded JSON or just "OK"
             if (typeof data === "string") {
-                throw new Error("Réponse invalide pour /internal/admin/reports/stats");
+                try {
+                    // try to parse it
+                    return JSON.parse(data);
+                } catch {
+                    // if it fails (e.g. "OK" string), return empty stats
+                    return { PENDING: 0, APPROVED: 0, REJECTED: 0 };
+                }
             }
 
             return data;
