@@ -1,5 +1,5 @@
 import api from './api';
-import { Volunteer, VolunteerCreate, VolunteerUpdate } from '@/models/volunteer.model';
+import { Volunteer, VolunteerCreate, VolunteerPublic, VolunteerUpdate } from '@/models/volunteer.model';
 import { Mission } from '@/models/mission.model';
 import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler'
@@ -35,6 +35,22 @@ export const volunteerService = {
     } catch (error) {
       handleApiError(error);
       throw error;
+    }
+  },
+
+  /**
+   * Récupère le profil public complet d'un bénévole par son ID
+   * GET /volunteers/{volunteer_id}
+   * @param volunteerId L'ID unique du bénévole
+   * @returns VolunteerPublic
+   */
+  getById: async (volunteerId: number): Promise<VolunteerPublic | null> => {
+    try {
+      const { data } = await api.get<VolunteerPublic>(`/volunteers/${volunteerId}`);
+      return data;
+    } catch (error) {
+      handleApiError(error);
+      return null; // retourne null en cas d'erreur
     }
   },
 

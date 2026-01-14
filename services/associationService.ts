@@ -1,10 +1,12 @@
 import { Engagement } from '@/models/engagement.model';
 import api from './api';
 import { Association, AssociationCreate, AssociationUpdate } from '@/models/association.model';
-import { Mission, MissionCreate, MissionUpdate } from '@/models/mission.model';
+import { Mission, MissionCreate, MissionPublic, MissionUpdate } from '@/models/mission.model';
 import { Notification } from '@/models/notif.model';
 import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler';
+import { ProcessingStatus } from '@/models/enums';
+import { VolunteerPublic } from '@/models/volunteer.model';
 
 export const associationService = {
 
@@ -71,14 +73,37 @@ export const associationService = {
   },
   
   // GET /associations/me/missions
-  getMyMissions: async (): Promise<Mission[]> => {
+  getMyMissions: async (): Promise<MissionPublic[]> => {
     try {
-      const { data } = await api.get<Mission[]>('/associations/me/missions');
+      const { data } = await api.get<MissionPublic[]>('/associations/me/missions');
       return data;
     } catch (error) {
       handleApiError(error);
     }
   },
+
+  /**
+   * Retrieve only finished missions (date_end in the past).
+   */
+  getMyFinishedMissions: async (): Promise<MissionPublic[]> => {
+  try {
+    const response = await api.get<MissionPublic[]>('/associations/me/missions');
+    const missions = response.data; 
+
+    const today = new Date();
+
+    const finishedMissions = missions.filter((m) => {
+      const endDate = new Date(m.date_end);
+      return endDate < today;
+    });
+
+    return finishedMissions;
+  } catch (error) {
+    handleApiError(error);
+    return [];
+  }
+},
+
 
   // POST /associations/me/missions
   createMission: async (payload: MissionCreate): Promise<Mission> => {
@@ -157,6 +182,29 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+    }
+  },
+
+    /**
+   * Récupère tous les engagements pour une mission de l'association connectée
+   * @param missionId - ID de la mission
+   * @param status - Filtrer par état facultatif ('PENDING', 'APPROVED', 'REJECTED')
+   * @returns Liste des engagements
+   */
+  getMissionEngagements: async (
+    missionId: number,
+    status?: ProcessingStatus
+  ): Promise<VolunteerPublic[]> => {
+    try {
+      const params = status ? { status } : {};
+      const { data } = await api.get<VolunteerPublic[]>(
+        `/associations/me/missions/${missionId}/engagements`,
+        { params }
+      );
+      return data;
+    } catch (error) {
+      handleApiError(error);
+      return []; // fallback en cas d'erreur
     }
   },
 

@@ -1,7 +1,8 @@
 import { Colors } from '@/constants/colors';
 import { Volunteer } from '@/models/volunteer.model';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
-import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { associationService } from '@/services/associationService';
 
 type Props = {
     visible: boolean;
@@ -9,8 +10,9 @@ type Props = {
     title: string;
     search: string;
     setSearch: (value: string) => void;
-    benevoles: Volunteer[]; // liste de bénévoles (Volunteer)
+    benevoles: Volunteer[]; // list of volunteers
     setBenevoles: (value: Volunteer[]) => void;
+    missionId: number; // <-- new prop to know which mission
 };
 
 export default function ListeBenevolesModal({
@@ -21,15 +23,39 @@ export default function ListeBenevolesModal({
     setSearch,
     benevoles,
     setBenevoles,
+    missionId,
 }: Props) {
-    // Research function
+    // ---------------------
+    // FILTER VOLUNTEERS BY SEARCH
+    // ---------------------
     const filteredBenevoles = benevoles.filter(b =>
         (b.last_name + ' ' + b.first_name).toLowerCase().includes(search.toLowerCase())
     );
 
-    // Delete function
-    const removeBenevole = (id: number) => {
-        setBenevoles(benevoles.filter(b => b.id_volunteer !== id));
+    // ---------------------
+    // REJECT VOLUNTEER ENGAGEMENT VIA API
+    // ---------------------
+    const removeBenevole = async (volunteerId: number) => {
+        Alert.prompt(
+            'Motif du rejet',
+            'Entrez la raison du rejet pour ce bénévole',
+            async (rejectionReason) => {
+                if (!rejectionReason) return;
+
+                try {
+                    // Call backend to reject engagement
+                    await associationService.rejectEngagement(volunteerId, missionId, rejectionReason);
+
+                    // Update local state
+                    setBenevoles(benevoles.filter(b => b.id_volunteer !== volunteerId));
+                    console.log(`Volunteer ${volunteerId} removed successfully`);
+                } catch (error) {
+                    console.error('Error rejecting volunteer:', error);
+                    Alert.alert('Erreur', 'Impossible de supprimer ce bénévole.');
+                }
+            },
+            'plain-text'
+        );
     };
 
     const renderItem = ({ item }: { item: Volunteer }) => (

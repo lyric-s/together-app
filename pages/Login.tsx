@@ -9,6 +9,7 @@ import AlertToast from '@/components/AlertToast';
 import { Colors } from '@/constants/colors';
 import Cross from '@/components/Cross';
 import { UserType } from '@/models/enums'
+import { storageService } from '@/services/storageService';
 
 /**
  * Renders the login screen and manages credential entry, validation, authentication, and post-login navigation.
@@ -19,7 +20,7 @@ import { UserType } from '@/models/enums'
  */
 export default function Login() {
     const router = useRouter();
-    const { login } = useAuth();
+    const { login, refetchUser } = useAuth();
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState({ visible: false, title: '', message: '' });
     
@@ -54,10 +55,24 @@ export default function Login() {
         setLoading(true);
         try {
             const response = await authService.login(username, password);
-            await login(username, password);
+            await storageService.saveTokens(response.access_token, response.refresh_token);
+            if(response.user_type) await storageService.setItem('user_type', response.user_type);
+            await refetchUser();
             console.log("✅ Connexion réussie");
-            const { user_type } = response.user_type;
-            user_type === UserType.ADMIN ? router.replace(`/(${user_type})/dashboard` as any) : router.replace(`/(${user_type})/home` as any);
+            const user_type:UserType = response.user_type;
+            if (user_type) {
+                // Cas spécial pour l'admin
+                if (user_type === UserType.ADMIN) {
+                    router.replace('/(admin)/dashboard');
+                } else {
+                    // Cas pour 'volunteer' et 'association'
+                    router.replace(`/(${user_type})/home`);
+                }
+            } else {
+                // Sécurité : si l'API ne retourne pas le type, on redirige vers une page par défaut
+                showToast("Erreur de redirection", "Type d'utilisateur non reconnu.");
+                router.replace('/(guest)/home');
+            }
         } catch (e: any) {
             console.error(e);
             showToast("Échec de la connexion", "Identifiants incorrects.");

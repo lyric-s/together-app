@@ -34,7 +34,7 @@ import AlertToast from "@/components/AlertToast";
  * @returns The mission detail screen UI component with loading/error handling, formatted date/location display, and join/favorite action controls conditioned on authentication and user role.
  */
 export default function JoinMissionPage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>(); 
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
   const isSmallScreenWeb = isWeb && width < 900;
