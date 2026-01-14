@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
   
   const [userType, setUserType] = useState<UserType>(
-    IS_DEBUG_MODE ? 'volunteer' : 'volunteer_guest'
+    IS_DEBUG_MODE ? MOCK_ASSOCIATION_USER.user_type : 'volunteer_guest'
   );
 
   const [isLoading, setIsLoading] = useState(!IS_DEBUG_MODE);

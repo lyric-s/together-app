@@ -374,16 +374,13 @@ export default function ProfilAssos() {
                         <Text style={[styles.text, isSmallScreen && {paddingLeft: 40}]}>Toutes les données vous concernant</Text>
                         {isVerySmallScreen ? (
                         <>
-                        <View style={{ marginBottom: -60 }}>
+                        <View style={{ alignItems: 'center', gap: 20 }}>
                             <ProfilCard
                                 userType="association"
                                 userData={profileUser}
                                 onSave={handleSave}
                                 showAlert={showAlert}
                             />
-
-                        </View>
-                        <View>
                             {rightColumnContent()}
                         </View>
                         </>

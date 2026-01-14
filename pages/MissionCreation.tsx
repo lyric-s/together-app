@@ -10,6 +10,9 @@ import {
 import { Picker } from "@react-native-picker/picker";
 import DatePickerField from "@/components/DatePickerFields"; 
 import {styles} from "@/styles/pages/CreationMissionStyle";
+import {associationService} from "@/services/associationService";
+import { router } from "expo-router";
+
 
 export default function MissionCreation() {
   const [title, setTitle] = useState("");
@@ -54,54 +57,81 @@ export default function MissionCreation() {
 //   }
 // };
 
+  const toIsoDate = (date: Date) => date.toISOString().split("T")[0];
 
 
-  const handlePublish = () => {
-    if (
-      !title ||
-      !description ||
-      !category ||
-      !startDate ||
-      !location ||
-      !maxVolunteers 
-      // || !image
-    ) {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return;
-    }
 
-    // Validate date range
-    if (endDate && endDate < startDate) {
-      alert("La date de fin doit être après la date de début.");
-      return;
-    }
 
-    // Validate volunteer counts
-    const min = parseInt(minVolunteers || "0");
-    const max = parseInt(maxVolunteers);
-    if (isNaN(max) || max <= 0) {
-      alert("Le nombre maximum de bénévoles doit être un nombre valide supérieur à 0.");
-      return;
-    }
-    if (minVolunteers && min > max) {
-      alert("Le nombre minimum de bénévoles ne peut pas dépasser le maximum.");
-      return;
-    }
+  const handlePublish = async () => {
+  if (
+    !title ||
+    !description ||
+    !category ||
+    !startDate ||
+    !location ||
+    !maxVolunteers
+  ) {
+    alert("Veuillez remplir tous les champs obligatoires.");
+    return;
+  }
 
-    // Validate start date is not in the past
-    const now = new Date();
-    if (startDate < now) {
-      alert("La date de début ne peut pas être dans le passé.");
-      return;
-    }
+  if (endDate && endDate < startDate) {
+    alert("La date de fin doit être après la date de début.");
+    return;
+  }
 
-    // TODO 
-    alert("OK (logique backend pas encore faite)");
-  }; 
+  const min = parseInt(minVolunteers || "0");
+  const max = parseInt(maxVolunteers);
+
+  if (isNaN(max) || max <= 0) {
+    alert("Le nombre maximum de bénévoles doit être un nombre valide supérieur à 0.");
+    return;
+  }
+
+  if (minVolunteers && min > max) {
+    alert("Le nombre minimum de bénévoles ne peut pas dépasser le maximum.");
+    return;
+  }
+
+  const now = new Date();
+  if (startDate < now) {
+    alert("La date de début ne peut pas être dans le passé.");
+    return;
+  }
+
+  try {
+    const payload = {
+      name: title,
+      description,
+      skills,
+      capacity_min: min,
+      capacity_max: max,
+      date_start: toIsoDate(startDate),
+      date_end: endDate ? toIsoDate(endDate) : toIsoDate(startDate),
+
+      // ⚠️ TODO : à brancher dynamiquement plus tard
+      id_location: 1,
+      id_categ: 1,
+      id_asso: 1,
+    };
+
+    const mission = await associationService.createMission(payload);
+
+    alert("Mission créée avec succès !");
+    console.log("Mission créée :", mission);
+
+    // Go back to home page
+    router.replace("/(association)/home");
+  } catch (error) {
+    console.error(error);
+    alert("Erreur lors de la création de la mission.");
+  }
+};
+
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <ScrollView style={styles.container}>
+      <View >
         <Text style={styles.mainTitle}>Création d'une mission</Text>
         <Text style={styles.subtitle}>
           Remplissez les informations pour créer une nouvelle mission.
