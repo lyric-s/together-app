@@ -27,6 +27,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      throw error;
     }
   },
 
@@ -79,6 +80,7 @@ export const associationService = {
       return data;
     } catch (error) {
       handleApiError(error);
+      return [];
     }
   },
 
