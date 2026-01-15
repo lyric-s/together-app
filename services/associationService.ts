@@ -6,7 +6,7 @@ import { Notification } from '@/models/notif.model';
 import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler';
 import { ProcessingStatus } from '@/models/enums';
-import { VolunteerPublic } from '@/models/volunteer.model';
+import { VolunteerPublic, VolunteerStatus } from '@/models/volunteer.model';
 
 export const associationService = {
 
@@ -194,10 +194,10 @@ export const associationService = {
   getMissionEngagements: async (
     missionId: number,
     status?: ProcessingStatus
-  ): Promise<VolunteerPublic[]> => {
+  ): Promise<VolunteerStatus[]> => {
     try {
       const params = status ? { status } : {};
-      const { data } = await api.get<VolunteerPublic[]>(
+      const { data } = await api.get<VolunteerStatus[]>(
         `/associations/me/missions/${missionId}/engagements`,
         { params }
       );

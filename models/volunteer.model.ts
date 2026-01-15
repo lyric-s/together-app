@@ -52,7 +52,7 @@ export interface VolunteerUpdate {
   password?: string;
 }
 
-export interface VolunteerInfo {
+export interface VolunteerStatus {
   id_volunteer: number;
   id_mission: number;
   state: ProcessingStatus;
@@ -82,4 +82,8 @@ export interface VolunteerPublic {
   active_missions_count: number;
   finished_missions_count: number;
   user: User;
+}
+
+export interface VolunteerWithStatus extends Volunteer {
+  state: ProcessingStatus;
 }

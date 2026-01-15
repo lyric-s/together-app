@@ -3,6 +3,7 @@ import { Volunteer, VolunteerCreate, VolunteerPublic, VolunteerUpdate } from '@/
 import { Mission } from '@/models/mission.model';
 import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler'
+import { ProcessingStatus } from '@/models/enums';
 
 // --- Service ---
 export const volunteerService = {
@@ -170,5 +171,23 @@ export const volunteerService = {
       throw error;
     }
   },
+
+  getMissionEngagements: async (
+    missionId: number,
+    status?: ProcessingStatus
+  ): Promise<VolunteerPublic[]> => {
+    try {
+      const params = status ? { status } : {};
+      const { data } = await api.get<VolunteerPublic[]>(
+        `/associations/me/missions/${missionId}/engagements`,
+        { params }
+      );
+      return data;
+    } catch (error) {
+      handleApiError(error);
+      return []; // fallback en cas d'erreur
+    }
+  },
+  
 
 };
