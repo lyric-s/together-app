@@ -112,8 +112,8 @@ export default function ActivityAssos() {
         // Fetch finished missions 
         const upcomingMissionsPublic = await associationService.getMyMissions();
         // Map API missions to internal Mission model
-        const finishedMissions = upcomingMissionsPublic.map(mapMissionPublicToMission);
-        setMissions(finishedMissions);
+        const upcomingMissions = upcomingMissionsPublic.map(mapMissionPublicToMission);
+        setMissions(upcomingMissions);
       } catch (error) {
         console.error("Error loading finished missions:", error);
         setMissions([]);

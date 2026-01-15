@@ -71,7 +71,8 @@ export default function MissionCreation() {
     !selectedCategory ||
     !startDate ||
     !location ||
-    !maxVolunteers
+    !maxVolunteers ||
+    !association
   ) {
     alert("Veuillez remplir tous les champs obligatoires.");
     return;

@@ -172,22 +172,4 @@ export const volunteerService = {
     }
   },
 
-  getMissionEngagements: async (
-    missionId: number,
-    status?: ProcessingStatus
-  ): Promise<VolunteerPublic[]> => {
-    try {
-      const params = status ? { status } : {};
-      const { data } = await api.get<VolunteerPublic[]>(
-        `/associations/me/missions/${missionId}/engagements`,
-        { params }
-      );
-      return data;
-    } catch (error) {
-      handleApiError(error);
-      return []; // fallback en cas d'erreur
-    }
-  },
-  
-
 };
