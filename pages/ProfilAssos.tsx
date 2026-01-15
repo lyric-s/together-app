@@ -182,11 +182,7 @@ export default function ProfilAssos() {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.smallButton, styles.saveButton]}
-            onPress={() => {
-              setSavedDescription(profileUser?.description || '');
-              setIsEditingDescription(false);
-              showAlert('Succès', 'Description mise à jour');
-            }}
+            onPress={() => profileUser && handleSave(profileUser)}
           >
             <Image style={styles.imageBtn} source={require('@/assets/images/validate.png')} />
           </TouchableOpacity>
