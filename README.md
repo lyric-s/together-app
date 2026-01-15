@@ -68,4 +68,4 @@ Start the development server with Expo:
 
 ```bash
 # Start the development server
-npm epo start
+npx expo start
