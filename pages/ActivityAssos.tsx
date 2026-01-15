@@ -12,10 +12,9 @@ import CategoryLabel from '@/components/CategoryLabel';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ActivityAssosCSS';
 import ListeBenevolesModal from '@/components/ListBenevolesModal';
-import { Mission } from '@/models/mission.model';
+import { Mission, MissionPublic } from '@/models/mission.model';
 import { Volunteer, VolunteerStatus, VolunteerWithStatus } from '@/models/volunteer.model';
 import { router } from 'expo-router';
-import { mapMissionPublicToMission } from '@/utils/mission.utils';
 import { associationService } from '@/services/associationService';
 import { volunteerService } from '@/services/volunteerService';
 import { ProcessingStatus } from '@/models/enums';
@@ -95,7 +94,7 @@ export default function ActivityAssos() {
   // ---------------------
   // STATE
   // ---------------------
-  const [missions, setMissions] = useState<Mission[]>([]);
+  const [missions, setMissions] = useState<MissionPublic[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [missionClick, setMissionClick] = useState<Mission | null>(null);
   const [search, setSearch] = useState('');
@@ -110,10 +109,8 @@ export default function ActivityAssos() {
       setLoading(true);
       try {
         // Fetch finished missions 
-        const upcomingMissionsPublic = await associationService.getMyMissions();
-        // Map API missions to internal Mission model
-        const upcomingMissions = upcomingMissionsPublic.map(mapMissionPublicToMission);
-        setMissions(upcomingMissions);
+        const missionsData = await associationService.getMyMissions();
+        setMissions(missionsData);
       } catch (error) {
         console.error("Error loading finished missions:", error);
         setMissions([]);
@@ -160,7 +157,7 @@ export default function ActivityAssos() {
   // ---------------------
   // RENDER A MISSION CARD
   // ---------------------
-  const renderMissionCard = (mission: Mission) => (
+  const renderMissionCard = (mission: MissionPublic) => (
     <View key={mission.id_mission} style={styles.missionCard}>
       {/* Mission information */}
       <View style={styles.missionInfo}>
@@ -170,7 +167,7 @@ export default function ActivityAssos() {
         </Text>
         <View style={[styles.categoryContainer, { marginVertical: -2, marginLeft: -10 }]}>
           <CategoryLabel
-            text={`Catégorie ${mission.id_categ}`}
+            text={`Catégorie ${mission.category?.label || mission.id_categ}`}
             backgroundColor={Colors.brightOrange}
           />
         </View>
@@ -200,7 +197,7 @@ export default function ActivityAssos() {
         <View style={styles.imageSection}>
           <View style={styles.participantsContainer}>
             <Text style={styles.participantsText}>
-              {mission.capacity_min} / {mission.capacity_max}
+              {mission.volunteers_enrolled} / {mission.capacity_max}
             </Text>
             <Image source={require('@/assets/images/people.png')} style={styles.participantsIcon} />
           </View>
