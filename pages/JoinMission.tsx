@@ -239,7 +239,7 @@ export default function JoinMissionPage() {
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-        const isGuest = !userType;
+        const isGuest = userType === 'volunteer_guest';
         const route = (isGuest
           ? `/(guest)/search/association/${mission.id_asso}`
           : `/(volunteer)/search/association/${mission.id_asso}`) as Href;
