@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform, View } from "react-native";
-import styles from "@/styles/components/AdminLineChartStyle";
+import styles from "@/styles/pages/AdminLineChartStyle";
 
 type Props = {
     labels: string[];

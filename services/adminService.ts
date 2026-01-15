@@ -254,7 +254,17 @@ export const adminService = {
         }
     },
 
-    getDashboardStats: async (months = 7) => {
+    getDashboardStats: async (
+        months = 7
+    ): Promise<{
+        associationsCount: number;
+        completedMissionsCount: number;
+        usersCount: number;
+        volunteersPerMonth: MonthlyDataPoint[];
+        missionsPerMonth: MonthlyDataPoint[];
+        pendingReportsCount: number;
+        pendingAssociationsCount: number;
+    }> => {
         try {
             const [overview, volunteers, missions] = await Promise.all([
                 adminService.getDashboardOverview(),
@@ -263,16 +273,53 @@ export const adminService = {
             ]);
 
             return {
-                associationsCount: overview.validated_associations_count,
-                completedMissionsCount: overview.completed_missions_count,
-                usersCount: overview.total_users_count,
+                associationsCount: overview.total_validated_associations,
+                completedMissionsCount: overview.total_completed_missions,
+                usersCount: overview.total_users,
                 pendingReportsCount: overview.pending_reports_count,
                 pendingAssociationsCount: overview.pending_associations_count,
-                volunteersPerMonth: volunteers,
-                missionsPerMonth: missions,
+                volunteersPerMonth: volunteers ?? [],
+                missionsPerMonth: missions ?? [],
             };
         } catch (error) {
             handleApiError(error);
+            return {
+                associationsCount: 0,
+                completedMissionsCount: 0,
+                usersCount: 0,
+                volunteersPerMonth: [],
+                missionsPerMonth: [],
+                pendingReportsCount: 0,
+                pendingAssociationsCount: 0,
+            };
         }
     },
+    // LISTE pending
+    getPendingDocuments: async () => {
+        const { data } = await api.get("/internal/admin/documents/pending");
+        return data;
+    },
+
+// PREVIEW (iframe)
+    getAdminDocumentPreviewUrl: async (
+        documentId: number
+    ): Promise<{ preview_url: string; expires_in: number }> => {
+        const { data } = await api.get(
+            `/internal/admin/documents/${documentId}/preview-url`
+        );
+        return data;
+    },
+
+// DOWNLOAD
+    getAdminDocumentDownloadUrl: async (
+        documentId: number
+    ): Promise<{ download_url: string; expires_in: number }> => {
+        const { data } = await api.get(
+            `/internal/admin/documents/${documentId}/download-url`
+        );
+        return data;
+    },
+
+
+
 };

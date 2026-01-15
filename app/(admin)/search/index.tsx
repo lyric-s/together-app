@@ -1,5 +1,7 @@
 // app/(admin)/search/index.tsx
 import React from 'react';
+import AssociationProfileVerification from '@/pages/AssociationProfileVerification';
+
 /**
  * Admin route component for the search screen.
  *
@@ -7,5 +9,5 @@ import React from 'react';
  */
 
 export default function SearchAdminPage() {
-//    return <SearchAdmin />;
+    return <AssociationProfileVerification />;
 }

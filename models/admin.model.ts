@@ -80,9 +80,9 @@ export type MonthlyDataPoint = {
 };
 
 export type OverviewStatsResponse = {
-  validated_associations_count: number;
-  completed_missions_count: number;
-  total_users_count: number;
+  total_validated_associations: number;
+  total_completed_missions: number;
+  total_users: number;
   pending_reports_count: number;
   pending_associations_count: number;
 };

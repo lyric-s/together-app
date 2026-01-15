@@ -1,257 +1,249 @@
-import { View, TextInput, Text, TouchableOpacity, Image, FlatList, ActivityIndicator } from "react-native";
-import { useRef, useState, useEffect } from "react";
-import { Colors } from "../constants/colors";
-import { styles } from "../styles/components/SearchBarStyle";
-import { SearchFilters } from "../types/search.types";
+import React from "react";
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    ScrollView,
+    useWindowDimensions,
+} from "react-native";
+import ProfilePicture from "./ProfilPicture";
+import { getStyles } from "../styles/components/SideBarStyle";
+import { usePathname, Href } from "expo-router";
+import { useAuth } from "@/context/AuthContext";
+import { normalizePath } from '@/utils/path.utils';
 
-interface SearchBarProps {
-  categories?: string[]; // Renommé pour la clarté (était filters_1)
-  onSearch: (text: string, filters: SearchFilters) => void;
-}
+const MOBILE_BREAKPOINT = 900;
 
-// Type for API results
-interface CityResult {
-  properties: {
+type SidebarProps = {
+    userType: "volunteer" | "volunteer_guest" | "association" | "admin";
+    userName: string;
+    onNavigate: (route: Href | string) => void;
+};
+
+const resolvePath = (route: Href | string): string => {
+    if (typeof route === 'string') return route;
+    if (typeof route === 'object' && route !== null && 'pathname' in route) {
+        return route.pathname;
+    }
+    return '';
+};
+
+type MenuItem = {
+    icon: any;
     label: string;
-    postcode: string;
-    city: string;
-    context: string;
-  };
+    route: Href;
+};
+
+type SidebarButtonProps = {
+    icon: any;
+    label: string;
+    onPress: () => void;
+    active?: boolean;
+};
+
+/**
+ * Render a sidebar menu button containing an icon and a label.
+ *
+ * @param icon - Image source used for the button icon
+ * @param label - Text displayed next to the icon
+ * @param onPress - Callback invoked when the button is pressed
+ * @param active - When `true`, applies active styling to indicate selection
+ * @returns A React element representing the touchable sidebar button
+ */
+function SidebarButton({ icon, label, onPress, active=false }:SidebarButtonProps) {
+    const { width } = useWindowDimensions();
+    const styles = getStyles(width);
+
+    return (
+        <TouchableOpacity
+            onPress={onPress}
+            style={[styles.button, active && styles.activeButton]}
+        >
+            <Image source={icon} style={styles.buttonIcon} />
+            <Text style={styles.buttonLabel}>{label}</Text>
+        </TouchableOpacity>
+    );
 }
 
 /**
- * Render a search bar with inputs for query text, category, postal code, and start date, plus controls to execute or reset the search.
+ * Sidebar component for web and responsive layouts.
  *
- * The component calls `onSearch` when the user submits a search or presses the search button, passing the current text and a `SearchFilters` object where empty fields are represented as `null` and a valid `dateText` is parsed to a `Date`.
+ * @param userType - Type of the user ("volunteer", "volunteer_guest", "association", "admin")
+ * @param userName - Display name of the user or association
+ * @param onNavigate - Callback to navigate when a button is clicked; receives the route string
  *
- * @param categories - Optional list of category labels displayed in the category picker; the picker shows a default "Catégorie..." option mapped to `null`.
- * @param onSearch - Callback invoked with `(text: string, filters: SearchFilters)` when a search is triggered. `filters` has the shape `{ category: string | null; zipCode: string | null; date: Date | null }`.
- * @returns The rendered search bar React element containing inputs and action buttons.
+ * Responsive behavior:
+ * - On large screens (desktop), the sidebar is permanently visible and occupies a fixed space
+ *   on the left side of the layout.
+ * - On small screens, the sidebar is hidden by default and replaced by a burger menu button.
+ * - The burger button toggles the visibility of the sidebar.
+ * - When opened on small screens, the sidebar appears as an overlay (absolute positioned)
+ *   and does NOT push or resize the main content.
+ * - Selecting a navigation item on small screens automatically closes the sidebar.
+ *
+ * Displays:
+ * - App title based on user type
+ * - Profile picture and user name
+ * - Two sections: GENERAL (main navigation) and SECURITE (logout/settings)
+ * - Buttons highlight in bright orange when active
+ * - Scrollable content when menu height exceeds viewport
  */
-export default function SearchBar({
-    categories = [],    
-    onSearch,
-  }: SearchBarProps) {
+export default function Sidebar({ userType, userName, onNavigate }: SidebarProps) {
+    const { width } = useWindowDimensions();
+    const isMobile = width < MOBILE_BREAKPOINT;
+    const styles = getStyles(width);
+    const pathname = usePathname();
+    const { logout } = useAuth();
 
-  const [text, setText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("-");
-  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [open, setOpen] = React.useState(!isMobile);
 
-  const [dateText, setDateText] = useState("");
+    // Resize
+    React.useEffect(() => {
+        setOpen(!isMobile);
+    }, [isMobile]);
 
-  // --- Location Autocomplete States ---
-  const [locationInput, setLocationInput] = useState("");
-  const [confirmedZip, setConfirmedZip] = useState<string | null>(null);
-  const [suggestions, setSuggestions] = useState<CityResult[]>([]);
-  const [isLoadingLoc, setIsLoadingLoc] = useState(false);
+    const appTitle =
+        userType === "association"
+            ? "Together Association"
+            : userType === "admin"
+                ? "Together Management"
+                : "Together";
 
-  const debounceTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
-  useEffect(() => {
-    return () => {
-      if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+    const sections: Record<string, MenuItem[]> = {
+        volunteer: [
+            { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(volunteer)/home" },
+            { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(volunteer)/search" },
+            { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(volunteer)/library/upcoming" },
+            { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(volunteer)/library/history" },
+            { icon: require("../assets/images/user.png"), label: "Profil", route: "/(volunteer)/profile" },
+        ],
+        volunteer_guest: [
+            { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(guest)/home" },
+            { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(guest)/search" },
+        ],
+        association: [
+            { icon: require("../assets/images/home.png"), label: "Accueil", route: "/(association)/home" },
+            { icon: require("../assets/images/plus.png"), label: "Créer une mission", route: "/(association)/mission_creation" },
+            { icon: require("../assets/images/upcoming.png"), label: "Mission à venir", route: "/(association)/library/upcoming" },
+            { icon: require("../assets/images/historical.png"), label: "Historiques", route: "/(association)/library/history" },
+            { icon: require("../assets/images/user.png"), label: "Profil", route: "/(association)/profile" },
+        ],
+        admin: [
+            { icon: require("../assets/images/dashboard.png"), label: "Tableau de bord", route: "/(admin)/dashboard" },
+            { icon: require("../assets/images/search.png"), label: "Recherche", route: "/(admin)/search" },
+            { icon: require("../assets/images/report.png"), label: "Signalement", route: "/(admin)/report" },
+            { icon: require("../assets/images/user.png"), label: "Profil", route: "/(admin)/profile" },
+        ],
     };
-  }, []);
 
-  function resetAll() {
-    setText("");
-    setSelectedCategory("-");
-    setIsCategoryOpen(false);
-    setLocationInput("");
-    setConfirmedZip(null);
-    setSuggestions([]);
-    setDateText("");
-    onSearch("", { category: null, zipCode: null, date: null });
-  }
+    let activeSection = sections.volunteer_guest;
+    if (userType === 'volunteer') activeSection = sections.volunteer;
+    else if (userType === 'association') activeSection = sections.association;
+    else if (userType === 'admin') activeSection = sections.admin;
 
-  const fetchCities = async (query: string) => {
-    if (query.length < 3) {
-      setSuggestions([]);
-      return;
-    }
+    const securityItemsConnected = [
+        { icon: require("../assets/images/logout.png"), label: "Déconnexion", route: "LOGOUT_ACTION" },
+        { icon: require("../assets/images/settings.png"), label: "Réglages", route: "/settings" },
+    ];
 
-    setIsLoadingLoc(true);
-    try {
-      const controller = new AbortController();
-     const timeoutId = setTimeout(() => controller.abort(), 5000);
-     
-     const response = await fetch(
-       `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=municipality&limit=5`,
-       { signal: controller.signal }
-     );
-     clearTimeout(timeoutId);
-     
-     if (!response.ok) {
-       throw new Error(`HTTP ${response.status}`);
-     }
-      const data = await response.json();
-      setSuggestions(data.features || []);
-    } catch (error) {
-      console.error("Error fetching cities", error);
-      setSuggestions([]);
-    } finally {
-      setIsLoadingLoc(false);
-    }
-  };
+    const securityItemsGuest = [
+        { icon: require("../assets/images/login.png"), label: "Se connecter", route: "/(auth)/login" },
+    ];
 
-  const handleLocationChange = (val: string) => {
-    setLocationInput(val);
-    setConfirmedZip(null); 
-    
-    // Debounce API call
-    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
-    debounceTimeout.current = setTimeout(() => {
-      fetchCities(val);
-    }, 400);
-  };
+    const securityItems = userType === 'volunteer_guest'
+        ? securityItemsGuest
+        : securityItemsConnected;
 
-  const selectCity = (item: CityResult) => {
-    const displayLabel = `${item.properties.city} (${item.properties.postcode})`;
-    setLocationInput(displayLabel);
-    setConfirmedZip(item.properties.postcode);
-    setSuggestions([]);
-    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
-  };
-
-  const selectCategory = (cat: string) => {
-      setSelectedCategory(cat);
-      setIsCategoryOpen(false);
-  };
-
-  // --- Search Logic ---
-  const handleSearch = () => {
-    let dateObj: Date | null = null;
-    if (dateText) {
-      // Validate YYYY-MM-DD format explicitly
-      const match = dateText.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (match) {
-        const year = parseInt(match[1]);
-        const month = parseInt(match[2]) - 1;
-        const day = parseInt(match[3]);
-        const d = new Date(year, month, day);
-        // Verify the date didn't roll over (e.g., Feb 31 -> Mar 2)
-        if (!isNaN(d.getTime()) && 
-          d.getFullYear() === year && 
-          d.getMonth() === month && 
-          d.getDate() === day) {
-            dateObj = d;
-          }
+    const handleNavigation = (route: Href | string) => {
+        if (route === "LOGOUT_ACTION") {
+            logout();
+            return;
         }
-    }
+        onNavigate(route as Href);
+        if (isMobile) setOpen(false);
+    };
 
-    onSearch(text, {
-      category: selectedCategory === "-" ? null : selectedCategory,
-      zipCode: confirmedZip, 
-      date: dateObj
-    });
-  };
+    const isRouteActive = (route: Href | string) => {
+        if (route === "LOGOUT_ACTION") return false;
+        const routePath = resolvePath(route);
+        const cleanPathname = normalizePath(pathname);
+        const cleanRoute = normalizePath(routePath);
 
-  return (
-    <View style={[styles.container]}>
-      
-      <TextInput
-        style={[styles.input, { minWidth: 300 }]}
-        placeholder="Rechercher une mission..."
-        placeholderTextColor={Colors.grayPlaceholder}
-        value={text}
-        onChangeText={setText}
-        onSubmitEditing={handleSearch}
-      />
+        if (cleanPathname === cleanRoute) return true;
+        return cleanPathname.startsWith(`${cleanRoute}/`);
+    };
 
-      <View style={[styles.flexContainer, { minWidth: 150, zIndex: 4000 }]}>
-        
-        <TouchableOpacity 
-            style={[styles.input, { justifyContent: 'center' }]} 
-            onPress={() => setIsCategoryOpen(!isCategoryOpen)}
-        >
-            <Text style={{ color: selectedCategory === "-" ? Colors.grayPlaceholder : Colors.black }}>
-                {selectedCategory === "-" ? "Catégorie..." : selectedCategory}
-            </Text>
-            <Text style={{ position: 'absolute', right: 10, color: Colors.grayPlaceholder }}>▼</Text>
-        </TouchableOpacity>
-
-        {isCategoryOpen && (
-            <View style={styles.suggestionsContainer}>
-                <FlatList
-                    data={["-", ...categories]}
-                    keyExtractor={(item) => item}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity 
-                            style={styles.suggestionItem} 
-                            onPress={() => selectCategory(item)}
-                        >
-                            <Text style={[
-                                styles.suggestionText,
-                                item === selectedCategory && { fontWeight: 'bold', color: Colors.orange }
-                            ]}>
-                                {item === "-" ? "Aucune" : item}
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-                />
-            </View>
-        )}
-      </View>
-
-      {/* --- LOCATION INPUT WITH AUTOCOMPLETE --- */}
-      <View style={[styles.flexContainer, { maxWidth: 200 }]}>
-        <TextInput
-          style={[styles.input]}
-          placeholder="Ville ou CP"
-          placeholderTextColor={Colors.grayPlaceholder}
-          value={locationInput}
-          onChangeText={handleLocationChange}
-        />
-        {isLoadingLoc && (
-           <ActivityIndicator size="small" color={Colors.orange} style={{position: 'absolute', right: 10, top: 12}}/>
-        )}
-
-        {/* Suggestions Dropdown */}
-        {suggestions.length > 0 && (
-          <View style={styles.suggestionsContainer}>
-            <FlatList
-              data={suggestions}
-              keyExtractor={(item) => `${item.properties.city}-${item.properties.postcode}`}
-              keyboardShouldPersistTaps="handled"
-              renderItem={({ item }) => (
-                <TouchableOpacity 
-                  style={styles.suggestionItem} 
-                  onPress={() => selectCity(item)}
+    return (
+        <>
+            {/* BURGER BUTTON */}
+            {isMobile && (
+                <TouchableOpacity
+                    onPress={() => setOpen(!open)}
+                    style={styles.burgerButton}
+                    accessibilityRole="button"
+                    accessibilityLabel={open ? "Fermer le menu" : "Ouvrir le menu"}
                 >
-                  <Text style={styles.suggestionText}>
-                    {item.properties.city} <Text style={{fontWeight:'bold'}}>{item.properties.postcode}</Text>
-                  </Text>
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        )}
-      </View>
-      
-      <View style={[styles.flexContainer]}>
-        <TextInput
-          style={[styles.input]}
-          placeholder="Date début (AAAA-MM-JJ)"
-          placeholderTextColor={Colors.grayPlaceholder}
-          value={dateText}
-          onChangeText={setDateText}
-        />
-      </View>
+                    <Text style={styles.burger}>☰</Text>
+                </TouchableOpacity>      )}
 
-      {/* Button Reset */}
-      <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
-        <TouchableOpacity style={styles.resetButton} onPress={resetAll}>
-          <Text style={styles.resetText}>X</Text>
-        </TouchableOpacity>
+            {/* SIDEBAR */}
+            {open && (
+                <View
+                    style={[
+                        styles.sidebar,
+                        isMobile && styles.reducedSideBar,
+                    ]}
+                >
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {/* HEADER */}
+                        <View>
+                            <View style={styles.titleRow}>
+                                <Image
+                                    source={require("../assets/images/logo.png")}
+                                    style={styles.logo}
+                                />
+                                <Text style={styles.title}>{appTitle}</Text>
+                            </View>
 
-        {/* Search button */}
-        <TouchableOpacity onPress={handleSearch}>
-          <Image
-            source={require("../assets/images/loupe.png")}
-            style={styles.searchIcon}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+                            {/* PROFIL */}
+                            <View style={styles.profileRow}>
+                                <ProfilePicture
+                                    source={require("../assets/images/favicon.png")}
+                                    size={45}
+                                />
+                                <Text style={styles.userName}>{userName}</Text>
+                            </View>
+
+                            <Text style={styles.sectionTitle}>GENERAL</Text>
+                            {activeSection.map((item, i) => (
+                                <SidebarButton
+                                    key={i}
+                                    icon={item.icon}
+                                    label={item.label}
+                                    active={isRouteActive(item.route)}
+                                    onPress={() => handleNavigation(item.route)}
+                                />
+                            ))}
+                        </View>
+
+                        <View>
+                            <Text style={styles.sectionTitle}>
+                                {userType === 'volunteer_guest' ? 'COMPTE' : 'SECURITE'}
+                            </Text>
+                            {securityItems.map((item, i) => (
+                                <SidebarButton
+                                    key={i}
+                                    icon={item.icon}
+                                    label={item.label}
+                                    active={isRouteActive(item.route)}
+                                    onPress={() => handleNavigation(item.route)}
+                                />
+                            ))}
+                        </View>
+                    </ScrollView>
+                </View>
+            )}
+        </>
+    );
 }
