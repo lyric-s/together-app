@@ -20,7 +20,8 @@ import { Association } from "@/models/association.model";
 export default function MissionCreation() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [image, setImage] = useState<string | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null); 
@@ -36,10 +37,10 @@ export default function MissionCreation() {
     const loadCategories = async () => {
       try {
         const data = await categoryService.getAll();
-        setCategory(data);
+        setCategories(data);
       } catch (error) {
         console.error("Erreur lors du chargement des catégories :", error);
-        setCategory([]); // fallback
+        setCategories([]); // fallback
       }
     };
     loadCategories();
@@ -67,7 +68,7 @@ export default function MissionCreation() {
   if (
     !title ||
     !description ||
-    !category ||
+    !selectedCategory ||
     !startDate ||
     !location ||
     !maxVolunteers
@@ -111,7 +112,7 @@ export default function MissionCreation() {
       date_end: endDate ? toIsoDate(endDate) : toIsoDate(startDate),
       // ⚠️ TODO : à brancher dynamiquement plus tard
       id_location: 1,
-      id_categ: Number(category),
+      category_ids: [Number(selectedCategory)],
       id_asso: Number(association?.id_asso),
     };
 
@@ -161,13 +162,13 @@ export default function MissionCreation() {
           <Text style={styles.label}>Catégorie *</Text>
           <View style={styles.pickerContainer}>
             <Picker
-              selectedValue={category}
-              onValueChange={(value) => setCategory(value)}
+              selectedValue={selectedCategory}
+              onValueChange={(value) => setSelectedCategory(value)}
               style={styles.picker}
             >
               <Picker.Item label="Sélectionnez une catégorie" value="" />
 
-              {category.map((c) => (
+              {categories.map((c) => (
                 <Picker.Item key={c.id_categ} label={c.label} value={c.id_categ} />
               ))}
             </Picker>
