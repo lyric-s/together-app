@@ -1,6 +1,7 @@
+import React, { useEffect, useRef } from 'react';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
-import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 
 type Benevole = {
     id: string;
@@ -37,6 +38,18 @@ export default function ListeBenevolesModal({
         setBenevoles(benevoles.filter(b => b.id !== id));
     };
 
+    const searchInputRef = useRef<TextInput>(null);
+
+    useEffect(() => {
+        if (visible && Platform.OS === 'web') {
+            // Petit délai pour laisser le temps à la modale de s'afficher
+            const timer = setTimeout(() => {
+                searchInputRef.current?.focus();
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [visible]);
+
     const renderItem = ({ item }: { item: Benevole }) => (
         <View style={styles.itemContainer}>
         <Text style={styles.benevoleText}>{item.lastname} {item.firstname}</Text>
@@ -56,7 +69,8 @@ export default function ListeBenevolesModal({
             animationType="slide"
             onRequestClose={onClose}
         >
-        <View style={styles.modalBackground}>
+        {/* @ts-ignore */}
+        <View style={styles.modalBackground} accessibilityViewIsModal={true}>
             <View style={styles.modalContainer}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text style={styles.title}>{title} - Liste des bénévoles</Text>
@@ -71,6 +85,7 @@ export default function ListeBenevolesModal({
                     style={styles.icon}
                 />
                 <TextInput
+                    ref={searchInputRef}
                     placeholder="Recherche un bénévole"
                     value={search}
                     onChangeText={setSearch}

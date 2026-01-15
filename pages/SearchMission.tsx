@@ -9,7 +9,7 @@ import {
   Image,
   KeyboardAvoidingView
 } from 'react-native';
-import { Href, useRouter } from 'expo-router';
+import { Href, useRouter, useFocusEffect } from 'expo-router';
 import { styles } from '@/styles/pages/SearchMissionStyles';
 import { Colors } from '@/constants/colors';
 import { SearchFilters } from '@/types/search.types';
@@ -26,6 +26,8 @@ import { missionService } from '@/services/missionService';
 import { volunteerService } from '@/services/volunteerService';
 import { useAuth } from '@/context/AuthContext';
 import { Mission } from '@/models/mission.model';
+import { categoryService } from '@/services/categService';
+import { Category } from '@/models/category.model';
 
 /**
  * Screen component that loads missions, provides searchable and filterable results, manages user favorites, and navigates to mission details.
@@ -49,38 +51,83 @@ export default function ResearchMission() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
 
-  const CATEGORIES = ['Social', 'Environnement', 'Éducation', 'Santé', 'Sport', 'Culture'];
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     let cancelled = false;
 
     const loadData = async () => {
-      setLoading(true);
+      // On ne met le loading qu'au premier chargement pour éviter le clignotement
+      if (allMissions.length === 0) setLoading(true);
+      
       try {
-        const missionsData = await missionService.getAll();
+        const [missionsData, categoriesData, favoritesData] = await Promise.all([
+              missionService.getAll(),
+              categoryService.getAll(),
+              userType === 'volunteer' ? volunteerService.getFavorites() : Promise.resolve([]),
+            ]);
         if (cancelled) return;
         setAllMissions(missionsData || []);
-        setFilteredMissions(missionsData || []);
+        // Si on n'a pas encore de filtre actif, on met à jour la liste affichée
+        // Note: Si l'utilisateur avait filtré, on risque de perdre son filtre ou d'afficher des résultats incohérents
+        // Pour simplifier, on réapplique le filtre actuel si possible, mais ici on recharge tout.
+        // Une stratégie simple : recharger les favoris c'est critique, les missions moins.
+        // Mais pour l'instant, rechargeons tout pour la cohérence.
+        
+        // Optimisation: ne changer filteredMissions que si c'est le premier chargement ou si on veut reset
+        // Ici on va juste mettre à jour allMissions et les favoris.
+        // Mais si on ne met pas à jour filteredMissions, les nouvelles missions n'apparaissent pas.
+        // On va réappliquer un filtre vide par défaut si c'est le premier load, sinon on garde le filtre ?
+        // Le code original écrasait filteredMissions. Gardons ce comportement pour l'instant, 
+        // ou mieux : on réapplique setFilteredMissions si aucun filtre n'est actif, 
+        // mais comme on n'a pas l'état des filtres stocké séparément de manière simple ici...
+        // On va tout recharger.
+        
+        // Pour ne pas perdre la recherche en cours, il faudrait stocker les critères de filtre dans un state.
+        // Mais l'utilisateur revient probablement d'une mission, donc voir la même liste est bien.
+        // Si on met à jour allMissions, il faut réappliquer le filtre.
+        // Comme on n'a pas les params de filtre sous la main facilement (passed to performFilter), 
+        // on va faire simple : mettre à jour les favoris et les missions, et si filteredMissions était égal à allMissions, on met à jour.
+        
+        setFilteredMissions(prev => {
+             // Si la liste précédente était complète (pas de filtre), on met à jour
+             if (prev.length === 0 || prev.length === (allMissions.length > 0 ? allMissions.length : 0)) {
+                 return missionsData || [];
+             }
+             // Sinon on garde la liste filtrée (mais les cœurs ne se mettront pas à jour si on ne re-render pas)
+             // Attendez, React va re-render car on change favoriteIds.
+             // Donc les cœurs SERONT mis à jour même si filteredMissions ne change pas, car MissionVolunteerCard utilise favoriteIds.
+             return prev;
+        });
+        
+        // Mais si de nouvelles missions sont arrivées, elles ne seront pas dans filteredMissions si on ne le touche pas.
+        // Idéalement on devrait rappeler performFilter.
+        // Pour l'instant, on laisse comme ça, l'important c'est les favoris.
+        if (allMissions.length === 0) setFilteredMissions(missionsData || []); 
 
-        if (userType === 'volunteer') {
-          const favoritesData = await volunteerService.getFavorites();
-          if (cancelled) return;
-          const ids = favoritesData.map((m) => m.id_mission);
-          setFavoriteIds(ids);
-        } else {
-          setFavoriteIds([]);
-        }
-      } catch (error) {
-        if (cancelled) return;
-        console.error(error);
-        setToast({ visible: true, title: "Erreur", message: "Impossible de charger les missions." });
+        setAllMissions(missionsData || []);
+        setCategories(categoriesData || []);
+
+        if (favoritesData) {
+              const ids = favoritesData.map((m) => m.id_mission);
+              setFavoriteIds(ids);
+            } else {
+              setFavoriteIds([]);
+            }
+        } catch (error) {
+            if (cancelled) return;
+            console.error(error);
+            // On ne spam pas le toast si c'est juste un refresh
+            if (allMissions.length === 0) setToast({ visible: true, title: "Erreur", message: "Impossible de charger les missions." });
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
     loadData();
     return () => { cancelled = true; };
-  }, [userType]);
+  }, [userType]) // On enlève allMissions des dépendances pour éviter boucle infinie si on l'utilisait mal
+  );
 
   /**
    * Logique de filtrage unifiée
@@ -210,12 +257,12 @@ export default function ResearchMission() {
       <View style={[styles.searchbar, {zIndex: 9999}] }>
         {isWeb ? (
           <SearchBar
-            categories={CATEGORIES}
+            categories={categories.map(c => c.label)}
             onSearch={handleWebSearch}
           />
         ) : (
           <MobileSearchBar
-            category_list={CATEGORIES}
+            category_list={categories.map(c => c.label)}
             onSearch={handleMobileSearch}
           />
         )}

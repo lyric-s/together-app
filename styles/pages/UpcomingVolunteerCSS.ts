@@ -37,8 +37,11 @@ export const styles = StyleSheet.create({
     color: Colors.black,
   },
   emptyText: {
+    fontSize: 14,
     color: 'gray',
     fontStyle: 'italic',
+    textAlign: 'center',
+    marginTop: 20,
   },
   fixedBottom: {
     position: 'absolute',

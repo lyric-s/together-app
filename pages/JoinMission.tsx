@@ -13,7 +13,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Href, router, useLocalSearchParams } from 'expo-router';
+import { Href, router, useLocalSearchParams, useRouter } from 'expo-router';
 import BackButton from "@/components/BackButton";
 import ButtonAuth from "@/components/Button";
 import CategoryLabel from "@/components/CategoryLabel";
@@ -34,21 +34,24 @@ import AlertToast from "@/components/AlertToast";
  * @returns The mission detail screen UI component with loading/error handling, formatted date/location display, and join/favorite action controls conditioned on authentication and user role.
  */
 export default function JoinMissionPage() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: missionId } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
   const isSmallScreenWeb = isWeb && width < 900;
-  const { userType } = useAuth();
+  const { user, userType } = useAuth();
+  const router = useRouter();
 
   const [mission, setMission] = useState<Mission | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
+  const [statusText, setStatusText] = useState("Rejoindre la mission");
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
   const [error, setError] = useState(false);
 
   // FETCH MISSION
   useEffect(() => {
-    const rawId = Array.isArray(id) ? id[0] : id;
+    const rawId = Array.isArray(missionId) ? missionId[0] : missionId;
 
     if (!rawId) {
       setError(true);
@@ -68,15 +71,27 @@ export default function JoinMissionPage() {
       setError(false);
       setMission(null);
       try {
+        setLoading(true);
         const data = await missionService.getById(numericId);
         setMission(data);
         if (userType === 'volunteer') {
           try {
-            const favorites = await volunteerService.getFavorites();
+            const [favorites, myMissions] = await Promise.all([
+              volunteerService.getFavorites(),
+              volunteerService.getMyMissions()
+            ]);
+            
             const isAlreadyFavorite = favorites.some(fav => fav.id_mission === numericId);
             setIsFavorite(isAlreadyFavorite);
+
+            // Check if already ACCEPTED
+            const alreadyAccepted = myMissions.some(m => m.id_mission === numericId);
+            if (alreadyAccepted) {
+                setIsJoined(true);
+                setStatusText("Inscrit (Validé)");
+            }
           } catch (favError) {
-            console.warn("Could not load favorites:", favError);
+            console.warn("Could not load volunteer data:", favError);
           }
         }
       } catch (e) {
@@ -88,7 +103,7 @@ export default function JoinMissionPage() {
     };
 
     fetchMission();
-  }, [id, userType]);
+  }, [missionId, userType]);
 
   const showToast = useCallback((title: string, message: string) => {
     setToast({ visible: true, title, message });
@@ -156,7 +171,6 @@ export default function JoinMissionPage() {
     return `${dateFormatted} à ${startHour}`;
   };
 
-  // HANDLERS (LOGIQUE GUEST)
   const checkAuthAndRedirect = () => {
     if (!userType || userType === 'volunteer_guest') {
       showToast("Connexion requise", "Vous devez être connecté pour effectuer cette action.");
@@ -167,16 +181,39 @@ export default function JoinMissionPage() {
 
   const handleJoinMission = async () => {
     if (!checkAuthAndRedirect()) return;
-    if (userType !== 'volunteer') {
+    if (userType !== 'volunteer' || !missionId) {
       showToast("Action indisponible", "Seuls les bénévoles peuvent rejoindre une mission.");
       return;
     }
 
+    if (isJoined) {
+        showToast("Info", "Vous êtes déjà inscrit ou en attente de validation.");
+        return;
+    }
+
+    setLoading(true);
     try {
-      await volunteerService.applyToMission(mission.id_mission);
-      showToast("Succès", "Candidature envoyée avec succès !");
+      await volunteerService.applyToMission(Number(missionId));
+      setIsJoined(true);
+      setStatusText("En attente de validation");
+      showToast("Succès", "Candidature envoyée ! En attente de validation par l'association.");
     } catch (e: any) {
-      showToast("Erreur", e.message || "Une erreur est survenue.");
+      const msg = e.response?.data?.detail || e.message || "";
+      // Detect specific backend error for already applied
+      if (
+          msg.toLowerCase().includes("already") || 
+          msg.toLowerCase().includes("existe déjà") ||
+          e.response?.status === 409 || 
+          e.response?.status === 400
+      ) {
+          setIsJoined(true);
+          setStatusText("En attente de validation");
+          showToast("Déjà postulé", "Vous avez déjà rejoint cette mission, il faut la validation de l'association.");
+      } else {
+          showToast("Erreur", "Impossible de rejoindre la mission. Réessayez plus tard.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -202,13 +239,21 @@ export default function JoinMissionPage() {
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-        const isGuest = !userType || userType === 'volunteer_guest';
+        const isGuest = !userType;
         const route = (isGuest
           ? `/(guest)/search/association/${mission.id_asso}`
           : `/(volunteer)/search/association/${mission.id_asso}`) as Href;
           router.push(route);
       }
   };
+
+  if (loading && !mission) {
+    return <ActivityIndicator style={{ flex: 1 }} size="large" />;
+  }
+   
+  if (!mission) {
+    return <Text>Mission non trouvée.</Text>;
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: Colors.white }]} >
@@ -271,7 +316,15 @@ export default function JoinMissionPage() {
                 <Text style={styles.infoLabel}>Association :</Text> {mission.association?.name || "Non spécifiée"}
             </Text>
             {!!mission.id_asso && (
-              <TouchableOpacity onPress={goToAssociation} style={{ marginLeft: 5 }}>
+              <TouchableOpacity 
+                onPress={() => {
+                    if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                    goToAssociation();
+                }} 
+                style={{ marginLeft: 5 }}
+              >
                   <Text style={{ color: Colors.orange, textDecorationLine: 'underline', fontWeight: '600' }}>
                       (Voir profil)
                   </Text>
@@ -301,11 +354,21 @@ export default function JoinMissionPage() {
                               <Text style={{ color: Colors.orange, fontSize: 20, fontWeight: '500', }}>Complet</Text>
                           </View>
                       ) : (
-                          <ButtonAuth text="Rejoindre la mission" onPress={handleJoinMission} />
+                          <ButtonAuth 
+                            text={statusText} 
+                            onPress={handleJoinMission}
+                            disabled={isJoined}
+                            style={isJoined ? { backgroundColor: 'gray' } : undefined}
+                          />
                       )}
                     </View>
                     <TouchableOpacity
-                      onPress={toggleFavorite}
+                      onPress={() => {
+                        if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                           document.activeElement.blur();
+                        }
+                        toggleFavorite();
+                      }}
                       accessibilityRole="button"
                       accessibilityLabel={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
                       accessibilityState={{ checked: isFavorite }}

@@ -28,27 +28,11 @@ export const styles1 = StyleSheet.create({
         alignItems: 'flex-start',
         gap: 20, // Espacement entre colonne gauche et droite
         width: '100%',
+        marginBottom: 20,
     },
     mainLayoutMobile: {
         flexDirection: 'column', // Mobile : Colonne
         alignItems: 'center', // Centre les éléments sur mobile
-    },
-
-    // --- COLONNES ---
-    leftColumn: {
-        flex: 1, 
-        minWidth: 320, // Largeur min de la carte profil
-        maxWidth: 450, // Largeur max pour pas qu'elle soit géante sur grand écran
-    },
-    rightColumn: {
-        flex: 1.5, // Prend un peu plus de place que la gauche sur desktop
-        width: '100%', // Important pour mobile
-        gap: 30, // Espace vertical entre Calendrier et Stats
-    },
-    columnMobile: {
-        width: '100%',
-        maxWidth: 500, // Sur mobile, on limite la largeur pour pas que ça s'étire trop sur tablette portrait
-        marginBottom: 20,
     },
 
     // --- ELEMENTS INTERNES ---

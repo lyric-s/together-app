@@ -11,13 +11,11 @@ export const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
-        maxHeight: '85%',
         marginTop: 20,
         marginBottom: 20,
     },
     scrollContent: {
         alignItems: 'center',
-        flexGrow: 1,
         paddingBottom: 20,
     },
     photoContainer: {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -88,6 +88,17 @@ export default function MobileSearchBar({
     }
   };
 
+  const cityInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (filtersOpen && Platform.OS === 'web') {
+        const timer = setTimeout(() => {
+            cityInputRef.current?.focus();
+        }, 100);
+        return () => clearTimeout(timer);
+    }
+  }, [filtersOpen]);
+
   const handleSelectCity = (item: City) => {
     setSelectedCityName(item.nom);
     const cp = item.codesPostaux && item.codesPostaux.length > 0 ? item.codesPostaux[0] : "";
@@ -133,7 +144,14 @@ export default function MobileSearchBar({
       {/* TOP BAR */}
       <View style={styles.searchBar}>
         <TouchableOpacity
-          onPress={() => setFiltersOpen(true)}
+          onPress={() => {
+            // @ts-ignore
+            if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                // @ts-ignore
+                document.activeElement.blur();
+            }
+            setFiltersOpen(true);
+          }}
           style={styles.iconButton}
         >
           <Image source={require("../assets/images/setting.png")} style={styles.icon} />
@@ -178,7 +196,8 @@ export default function MobileSearchBar({
 
       {/* FILTERS PANEL */}
       <Modal visible={filtersOpen} animationType="slide" presentationStyle="pageSheet">
-        <View style={internalStyles.modalContainer}>
+        {/* @ts-ignore */}
+        <View style={internalStyles.modalContainer} accessibilityViewIsModal={true}>
             <View style={internalStyles.modalHeader}>
                 <Text style={internalStyles.modalTitle}>Filtres</Text>
                 <TouchableOpacity onPress={() => setFiltersOpen(false)}>
@@ -200,6 +219,7 @@ export default function MobileSearchBar({
             >
               <Text style={styles.filterTitle}>Ville ou Code Postal</Text>
               <TextInput
+                ref={cityInputRef}
                 style={[styles.filterInput, { borderWidth: 1, borderColor: Colors.grayBorder, padding: 10, borderRadius: 8 }]}
                 placeholder="Ex: Paris ou 75001"
                 value={cityInputText}

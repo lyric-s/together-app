@@ -40,7 +40,11 @@ export default function VolunteerLayout() {
       {isWeb && (
         <Sidebar 
           userType="volunteer" 
-          userName={user?.username || 'Bénévole'} 
+          userName={
+             (user?.first_name && user?.last_name)
+            ? `${user.first_name} ${user.last_name}`
+            : user?.username || 'Bénévole'
+        }
           onNavigate={(route) => {
              router.push(route as Href);
           }} 

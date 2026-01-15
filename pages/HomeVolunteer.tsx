@@ -1,6 +1,6 @@
 // pages/HomeVolunteer.tsx
 import React, { useCallback, useEffect, useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 import {
   View,
@@ -115,10 +115,12 @@ export default function HomeVolunteer() {
     }
   };
 
-  useEffect(() => {
-    loadMissions();
-    loadMissionsFavorites();
-  }, [loadMissions, loadMissionsFavorites]);
+  useFocusEffect(
+    useCallback(() => {
+      loadMissions();
+      loadMissionsFavorites();
+    }, [loadMissions, loadMissionsFavorites])
+  );
 
   const handlePressMission = (missionId: number) => {
     console.log('Mission pressed:', missionId);
@@ -192,7 +194,7 @@ export default function HomeVolunteer() {
             ) : (
             <View style={isMobile ? {alignItems:'center'} : styles.missionsGrid}>
               {missions.length === 0 ? (
-                <Text style={{ color: 'gray', fontStyle: 'italic', padding: 20 }}>Aucune mission favorite disponible.</Text>
+                <Text style={{ color: 'gray', fontStyle: 'italic', padding: 20 }}>Aucune mission récente disponible pour le moment.</Text>
               ) : (
                 missions.slice(0, 3).map((mission) => (
                   <View key={mission.id_mission} style={styles.cardWrapper}>
