@@ -31,7 +31,7 @@ export interface Mission {
 export interface MissionCreate {
   name: string;
   id_location: number;
-  id_categ: number;
+  category_ids: number[];
   id_asso: number;
   date_start: string;
   date_end: string;
