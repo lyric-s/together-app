@@ -2,10 +2,10 @@
  * DocumentsVerification
  *
  * Page d'administration permettant de :
- * - lister les documents envoyés par les associations,
- * - filtrer par statut de vérification (en attente / accepté / rejeté),
+ * - lister les documents envoyés par les associations (PENDING seulement),
  * - rechercher une association par nom, code RNA ou nom de document,
- * - ouvrir un popup de détails pour accepter ou rejeter le document.
+ * - ouvrir un popup de détails pour accepter ou rejeter le document,
+ * - afficher un aperçu via presigned preview URL (admin endpoint).
  */
 
 import React, { useEffect, useMemo, useState, useCallback } from "react";
@@ -16,11 +16,11 @@ import {
     TouchableOpacity,
     TextInput,
     ActivityIndicator,
+    Platform,
+    Linking,
 } from "react-native";
 
-import Sidebar from "@/components/SideBar";
 import styles from "@/styles/pages/AssociationProfileVerificationStyles";
-
 import { adminService } from "@/services/adminService";
 
 // --------------------
@@ -31,7 +31,7 @@ type StatutTraitement = "pending" | "accepted" | "rejected";
 type AssociationDocument = {
     idDoc: number;
     docName: string;
-    urlDoc: string | null;
+    urlDoc: string | null; // (optionnel, pas utilisé pour l’aperçu)
     dateUpload: string; // déjà formaté pour affichage
     verifState: StatutTraitement;
     idAsso: number;
@@ -42,14 +42,6 @@ type AssociationDocument = {
 // --------------------
 // Helpers
 // --------------------
-const mapApiStateToUiState = (
-    state: "PENDING" | "APPROVED" | "REJECTED"
-): StatutTraitement => {
-    if (state === "PENDING") return "pending";
-    if (state === "APPROVED") return "accepted";
-    return "rejected";
-};
-
 const formatDateFR = (iso: string) => {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return iso;
@@ -64,20 +56,22 @@ const formatDateFR = (iso: string) => {
 
 export default function DocumentsVerification() {
     const [documents, setDocuments] = useState<AssociationDocument[]>([]);
-    const [selectedDoc, setSelectedDoc] = useState<AssociationDocument | null>(
-        null
-    );
+    const [selectedDoc, setSelectedDoc] = useState<AssociationDocument | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState<boolean>(false);
 
     const [search, setSearch] = useState("");
-    const [selectedState, setSelectedState] =
-        useState<StatutTraitement | null>("pending");
+    const [selectedState, setSelectedState] = useState<StatutTraitement | null>("pending");
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+    // ✅ Preview (presigned URL)
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [previewLoading, setPreviewLoading] = useState<boolean>(false);
+    const [previewError, setPreviewError] = useState<string | null>(null);
+
     // --------------------
-    // Load data (docs + associations) and join
+    // Load data (PENDING docs + associations) and join
     // --------------------
     const fetchDocuments = useCallback(async () => {
         try {
@@ -85,14 +79,11 @@ export default function DocumentsVerification() {
             setErrorMsg(null);
 
             const [docsApi, assosApi] = await Promise.all([
-                adminService.getAllDocuments(0, 100),
+                adminService.getPendingDocuments(), // ✅ endpoint pending
                 adminService.getAllAssociationsInternal(),
             ]);
 
-            const assoMap = new Map<
-                number,
-                { assoName: string; rnaCode: string }
-            >(
+            const assoMap = new Map<number, { assoName: string; rnaCode: string }>(
                 (assosApi || []).map((a: any) => [
                     a.id_asso,
                     { assoName: a.name, rnaCode: a.rna_code },
@@ -107,7 +98,10 @@ export default function DocumentsVerification() {
                     docName: doc.doc_name,
                     urlDoc: doc.url_doc ?? null,
                     dateUpload: formatDateFR(doc.date_upload),
-                    verifState: mapApiStateToUiState(doc.verif_state),
+
+                    // ✅ pending only
+                    verifState: "pending",
+
                     idAsso: doc.id_asso,
                     assoName: asso?.assoName ?? `Association #${doc.id_asso}`,
                     rnaCode: asso?.rnaCode ?? "—",
@@ -116,15 +110,12 @@ export default function DocumentsVerification() {
 
             setDocuments(joined);
 
-            // si aucun doc sélectionné, on prend le premier (optionnel)
             if (!selectedDoc && joined.length > 0) {
                 setSelectedDoc(joined[0]);
             }
         } catch (e: any) {
             console.error("Erreur chargement documents:", e);
-            setErrorMsg(
-                "Impossible de charger les documents. Vérifie ta connexion ou ton token admin."
-            );
+            setErrorMsg("Impossible de charger les documents. Vérifie ta connexion ou ton token admin.");
         } finally {
             setIsLoading(false);
         }
@@ -135,24 +126,17 @@ export default function DocumentsVerification() {
     }, [fetchDocuments]);
 
     // --------------------
-    // Counts
+    // Counts (pending only)
     // --------------------
     const counts = useMemo(() => {
-        let pending = 0;
-        let accepted = 0;
-        let rejected = 0;
-
-        documents.forEach((d) => {
-            if (d.verifState === "pending") pending += 1;
-            else if (d.verifState === "accepted") accepted += 1;
-            else if (d.verifState === "rejected") rejected += 1;
-        });
-
+        const pending = documents.length;
+        const accepted = 0;
+        const rejected = 0;
         return { pending, accepted, rejected };
     }, [documents]);
 
     // --------------------
-    // Filtered docs
+    // Filtered docs (search + status)
     // --------------------
     const filteredDocuments = useMemo(
         () =>
@@ -164,8 +148,7 @@ export default function DocumentsVerification() {
                         .toLowerCase()
                         .includes(search.toLowerCase());
 
-                const matchesState =
-                    selectedState === null || doc.verifState === selectedState;
+                const matchesState = selectedState === null || doc.verifState === selectedState;
 
                 return matchesSearch && matchesState;
             }),
@@ -192,12 +175,8 @@ export default function DocumentsVerification() {
     // UI handlers
     // --------------------
     const handleToggleStateFilter = () => {
-        const order: (StatutTraitement | null)[] = [
-            null,
-            "pending",
-            "accepted",
-            "rejected",
-        ];
+        // pending only -> [null, pending]
+        const order: (StatutTraitement | null)[] = [null, "pending"];
         const currentIndex = order.indexOf(selectedState);
         const nextIndex = (currentIndex + 1) % order.length;
         setSelectedState(order[nextIndex]);
@@ -208,13 +187,43 @@ export default function DocumentsVerification() {
         setSelectedState("pending");
     };
 
-    const handleSelectDoc = (doc: AssociationDocument) => {
+    // ✅ ouvre la modale + génère une presigned PREVIEW URL (admin)
+    const handleSelectDoc = async (doc: AssociationDocument) => {
         setSelectedDoc(doc);
         setIsDetailOpen(true);
+
+        setPreviewUrl(null);
+        setPreviewError(null);
+
+        try {
+            setPreviewLoading(true);
+
+            // ✅ IMPORTANT : utiliser l’endpoint PREVIEW (inline) côté ADMIN
+            // Il doit exister dans ton adminService:
+            // getAdminDocumentPreviewUrl(documentId) -> { preview_url, expires_in }
+            const res = await adminService.getAdminDocumentPreviewUrl(doc.idDoc);
+
+            const signed = res?.preview_url ?? null;
+
+            if (!signed) {
+                setPreviewError("Aucun lien d’aperçu disponible pour ce document.");
+                return;
+            }
+
+            // ⚠️ on ne reconstruit pas l’URL : le backend renvoie déjà une URL complète MinIO
+            setPreviewUrl(signed);
+        } catch (e) {
+            console.error("Erreur preview-url:", e);
+            setPreviewError("Impossible de générer l’aperçu du document.");
+        } finally {
+            setPreviewLoading(false);
+        }
     };
 
     const handleCloseModal = () => {
         setIsDetailOpen(false);
+        setPreviewUrl(null);
+        setPreviewError(null);
     };
 
     // --------------------
@@ -226,7 +235,11 @@ export default function DocumentsVerification() {
         try {
             setIsLoading(true);
             await adminService.approveDocument(selectedDoc.idDoc);
+
             setIsDetailOpen(false);
+            setPreviewUrl(null);
+            setPreviewError(null);
+
             await fetchDocuments();
         } catch (e) {
             console.error("Erreur approve:", e);
@@ -242,11 +255,13 @@ export default function DocumentsVerification() {
         try {
             setIsLoading(true);
 
-            // Tu peux remplacer par un input plus tard
             const reason = "Document invalide ou illisible";
-
             await adminService.rejectDocument(selectedDoc.idDoc, reason);
+
             setIsDetailOpen(false);
+            setPreviewUrl(null);
+            setPreviewError(null);
+
             await fetchDocuments();
         } catch (e) {
             console.error("Erreur reject:", e);
@@ -257,16 +272,16 @@ export default function DocumentsVerification() {
     };
 
     // --------------------
+    // Viewer component (WebView only on native)
+    // --------------------
+    const NativeWebView =
+        Platform.OS === "web" ? null : require("react-native-webview").WebView;
+
+    // --------------------
     // Render
     // --------------------
     return (
         <View style={styles.page}>
-            <Sidebar
-                userType="admin"
-                userName="Bonjour, Mohamed"
-                onNavigate={() => {}}
-            />
-
             <View style={styles.mainBackground}>
                 <ScrollView
                     style={styles.mainScroll}
@@ -276,58 +291,35 @@ export default function DocumentsVerification() {
                     <View style={styles.contentWrapper}>
                         <Text style={styles.title}>Vérification des documents</Text>
                         <Text style={styles.subtitle}>
-                            Récépissés préfectoraux envoyés par les associations. Validez ou
-                            rejetez les documents après vérification.
+                            Récépissés préfectoraux envoyés par les associations. Validez ou rejetez les
+                            documents après vérification.
                         </Text>
 
-                        {/* Loading / Error */}
                         {isLoading && (
                             <View style={{ marginTop: 12 }}>
                                 <ActivityIndicator />
                             </View>
                         )}
 
-                        {errorMsg && (
-                            <Text style={{ marginTop: 12, color: "red" }}>{errorMsg}</Text>
-                        )}
+                        {errorMsg && <Text style={{ marginTop: 12, color: "red" }}>{errorMsg}</Text>}
 
-                        {/* Résumé */}
                         <View style={styles.summaryRow}>
-                            <View
-                                style={[styles.summaryCard, styles.summaryCardPending]}
-                            >
-                                <Text
-                                    style={[styles.summaryLabel, styles.summaryLabelPending]}
-                                >
-                                    En attente
-                                </Text>
+                            <View style={[styles.summaryCard, styles.summaryCardPending]}>
+                                <Text style={[styles.summaryLabel, styles.summaryLabelPending]}>En attente</Text>
                                 <Text style={styles.summaryValue}>{counts.pending}</Text>
                             </View>
 
-                            <View
-                                style={[styles.summaryCard, styles.summaryCardAccepted]}
-                            >
-                                <Text
-                                    style={[styles.summaryLabel, styles.summaryLabelAccepted]}
-                                >
-                                    Acceptés
-                                </Text>
+                            <View style={[styles.summaryCard, styles.summaryCardAccepted]}>
+                                <Text style={[styles.summaryLabel, styles.summaryLabelAccepted]}>Acceptés</Text>
                                 <Text style={styles.summaryValue}>{counts.accepted}</Text>
                             </View>
 
-                            <View
-                                style={[styles.summaryCard, styles.summaryCardRejected]}
-                            >
-                                <Text
-                                    style={[styles.summaryLabel, styles.summaryLabelRejected]}
-                                >
-                                    Rejetés
-                                </Text>
+                            <View style={[styles.summaryCard, styles.summaryCardRejected]}>
+                                <Text style={[styles.summaryLabel, styles.summaryLabelRejected]}>Rejetés</Text>
                                 <Text style={styles.summaryValue}>{counts.rejected}</Text>
                             </View>
                         </View>
 
-                        {/* Filtres + tableau */}
                         <View style={styles.leftColumn}>
                             <View style={styles.filtersRow}>
                                 <View style={styles.searchWrapper}>
@@ -340,100 +332,52 @@ export default function DocumentsVerification() {
                                     />
                                 </View>
 
-                                <TouchableOpacity
-                                    style={styles.filterButton}
-                                    onPress={handleToggleStateFilter}
-                                >
-                                    <Text style={styles.filterButtonText}>
-                                        {getStateFilterLabel()}
-                                    </Text>
+                                <TouchableOpacity style={styles.filterButton} onPress={handleToggleStateFilter}>
+                                    <Text style={styles.filterButtonText}>{getStateFilterLabel()}</Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity
-                                    style={styles.resetButton}
-                                    onPress={handleResetFilters}
-                                >
+                                <TouchableOpacity style={styles.resetButton} onPress={handleResetFilters}>
                                     <Text style={styles.resetButtonText}>Réinitialiser</Text>
                                 </TouchableOpacity>
                             </View>
 
-                            {/* header */}
                             <View style={styles.tableHeaderRow}>
-                                <Text style={[styles.headerCell, styles.headerCellAsso]}>
-                                    Association
-                                </Text>
-                                <Text style={[styles.headerCell, styles.headerCellRNA]}>
-                                    Code RNA
-                                </Text>
-                                <Text style={[styles.headerCell, styles.headerCellDoc]}>
-                                    Document
-                                </Text>
-                                <Text style={[styles.headerCell, styles.headerCellDate]}>
-                                    Date d&apos;upload
-                                </Text>
-                                <Text style={[styles.headerCell, styles.headerCellStatus]}>
-                                    Statut
-                                </Text>
-                                <Text style={[styles.headerCell, styles.headerCellActions]}>
-                                    Actions
-                                </Text>
+                                <Text style={[styles.headerCell, styles.headerCellAsso]}>Association</Text>
+                                <Text style={[styles.headerCell, styles.headerCellRNA]}>Code RNA</Text>
+                                <Text style={[styles.headerCell, styles.headerCellDoc]}>Document</Text>
+                                <Text style={[styles.headerCell, styles.headerCellDate]}>Date d&apos;upload</Text>
+                                <Text style={[styles.headerCell, styles.headerCellStatus]}>Statut</Text>
+                                <Text style={[styles.headerCell, styles.headerCellActions]}>Actions</Text>
                             </View>
 
-                            {/* lignes */}
                             {filteredDocuments.map((doc) => (
                                 <View key={doc.idDoc} style={styles.tableRow}>
-                                    <Text
-                                        style={[styles.cellText, styles.cellAsso]}
-                                        numberOfLines={1}
-                                    >
+                                    <Text style={[styles.cellText, styles.cellAsso]} numberOfLines={1}>
                                         {doc.assoName}
                                     </Text>
 
-                                    <Text style={[styles.cellText, styles.cellRNA]}>
-                                        {doc.rnaCode}
-                                    </Text>
+                                    <Text style={[styles.cellText, styles.cellRNA]}>{doc.rnaCode}</Text>
 
-                                    <Text
-                                        style={[styles.cellText, styles.cellDoc]}
-                                        numberOfLines={1}
-                                    >
+                                    <Text style={[styles.cellText, styles.cellDoc]} numberOfLines={1}>
                                         {doc.docName}
                                     </Text>
 
-                                    <Text style={[styles.cellText, styles.cellDate]}>
-                                        {doc.dateUpload}
-                                    </Text>
+                                    <Text style={[styles.cellText, styles.cellDate]}>{doc.dateUpload}</Text>
 
                                     <View style={styles.cellStatus}>
-                                        <View
-                                            style={[
-                                                styles.statusBadge,
-                                                doc.verifState === "pending" &&
-                                                styles.statusBadgePending,
-                                                doc.verifState === "accepted" &&
-                                                styles.statusBadgeAccepted,
-                                                doc.verifState === "rejected" &&
-                                                styles.statusBadgeRejected,
-                                            ]}
-                                        >
-                                            <Text style={styles.statusBadgeText}>
-                                                {getStatusLabel(doc.verifState)}
-                                            </Text>
+                                        <View style={[styles.statusBadge, styles.statusBadgePending]}>
+                                            <Text style={styles.statusBadgeText}>{getStatusLabel(doc.verifState)}</Text>
                                         </View>
                                     </View>
 
                                     <View style={styles.cellActions}>
-                                        <TouchableOpacity
-                                            style={styles.actionButton}
-                                            onPress={() => handleSelectDoc(doc)}
-                                        >
+                                        <TouchableOpacity style={styles.actionButton} onPress={() => handleSelectDoc(doc)}>
                                             <Text style={styles.actionButtonText}>Voir</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
                             ))}
 
-                            {/* petit cas vide */}
                             {!isLoading && filteredDocuments.length === 0 && (
                                 <Text style={{ marginTop: 16, color: "#6B7280" }}>
                                     Aucun document ne correspond aux filtres.
@@ -444,22 +388,16 @@ export default function DocumentsVerification() {
                 </ScrollView>
             </View>
 
-            {/* Popup détails */}
             {isDetailOpen && selectedDoc && (
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
-                        {/* header popup */}
                         <View style={styles.modalHeaderRow}>
                             <Text style={styles.modalTitle}>Détails du document</Text>
-                            <TouchableOpacity
-                                onPress={handleCloseModal}
-                                style={styles.modalCloseButton}
-                            >
+                            <TouchableOpacity onPress={handleCloseModal} style={styles.modalCloseButton}>
                                 <Text style={styles.modalCloseButtonText}>×</Text>
                             </TouchableOpacity>
                         </View>
 
-                        {/* infos */}
                         <View style={styles.detailInfoBlock}>
                             <View style={styles.detailLine}>
                                 <Text style={styles.detailLabel}>Association</Text>
@@ -486,33 +424,63 @@ export default function DocumentsVerification() {
                             </View>
                         </View>
 
-                        {/* aperçu */}
+                        {/* ✅ APERÇU via presigned preview URL */}
                         <View style={styles.previewContainer}>
-                            <View style={styles.previewPage}>
-                                <Text style={styles.previewTitle}>Aperçu document</Text>
-                                <Text style={styles.previewHint}>
-                                    {selectedDoc.urlDoc
-                                        ? "Un lien vers le PDF est disponible via urlDoc (à brancher dans un viewer)."
-                                        : "(Le backend ne fournit pas encore d’URL exploitable pour l’aperçu.)"}
-                                </Text>
-                            </View>
+                            <Text style={styles.previewTitle}>Aperçu document</Text>
+
+                            {previewLoading ? (
+                                <View style={{ marginTop: 10 }}>
+                                    <ActivityIndicator />
+                                </View>
+                            ) : previewError ? (
+                                <View style={styles.previewPage}>
+                                    <Text style={styles.previewHint}>{previewError}</Text>
+                                </View>
+                            ) : !previewUrl ? (
+                                <View style={styles.previewPage}>
+                                    <Text style={styles.previewHint}>(Aucun aperçu disponible.)</Text>
+                                </View>
+                            ) : (
+                                <>
+                                    <TouchableOpacity
+                                        onPress={() => Linking.openURL(previewUrl)}
+                                        style={{ marginBottom: 12, alignSelf: "flex-start" }}
+                                    >
+                                        <Text style={{ textDecorationLine: "underline" }}>
+                                            Ouvrir le document dans un nouvel onglet
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <View style={styles.previewPage}>
+                                        {Platform.OS === "web" ? (
+                                            // @ts-ignore
+                                            <iframe
+                                                src={previewUrl}
+                                                title="document-preview"
+                                                style={{
+                                                    width: "100%",
+                                                    height: 260,
+                                                    border: "0px",
+                                                    borderRadius: 12,
+                                                }}
+                                            />
+                                        ) : (
+                                            <NativeWebView
+                                                source={{ uri: previewUrl }}
+                                                style={{ height: 260, width: "100%", borderRadius: 12 }}
+                                            />
+                                        )}
+                                    </View>
+                                </>
+                            )}
                         </View>
 
-                        {/* boutons */}
                         <View style={styles.modalButtonsRow}>
-                            <TouchableOpacity
-                                style={styles.rejectButton}
-                                onPress={handleReject}
-                                disabled={isLoading}
-                            >
+                            <TouchableOpacity style={styles.rejectButton} onPress={handleReject} disabled={isLoading}>
                                 <Text style={styles.rejectButtonText}>Rejeter</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.acceptButton}
-                                onPress={handleAccept}
-                                disabled={isLoading}
-                            >
+                            <TouchableOpacity style={styles.acceptButton} onPress={handleAccept} disabled={isLoading}>
                                 <Text style={styles.acceptButtonText}>Accepter</Text>
                             </TouchableOpacity>
                         </View>

@@ -1,5 +1,6 @@
 // app/(admin)/report/index.tsx
 import React from 'react';
+import ReportsVerification from '@/pages/ReportsVerification';
 /**
  * Page component for the admin reports verification view.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function ReportsVerificationPage() {
-//    return <ReportsVerification />;
+    return <ReportsVerification />;
 }

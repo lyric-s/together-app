@@ -1,14 +1,3 @@
-/**
- * DashboardAdmin
- *
- * ✅ Branché sur le back-end :
- * - overview : /internal/admin/stats/overview
- * - volunteers-by-month : /internal/admin/stats/volunteers-by-month
- * - missions-by-month : /internal/admin/stats/missions-by-month
- *
- * via adminService.getDashboardStats()
- */
-
 import React, { useEffect, useState } from "react";
 import {
     View,
@@ -20,16 +9,11 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-import Sidebar from "@/components/SideBar";
 import AdminLineChart from "@/components/AdminLineChart";
 import styles from "@/styles/pages/DashboardAdminStyles";
 import { adminService } from "@/services/adminService";
-import {authService} from "@/services/authService";
+import { useAuth } from "@/context/AuthContext";
 
-/**
- * Type des données attendues pour alimenter le dashboard.
- * L'idée est que le back renvoie exactement ce format.
- */
 type DashboardStats = {
     associationsCount: number;
     completedMissionsCount: number;
@@ -45,7 +29,8 @@ export default function DashboardAdmin() {
     const isMobile = width < 900;
     const router = useRouter();
 
-    // State qui contient toutes les stats du dashboard
+    const { userType, isLoading: authLoading } = useAuth();
+
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -58,21 +43,27 @@ export default function DashboardAdmin() {
                 setLoading(true);
                 setError(null);
 
-                // ⚠️ 7 mois comme tes mocks (tu peux mettre 12 si tu veux)
-                await authService.login("admin@example.com", "password");
-                const data = await adminService.getDashboardStats(7);
+                // ✅ on attend que l'auth soit prête
+                if (authLoading) return;
 
-                if (isMounted) {
-                    setStats(data);
+                // ✅ si pas admin, on évite l'appel
+                if (userType !== "admin") {
+                    setError("Accès refusé : vous devez être admin.");
+                    setLoading(false);
+                    return;
                 }
+
+                const data = await adminService.getDashboardStats(7);
+                console.log("🟡 dashboard stats =", JSON.stringify(data, null, 2));
+
+                if (isMounted) setStats(data);
             } catch (e) {
+                console.error("Dashboard load error:", e);
                 if (isMounted) {
                     setError("Impossible de charger les statistiques du tableau de bord.");
                 }
             } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
+                if (isMounted) setLoading(false);
             }
         };
 
@@ -81,26 +72,16 @@ export default function DashboardAdmin() {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [authLoading, userType]);
 
-    // Navigation vers les pages de vérification / traitement
-    const handleNavigateToReports = () => {
-        router.push("/reportsverification");
-    };
+    // ⚠️ Ajuste tes routes selon ta structure Expo Router (groupes, etc.)
+    const handleNavigateToReports = () => router.push("/report");
+    const handleNavigateToAssociations = () =>
+        router.push("/search");
 
-    const handleNavigateToAssociations = () => {
-        router.push("/associationverification");
-    };
-
-    // Si les données ne sont pas encore chargées, on peut afficher un message
     if (loading || !stats) {
         return (
             <View style={styles.page}>
-                <Sidebar
-                    userType="admin"
-                    userName="Bonjour, Mohamed"
-                    onNavigate={() => {}}
-                />
                 <View
                     style={[
                         styles.mainBackground,
@@ -117,7 +98,6 @@ export default function DashboardAdmin() {
         );
     }
 
-    // On extrait les labels et valeurs à partir des tableaux renvoyés par l'api back
     const volunteerMonths = stats.volunteersPerMonth.map((p) => p.month);
     const volunteerValues = stats.volunteersPerMonth.map((p) => p.value);
 
@@ -126,12 +106,6 @@ export default function DashboardAdmin() {
 
     return (
         <View style={styles.page}>
-            <Sidebar
-                userType="admin"
-                userName="Bonjour, Mohamed"
-                onNavigate={() => {}}
-            />
-
             <View style={styles.mainBackground}>
                 <ScrollView
                     style={styles.mainScroll}
@@ -145,31 +119,31 @@ export default function DashboardAdmin() {
                             Vision globale sur les performances de l’application
                         </Text>
 
-                        {/* KPIs du haut */}
                         <View style={[styles.kpiRow, isMobile && styles.column]}>
                             <KpiCard
                                 icon={require("@/assets/images/hearticondahboard.png")}
                                 label="Nombre d'association"
-                                value={stats.associationsCount.toString()}
+                                value={Number(stats.associationsCount ?? 0).toLocaleString(
+                                    "fr-FR"
+                                )}
                             />
                             <KpiCard
                                 icon={require("@/assets/images/CheckIconDashboard.png")}
                                 label="Missions accomplies"
-                                value={stats.completedMissionsCount.toLocaleString("fr-FR")}
+                                value={Number(stats.completedMissionsCount ?? 0).toLocaleString(
+                                    "fr-FR"
+                                )}
                             />
                             <KpiCard
                                 icon={require("@/assets/images/PersoniconDashboard.png")}
                                 label="Nombre d'utilisateurs"
-                                value={stats.usersCount.toLocaleString("fr-FR")}
+                                value={Number(stats.usersCount ?? 0).toLocaleString("fr-FR")}
                             />
                         </View>
 
-                        {/* Graphiques mensuels */}
                         <View style={[styles.chartsRow, isMobile && styles.column]}>
                             <View style={styles.block}>
-                                <Text style={styles.blockTitle}>
-                                    Nouveaux bénévoles par mois
-                                </Text>
+                                <Text style={styles.blockTitle}>Nouveaux bénévoles par mois</Text>
                                 <View style={[styles.chartCard, styles.chartOrange]}>
                                     <AdminLineChart
                                         labels={volunteerMonths}
@@ -180,9 +154,7 @@ export default function DashboardAdmin() {
                             </View>
 
                             <View style={styles.block}>
-                                <Text style={styles.blockTitle}>
-                                    Missions terminées par mois
-                                </Text>
+                                <Text style={styles.blockTitle}>Missions terminées par mois</Text>
                                 <View style={[styles.chartCard, styles.chartPurple]}>
                                     <AdminLineChart
                                         labels={missionMonths}
@@ -193,14 +165,11 @@ export default function DashboardAdmin() {
                             </View>
                         </View>
 
-                        {/* Cartes du bas */}
                         <View style={[styles.bottomRow, isMobile && styles.column]}>
                             <View style={styles.block}>
-                                <Text style={styles.blockTitle}>
-                                    Signalements en attentes
-                                </Text>
+                                <Text style={styles.blockTitle}>Signalements en attentes</Text>
                                 <PendingCard
-                                    value={stats.pendingReportsCount.toString()}
+                                    value={String(stats.pendingReportsCount ?? 0)}
                                     cardStyle={styles.pendingOrange}
                                     buttonStyle={styles.btnOrange}
                                     onPress={handleNavigateToReports}
@@ -212,7 +181,7 @@ export default function DashboardAdmin() {
                                     Associations en attente de validation
                                 </Text>
                                 <PendingCard
-                                    value={stats.pendingAssociationsCount.toString()}
+                                    value={String(stats.pendingAssociationsCount ?? 0)}
                                     cardStyle={styles.pendingPurple}
                                     buttonStyle={styles.btnPurple}
                                     onPress={handleNavigateToAssociations}
@@ -226,10 +195,6 @@ export default function DashboardAdmin() {
     );
 }
 
-/**
- * Composant réutilisable pour afficher une carte KPI.
- * Il reçoit l'icône, le label et la valeur à afficher.
- */
 function KpiCard({
                      icon,
                      label,
@@ -252,10 +217,6 @@ function KpiCard({
     );
 }
 
-/**
- * Composant pour les cartes du bas (signalements / associations).
- * Il affiche une grande valeur et un bouton "traiter" qui déclenche une navigation.
- */
 function PendingCard({
                          value,
                          cardStyle,
@@ -270,11 +231,7 @@ function PendingCard({
     return (
         <View style={[styles.pendingCard, cardStyle]}>
             <Text style={styles.pendingValue}>{value}</Text>
-
-            <TouchableOpacity
-                style={[styles.pendingBtn, buttonStyle]}
-                onPress={onPress}
-            >
+            <TouchableOpacity style={[styles.pendingBtn, buttonStyle]} onPress={onPress}>
                 <Text style={styles.pendingBtnText}>traiter</Text>
             </TouchableOpacity>
         </View>

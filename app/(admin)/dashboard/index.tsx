@@ -1,5 +1,6 @@
 // app/(admin)/dashboard/index.tsx
 import React from 'react';
+import DashboardAdmin from '@/pages/DashboardAdmin';
 /**
  * Admin dashboard page component for the application's admin area.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function DashboardAdminPage() {
-//    return <DashboardAdmin />;
+    return <DashboardAdmin />;
 }

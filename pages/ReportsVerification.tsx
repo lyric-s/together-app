@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, TextInput, Image } from "react-native";
 
-import Sidebar from "@/components/SideBar";
 import reportStyles from "@/styles/pages/ReportsVerificationStyles";
 
 import { adminService } from "@/services/adminService";
@@ -46,7 +45,6 @@ const mapUiStateToApi = (s: ReportState): ReportProcessingState => {
 const mapApiTargetToUiType = (target: string): ReportType => {
     if (target === "MISSION") return "Mission";
     if (target === "ASSOCIATION") return "Association";
-    // PROFILE (ou autre) -> Utilisateur
     return "Utilisateur";
 };
 
@@ -62,7 +60,7 @@ const formatDateFr = (iso: string): string => {
 const mapApiReportToUi = (r: ReportPublic): Report => ({
     id: r.id_report,
     type: mapApiTargetToUiType(r.target),
-    target: r.target, // si tu préfères afficher autre chose, on pourra mettre un "display_target"
+    target: r.target,
     reason: r.reason,
     dateReporting: formatDateFr(r.date_reporting),
     state: mapApiStateToUi(r.state),
@@ -71,16 +69,11 @@ const mapApiReportToUi = (r: ReportPublic): Report => ({
 });
 
 const mapStatsToUiCounts = (stats: ReportStatsResponse | null) => {
-    // ton backend peut renvoyer {PENDING: x, APPROVED: y, REJECTED: z}
-    // ou {pending: x, accepted: y, rejected: z} selon implémentation
     if (!stats) return { pending: 0, accepted: 0, rejected: 0 };
 
-    const pending =
-        (stats as any).PENDING ?? (stats as any).pending ?? 0;
-    const accepted =
-        (stats as any).APPROVED ?? (stats as any).accepted ?? 0;
-    const rejected =
-        (stats as any).REJECTED ?? (stats as any).rejected ?? 0;
+    const pending = (stats as any).PENDING ?? (stats as any).pending ?? 0;
+    const accepted = (stats as any).APPROVED ?? (stats as any).accepted ?? 0;
+    const rejected = (stats as any).REJECTED ?? (stats as any).rejected ?? 0;
 
     return { pending, accepted, rejected };
 };
@@ -97,7 +90,6 @@ export default function ReportsVerification() {
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-    // pagination simple (tu peux améliorer plus tard)
     const [offset, setOffset] = useState(0);
     const limit = 100;
 
@@ -134,12 +126,12 @@ export default function ReportsVerification() {
     }, [offset]);
 
     const counts = useMemo(() => {
-        // si stats OK -> on les affiche (recommandé)
-        // sinon fallback -> compute from current list
         const fromStats = mapStatsToUiCounts(stats);
         if (stats) return fromStats;
 
-        let pending = 0, accepted = 0, rejected = 0;
+        let pending = 0,
+            accepted = 0,
+            rejected = 0;
         reports.forEach((r) => {
             if (r.state === "pending") pending++;
             else if (r.state === "accepted") accepted++;
@@ -224,10 +216,8 @@ export default function ReportsVerification() {
             setReports((prev) => prev.map((r) => (r.id === reportId ? updatedUi : r)));
             setSelectedReport(updatedUi);
 
-            // refresh stats after change
             refreshStats();
         } catch (e: any) {
-            // tu peux afficher une notif/toast si tu veux
             console.error(e?.message ?? e);
         }
     };
@@ -237,8 +227,6 @@ export default function ReportsVerification() {
 
     return (
         <View style={reportStyles.page}>
-            <Sidebar userType="admin" userName="Bonjour, Mohamed" onNavigate={() => {}} />
-
             <View style={reportStyles.mainBackground}>
                 <ScrollView
                     style={reportStyles.mainScroll}
@@ -249,29 +237,50 @@ export default function ReportsVerification() {
                         <Text style={reportStyles.title}>Signalement</Text>
                         <Text style={reportStyles.subtitle}>Liste et gestion des signalements reçus</Text>
 
-                        {/* Optional: état loading / erreur */}
                         {loading && <Text style={{ marginBottom: 10 }}>Chargement...</Text>}
                         {errorMsg && <Text style={{ marginBottom: 10, color: "red" }}>{errorMsg}</Text>}
 
-                        {/* Summary cards */}
                         <View style={reportStyles.summaryRow}>
-                            <View style={[reportStyles.summaryCard, reportStyles.summaryCardOrange, reportStyles.summaryCardFixed]}>
-                                <Text style={[reportStyles.summaryCardLabel, reportStyles.summaryLabelOrange]}>Non traités</Text>
+                            <View
+                                style={[
+                                    reportStyles.summaryCard,
+                                    reportStyles.summaryCardOrange,
+                                    reportStyles.summaryCardFixed,
+                                ]}
+                            >
+                                <Text style={[reportStyles.summaryCardLabel, reportStyles.summaryLabelOrange]}>
+                                    Non traités
+                                </Text>
                                 <Text style={reportStyles.summaryCardValue}>{counts.pending}</Text>
                             </View>
 
-                            <View style={[reportStyles.summaryCard, reportStyles.summaryCardPurple, reportStyles.summaryCardFixed]}>
-                                <Text style={[reportStyles.summaryCardLabel, reportStyles.summaryLabelPurple]}>Acceptés</Text>
+                            <View
+                                style={[
+                                    reportStyles.summaryCard,
+                                    reportStyles.summaryCardPurple,
+                                    reportStyles.summaryCardFixed,
+                                ]}
+                            >
+                                <Text style={[reportStyles.summaryCardLabel, reportStyles.summaryLabelPurple]}>
+                                    Acceptés
+                                </Text>
                                 <Text style={reportStyles.summaryCardValue}>{counts.accepted}</Text>
                             </View>
 
-                            <View style={[reportStyles.summaryCard, reportStyles.summaryCardGreen, reportStyles.summaryCardFixed]}>
-                                <Text style={[reportStyles.summaryCardLabel, reportStyles.summaryLabelGreen]}>Rejetés</Text>
+                            <View
+                                style={[
+                                    reportStyles.summaryCard,
+                                    reportStyles.summaryCardGreen,
+                                    reportStyles.summaryCardFixed,
+                                ]}
+                            >
+                                <Text style={[reportStyles.summaryCardLabel, reportStyles.summaryLabelGreen]}>
+                                    Rejetés
+                                </Text>
                                 <Text style={reportStyles.summaryCardValue}>{counts.rejected}</Text>
                             </View>
                         </View>
 
-                        {/* Search + filters */}
                         <View style={reportStyles.filtersRow}>
                             <View style={reportStyles.searchWrapper}>
                                 <Image source={require("../assets/images/loupe.png")} style={reportStyles.searchIcon} />
@@ -297,7 +306,6 @@ export default function ReportsVerification() {
                             </TouchableOpacity>
                         </View>
 
-                        {/* Table header */}
                         <View style={reportStyles.tableHeaderRow}>
                             <Text style={[reportStyles.headerCell, reportStyles.headerCellUser]}>Utilisateur</Text>
                             <Text style={[reportStyles.headerCell, reportStyles.headerCellType]}>Type</Text>
@@ -308,7 +316,6 @@ export default function ReportsVerification() {
                             <Text style={[reportStyles.headerCell, reportStyles.headerCellActions]}>Actions</Text>
                         </View>
 
-                        {/* Rows */}
                         {filteredReports.map((report) => (
                             <View key={report.id} style={reportStyles.tableRow}>
                                 <Text style={[reportStyles.cellText, reportStyles.cellUser]}>{report.reporterName}</Text>
@@ -336,7 +343,10 @@ export default function ReportsVerification() {
                                 </View>
 
                                 <View style={reportStyles.cellActions}>
-                                    <TouchableOpacity style={reportStyles.actionButton} onPress={() => handleOpenDetails(report)}>
+                                    <TouchableOpacity
+                                        style={reportStyles.actionButton}
+                                        onPress={() => handleOpenDetails(report)}
+                                    >
                                         <Text style={reportStyles.actionButtonText}>Voir</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -346,7 +356,6 @@ export default function ReportsVerification() {
                 </ScrollView>
             </View>
 
-            {/* Modal */}
             {selectedReport && (
                 <View style={reportStyles.modalOverlay}>
                     <View style={reportStyles.modalContainer}>

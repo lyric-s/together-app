@@ -30,73 +30,75 @@ const reportStyles = StyleSheet.create({
 
     contentWrapper: {
         width: "100%",
-        maxWidth: 980, // moins large -> cartes + tableau plus compacts
+        maxWidth: 1180,          // ✅ même largeur que documents
         alignSelf: "center",
-        paddingHorizontal: 32,
+        paddingHorizontal: 40,    // ✅ même padding
         paddingVertical: 24,
     },
 
     title: {
-        fontSize: 30,
+        fontSize: 24,             // ✅ même taille
         fontWeight: "700",
-        color: "#1E1E1E",
+        color: "#111827",         // ✅ même couleur
+        marginBottom: 4,
     },
 
     subtitle: {
-        marginTop: 4,
         fontSize: 12,
         color: Colors.grayText,
+        marginBottom: 24,         // ✅ même spacing
     },
 
-    // ----- Summary cards -----
     summaryRow: {
-        marginTop: 20,
         flexDirection: "row",
-        columnGap: 16,
+        gap: 16,
+        marginBottom: 24,
+        width: "60%",        // ✅ même emplacement (à gauche + pas trop large)
+        maxWidth: 550,
+        alignSelf: "flex-start",
     },
 
     summaryCard: {
-        borderRadius: 16,
+        flex: 1,
+        borderRadius: 20,    // ✅ même radius
         paddingVertical: 18,
-        paddingHorizontal: 18,
-        justifyContent: "space-between",
+        paddingHorizontal: 20,
+        justifyContent: "center",
     },
 
-    summaryCardFixed: {
-        width: 210, // plus petit que 260 -> coupe les côtés exagérés
+// ✅ mêmes couleurs que Documents
+    summaryCardOrange: {
+        backgroundColor: "#FFF4E5",
+    },
+    summaryCardPurple: {
+        backgroundColor: "#E6F7EC",
+    },
+    summaryCardGreen: {
+        backgroundColor: "#FFECEC",
     },
 
     summaryCardLabel: {
-        fontSize: 17,
-        fontWeight: "700",
-        marginBottom: 10,
-    },
-
-    summaryCardValue: {
-        fontSize: 28,
-        fontWeight: "800",
-        color: "#111827",
+        fontSize: 13,        // ✅ même taille label
+        fontWeight: "600",
+        marginBottom: 6,
     },
 
     summaryLabelOrange: {
-        color: "#FF3700",
+        color: "#EA580C",
     },
     summaryLabelPurple: {
-        color: "#6A00FF",
+        color: "#16A34A",
     },
     summaryLabelGreen: {
-        color: "#38B386",
+        color: "#DC2626",
     },
 
-    summaryCardOrange: {
-        backgroundColor: "#FFE7D1",
+    summaryCardValue: {
+        fontSize: 24,        // ✅ même taille value
+        fontWeight: "700",
+        color: "#111827",
     },
-    summaryCardPurple: {
-        backgroundColor: "#F1E6FF",
-    },
-    summaryCardGreen: {
-        backgroundColor: "#DFF5E7",
-    },
+
 
     // ----- Filters / search bar -----
     filtersRow: {
