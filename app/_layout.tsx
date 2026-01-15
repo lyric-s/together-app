@@ -23,7 +23,8 @@ function RootLayoutNav() {
     const inProtectedRoute = ['(volunteer)', '(association)', '(admin)'].includes(segments[0]);
 
     if (userType !== 'volunteer_guest' && inAuthGroup) {
-      router.replace(`/(${userType})/home` as any);
+      const targetHome = userType === 'admin' ? 'dashboard' : 'home';
+      router.replace(`/(${userType})/${targetHome}` as any);
     } 
     else if (userType === 'volunteer_guest' && inProtectedRoute) {
       router.replace('/(guest)/home' as any);
