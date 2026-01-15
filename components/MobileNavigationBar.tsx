@@ -44,6 +44,7 @@ const BottomNavBar: React.FC = () => {
     { id: 'search', route: '/(volunteer)/search', iconName: 'search', iconOutline: 'search-outline', label: 'Recherche' },
     { id: 'library', route: '/(volunteer)/library', iconName: 'book', iconOutline: 'book-outline', label: 'Activité' },
     { id: 'profile', route: '/(volunteer)/profile', iconName: 'person', iconOutline: 'person-outline', label: 'Profil' },
+    { id: 'settings', route: '/settings', iconName: 'settings', iconOutline: 'settings-outline', label: 'Paramètres' },
   ];
 
   const guestTabs: TabItem[] = [
@@ -51,6 +52,7 @@ const BottomNavBar: React.FC = () => {
     { id: 'search', route: '/(guest)/search', iconName: 'search', iconOutline: 'search-outline', label: 'Recherche' },
     { id: 'library', route: '/(guest)/library', iconName: 'book', iconOutline: 'book-outline', label: 'Activité' },
     { id: 'profile', route: '/(guest)/profile', iconName: 'person', iconOutline: 'person-outline', label: 'Profil' },
+    { id: 'settings', route: '/settings', iconName: 'settings', iconOutline: 'settings-outline', label: 'Paramètres' },
   ];
 
   const tabs = userType === 'volunteer' ? volunteerTabs : guestTabs;

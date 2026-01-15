@@ -4,6 +4,7 @@ import { Mission } from '@/models/mission.model';
 import { UserCreate } from '@/models/user.model';
 import { handleApiError } from '@/services/apiErrorHandler'
 import { ProcessingStatus } from '@/models/enums';
+import { mapApiToMission } from '@/utils/mission.utils';
 
 // --- Service ---
 export const volunteerService = {
@@ -91,11 +92,62 @@ export const volunteerService = {
     try {
       // dateFilter format: "YYYY-MM-DD"
       const params = targetDate ? { target_date: targetDate } : undefined;
-      const { data } = await api.get<Mission[]>('/volunteers/me/missions', { params });
-      return data;
+      const { data } = await api.get<any[]>('/volunteers/me/missions', { params });
+      return data.map(mapApiToMission);
     } catch (error) {
       handleApiError(error);
       throw error;
+    }
+  },
+
+  /**
+   * Missions À VENIR (Date de début >= Aujourd'hui)
+   * Utilisé pour la page: (volunteer)/library/upcoming
+   */
+  getEnrolledMissions: async (): Promise<Mission[]> => {
+    try {
+      const allMissions = await volunteerService.getMyMissions();
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const upcoming = allMissions.filter(mission => {
+        const missionDate = new Date(mission.date_start);
+        return missionDate >= today;
+      });
+
+      return upcoming.sort((a, b) => 
+        new Date(a.date_start).getTime() - new Date(b.date_start).getTime()
+      );
+
+    } catch (error) {
+      console.error("Erreur getEnrolledMissions", error);
+      return [];
+    }
+  },
+
+  /**
+   * Missions PASSÉES (Date de début < Aujourd'hui)
+   */
+  getHistoryMissions: async (): Promise<Mission[]> => {
+    try {
+      const allMissions = await volunteerService.getMyMissions();
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const history = allMissions.filter(mission => {
+        const missionDate = new Date(mission.date_start);
+        return missionDate < today;
+      });
+
+      return history.sort((a, b) => 
+        new Date(b.date_start).getTime() - new Date(a.date_start).getTime()
+      );
+
+    } catch (error) {
+      console.error("Erreur getHistoryMissions", error);
+      return [];
     }
   },
 
@@ -107,8 +159,8 @@ export const volunteerService = {
    */
   getFavorites: async (): Promise<Mission[]> => {
     try {
-      const { data } = await api.get<Mission[]>('/volunteers/me/favorites');
-      return data;
+      const { data } = await api.get<any[]>('/volunteers/me/favorites');
+      return data.map(mapApiToMission);
     } catch (error) {
       handleApiError(error);
       throw error;

@@ -133,4 +133,16 @@ webInfoColumn: {
     fontWeight: "600",
     fontSize : isWeb ? 19 : 15
   },
+
+  buttonDisabled: {
+        marginTop: 10,
+        alignSelf: 'center',
+        width: '60%',
+        maxWidth: 260,
+        height: 50,
+        borderRadius: 30,
+        backgroundColor: Colors.orangeVeryLight,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

@@ -1,5 +1,6 @@
 // app/(volunteer)/history/index.tsx
 import React from 'react';
+import HistoryVolunteer from '@/pages/HistoryVolunteer';
 /**
  * Page component for the volunteer history route. It is a placeholder and currently renders nothing.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function HistoryVolunteerPage() {
-//    return <HistoryVolunteer />;
+    return <HistoryVolunteer />;
 }

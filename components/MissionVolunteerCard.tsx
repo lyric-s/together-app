@@ -49,7 +49,15 @@ export default function MissionVolunteerCard({
   : "Lieu non précisé";
 
   return (
-    <TouchableOpacity style={[styles.card, { alignSelf: isWeb ? 'center' : 'auto',}]} onPress={onPressMission}>
+    <TouchableOpacity 
+      style={[styles.card, { alignSelf: isWeb ? 'center' : 'auto',}]} 
+      onPress={() => {
+         if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+             document.activeElement.blur();
+         }
+         onPressMission();
+      }}
+    >
       
       {/* Image */}
       <View style={styles.imageContainer}>
@@ -65,7 +73,16 @@ export default function MissionVolunteerCard({
 
         {/* Heart  (optional) */}
         {onPressFavorite && (
-            <TouchableOpacity style={styles.heartButton} onPress={onPressFavorite} activeOpacity={0.7}>
+            <TouchableOpacity 
+                style={styles.heartButton} 
+                onPress={() => {
+                    if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                    onPressFavorite();
+                }} 
+                activeOpacity={0.7}
+            >
                 <Image
                     source={
                         isFavorite
@@ -91,7 +108,7 @@ export default function MissionVolunteerCard({
           style={styles.peopleIcon}
         />
         <Text style={styles.peopleText}>
-          {mission.capacity_min} / {mission.capacity_max}
+          {mission.volunteers_enrolled} / {mission.capacity_max}
         </Text>
       </View>
     </TouchableOpacity>

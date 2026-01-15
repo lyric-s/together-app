@@ -19,6 +19,9 @@ export interface Mission {
   capacity_max: number;
   volunteers_enrolled?: number;
   image_url?: string;
+  volunteers_enrolled: number;
+  available_slots: number;
+  is_full: boolean;
 
   id_location: number;
   id_categ: number;
@@ -32,7 +35,7 @@ export interface Mission {
 export interface MissionCreate {
   name: string;
   id_location: number;
-  category_ids: number[];
+  id_categs: Category[];
   id_asso: number;
   date_start: string;
   date_end: string;
@@ -46,7 +49,7 @@ export interface MissionCreate {
 export interface MissionUpdate {
   name?: string;
   id_location?: number;
-  id_categ?: number;
+  id_categs?: Category[];
   date_start?: string;
   date_end?: string;
   skills?: string;

@@ -114,7 +114,7 @@ export default function ProfilCard({
     onSave,
     showAlert,
 }: Props) {
-    const { width, height } = useWindowDimensions();
+    const { width } = useWindowDimensions();
     const contentPadding = width < 380 ? 15 : 30;
     const [isEditing, setIsEditing] = useState(false);
     const labels = getLabels(userType);
@@ -285,7 +285,7 @@ export default function ProfilCard({
 
     return (
         <ScrollView
-            style={styles.card}
+            style={[styles.card, { width: '90%' }]}
             contentContainerStyle={[styles.scrollContent, { padding: contentPadding }]}
             showsVerticalScrollIndicator={false}
             alwaysBounceVertical={false}

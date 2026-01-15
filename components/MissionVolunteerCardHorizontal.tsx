@@ -59,7 +59,12 @@ export default function MissionVolunteerCard({
           marginBottom: 5
         }
       ]}
-      onPress={onPressMission}
+      onPress={() => {
+        if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+            document.activeElement.blur();
+        }
+        onPressMission();
+      }}
       activeOpacity={0.8}
     >
 
@@ -74,7 +79,16 @@ export default function MissionVolunteerCard({
         </View>
 
         {onPressFavorite && (
-          <TouchableOpacity style={styles.heartButtonOverlay} onPress={onPressFavorite} activeOpacity={0.7}>
+          <TouchableOpacity 
+            style={styles.heartButtonOverlay} 
+            onPress={() => {
+                if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                }
+                onPressFavorite();
+            }} 
+            activeOpacity={0.7}
+          >
             <Image
               source={
                 isFavorite
@@ -97,7 +111,7 @@ export default function MissionVolunteerCard({
 
         <View style={styles.peopleContainer}>
           <Text style={styles.peopleText}>
-            {mission.capacity_min} / {mission.capacity_max}
+            {mission.volunteers_enrolled} / {mission.capacity_max}
           </Text>
           <Image
             source={require("../assets/images/people.png")}

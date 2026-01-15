@@ -6,21 +6,16 @@ const { width: screenWidth } = Dimensions.get('window');
 export const styles = StyleSheet.create({
     card: {
         backgroundColor: Colors.white,
-        borderRadius: 15, // Un peu plus arrondi pour un look moderne
+        borderRadius: 15,
         shadowColor: Colors.black,
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
-        // On retire maxHeight fixe pour laisser le contenu grandir si nécessaire
-        // On retire margin: 20 car c'est géré par le parent ou le width dynamique
-        maxHeight: '85%', // Laisse un peu d'espace en haut et en bas de l'écran
         marginTop: 20,
         marginBottom: 20,
     },
     scrollContent: {
         alignItems: 'center',
-        flexGrow: 1,
-        // margin: 40 supprimé et remplacé par padding dynamique dans le composant
         paddingBottom: 20,
     },
     photoContainer: {
@@ -28,39 +23,39 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     photo: {
-        width: 120, // Légèrement réduit pour gagner de la place sur petits écrans
+        width: 120,
         height: 120,
-        borderRadius: 60, // Doit être la moitié de width/height pour être rond
-        backgroundColor: Colors.whiteLittleGray, // Couleur de fond si pas d'image
+        borderRadius: 60,
+        backgroundColor: Colors.whiteLittleGray,
     },
     inputRow: {
         flexDirection: 'row',
-        alignItems: 'center', // Centrer verticalement
-        marginBottom: 12, // Espacement vertical entre les lignes
+        alignItems: 'center',
+        marginBottom: 12,
         width: '100%',
     },
     labelContainer: {
-        flex: 1, // Prend 1 part de l'espace (environ 30-35%)
+        flex: 1,
         paddingRight: 10,
         justifyContent: 'center',
     },
     inputWrapper: {
-        flex: 2, // Prend 2 parts de l'espace (environ 65-70%) - Plus flexible que width: '65%'
+        flex: 2,
     },
     label: {
         fontWeight: "600",
-        fontSize: 13, // Un peu plus petit pour éviter le retour à la ligne
+        fontSize: 13,
         color: Colors.violet,
         textAlign: 'left',
     },
     text: {
         fontSize: 14,
         paddingVertical: 8,
-        textAlign: 'center', // Changé à left pour meilleure lisibilité ? Ou center selon design
+        textAlign: 'center',
         color: Colors.black,
     },
     separator: {
-        height: 1, // Un peu plus épais pour visibilité
+        height: 1,
         backgroundColor: Colors.violet,
         opacity: 0.5,
     },
@@ -90,6 +85,23 @@ export const styles = StyleSheet.create({
         width: '100%', // Le bouton remplit son wrapper
         maxWidth: 140, // Mais ne dépasse pas 140px sur grands écrans
         height: 40,    // Hauteur standard tactile
+    },
+    // Boutons
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 30,
+        width: '100%',
+        gap: 10,
+    },
+    buttonWrapper: {
+        flex: 1,
+        alignItems: 'center',
+    },
+    responsiveButton: {
+        width: '100%',
+        maxWidth: 140,
+        height: 40,
     },
     editIconContainer: {
         position: 'absolute',
