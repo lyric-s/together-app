@@ -161,8 +161,24 @@ export default function Register() {
             console.log("Inscription lancée");
             router.replace(`/(${payload.type})/home` as any);
         } catch (e: any) {
-            console.error(e);
-            showToast("Échec de l'inscription", e.message || "Une erreur est survenue.");
+            console.error("ERREUR DÉTAILLÉE D'INSCRIPTION:", JSON.stringify(e, null, 2));
+
+            let errorMessage = "Une erreur inconnue est survenue.";
+
+            if (e.response) {
+                const serverError = e.response.data;
+                if (serverError && serverError.detail) {
+                    errorMessage = serverError.detail;
+                } else {
+                    errorMessage = `Erreur du serveur : ${e.response.status}`;
+                }
+            } else if (e.request) {
+                errorMessage = "Erreur Réseau : Impossible de contacter le serveur. Vérifiez l'URL de l'API et si le backend est bien démarré.";
+            } else {
+                errorMessage = e.message;
+            }
+
+            showToast("Échec de l'inscription", errorMessage);
         } finally {
             setLoading(false);
         }

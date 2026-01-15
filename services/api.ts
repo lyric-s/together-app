@@ -15,9 +15,9 @@ if (__DEV__ && !localhost) {
     console.warn('Could not determine localhost IP, falling back to "localhost"');
 }
 
-const BASE_URL = __DEV__
-    ? `http://${localhost}:8000`
-    : 'https://together-api.out-online.net';
+const BASE_URL = __DEV__ 
+  ? `http://${localhost}:8000`
+  : 'https://together-api.out-online.net';
 
 const api = axios.create({
     baseURL: BASE_URL,
