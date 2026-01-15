@@ -13,34 +13,35 @@ import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/ActivityAssosCSS';
 import ListeBenevolesModal from '@/components/ListBenevolesModal';
 import { Mission } from '@/models/mission.model';
-import { Volunteer, VolunteerInfo, VolunteerPublic } from '@/models/volunteer.model';
+import { Volunteer, VolunteerStatus, VolunteerWithStatus } from '@/models/volunteer.model';
 import { router } from 'expo-router';
 import { mapMissionPublicToMission } from '@/utils/mission.utils';
 import { associationService } from '@/services/associationService';
-import { missionService } from '@/services/missionService';
 import { volunteerService } from '@/services/volunteerService';
+import { ProcessingStatus } from '@/models/enums';
 
-export const mapPublicVolunteerToVolunteer = async (
-  publicVolunteers: VolunteerPublic[]
-): Promise<Volunteer[]> => {
+export const mapVolunteerStatusToVolunteerWithStatus = async (
+  volunteerStatuses: VolunteerStatus[]
+): Promise<VolunteerWithStatus[]> => {
   const volunteers = await Promise.all(
-    publicVolunteers.map(async (pv) => {
-      const fullProfile = await volunteerService.getById(pv.id_volunteer);
+    volunteerStatuses.map(async (vs) => {
+      const fullProfile = await volunteerService.getById(vs.id_volunteer);
 
       if (!fullProfile) {
         // fallback minimal si l’API échoue
         return {
-          id_volunteer: pv.id_volunteer,
+          id_volunteer: vs.id_volunteer,
           id_user: 0,
-          first_name: pv.first_name,
-          last_name: pv.last_name,
-          phone_number: pv.phone_number,
+          first_name: vs.volunteer_first_name,
+          last_name: vs.volunteer_last_name,
+          phone_number: vs.volunteer_phone,
           birthdate: '',
-          skills: pv.skills,
+          skills: vs.volunteer_skills,
           bio: '',
           active_missions_count: 0,
           finished_missions_count: 0,
-        } as Volunteer;
+          state: vs.state,
+        } as VolunteerWithStatus;
       }
 
       return {
@@ -57,7 +58,8 @@ export const mapPublicVolunteerToVolunteer = async (
         active_missions_count: fullProfile.active_missions_count,
         finished_missions_count: fullProfile.finished_missions_count,
         user: fullProfile.user,
-      } as Volunteer;
+        state: vs.state,
+      } as VolunteerWithStatus;
     })
   );
 
@@ -97,7 +99,7 @@ export default function ActivityAssos() {
   const [modalVisible, setModalVisible] = useState(false);
   const [missionClick, setMissionClick] = useState<Mission | null>(null);
   const [search, setSearch] = useState('');
-  const [benevoles, setBenevoles] = useState<Volunteer[]>([]);
+  const [benevoles, setBenevoles] = useState<VolunteerWithStatus[]>([]);
   const [loading, setLoading] = useState(false);
 
   // ---------------------
@@ -129,9 +131,8 @@ export default function ActivityAssos() {
   const loadBenevoles = async (missionId: number) => {
     setLoading(true);
     try {
-      // Example API call (replace with your real endpoint)
-      const volunteers = await associationService.getMissionEngagements(missionId);
-      const volunteers_V = await mapPublicVolunteerToVolunteer(volunteers)
+      const volunteersStatus = await associationService.getMissionEngagements(missionId);
+      const volunteers_V = await mapVolunteerStatusToVolunteerWithStatus(volunteersStatus)
       setBenevoles(volunteers_V); // populate volunteer modal
     } catch (error) {
       console.error('Error loading volunteers:', error);

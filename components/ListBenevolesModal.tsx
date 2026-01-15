@@ -1,8 +1,9 @@
 import { Colors } from '@/constants/colors';
-import { Volunteer } from '@/models/volunteer.model';
+import { VolunteerWithStatus } from '@/models/volunteer.model';
 import { styles } from '@/styles/pages/ChangeMissionCSS';
 import { FlatList, Image, Modal, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
 import { associationService } from '@/services/associationService';
+import { ProcessingStatus } from '@/models/enums';
 
 type Props = {
     visible: boolean;
@@ -10,8 +11,8 @@ type Props = {
     title: string;
     search: string;
     setSearch: (value: string) => void;
-    benevoles: Volunteer[]; // list of volunteers
-    setBenevoles: (value: Volunteer[]) => void;
+    benevoles: VolunteerWithStatus[]; // list of volunteers
+    setBenevoles: (value: VolunteerWithStatus[]) => void;
     missionId: number; // <-- new prop to know which mission
 };
 
@@ -31,6 +32,7 @@ export default function ListeBenevolesModal({
     const filteredBenevoles = benevoles.filter(b =>
         (b.last_name + ' ' + b.first_name).toLowerCase().includes(search.toLowerCase())
     );
+    
 
     // ---------------------
     // REJECT VOLUNTEER ENGAGEMENT VIA API
@@ -58,17 +60,59 @@ export default function ListeBenevolesModal({
         );
     };
 
-    const renderItem = ({ item }: { item: Volunteer }) => (
+    // ---------------------
+    // ACCEPT VOLUNTEER ENGAGEMENT VIA API
+    // ---------------------
+    const acceptBenevole = async (volunteerId: number) => {
+        try {
+            await associationService.approveEngagement(volunteerId, missionId);
+
+            // Mise à jour locale : on passe l’état à APPROVED
+            setBenevoles(
+            benevoles.map(b =>
+                b.id_volunteer === volunteerId
+                ? { ...b, state: ProcessingStatus.APPROVED }
+                : b
+            )
+            );
+        } catch (error) {
+            console.error('Error approving volunteer:', error);
+            Alert.alert('Erreur', "Impossible d'accepter ce bénévole.");
+        }
+    };
+
+
+    const renderItem = ({ item }: { item: VolunteerWithStatus }) => (
         <View style={styles.itemContainer}>
-            <Text style={styles.benevoleText}>{item.last_name} {item.first_name}</Text>
+            <Text style={styles.benevoleText}>
+            {item.last_name} {item.first_name}
+            </Text>
+
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+            {/* Bouton ACCEPTER */}
+            {item.state === ProcessingStatus.PENDING && (
+                <TouchableOpacity
+                style={[
+                    styles.croixCircle,
+                    { backgroundColor: '#059669' },
+                ]}
+                onPress={() => acceptBenevole(item.id_volunteer)}
+                >
+                <Text style={styles.croixText}>✓</Text>
+                </TouchableOpacity>
+            )}
+
+            {/* Bouton REFUSER */}
             <TouchableOpacity
                 style={styles.croixCircle}
                 onPress={() => removeBenevole(item.id_volunteer)}
             >
                 <Text style={styles.croixText}>×</Text>
             </TouchableOpacity>
+            </View>
         </View>
-    );
+        );
+
 
     return (
         <Modal
