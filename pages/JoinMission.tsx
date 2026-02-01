@@ -1,11 +1,6 @@
-/**
- * @file JoinMissionPage.tsx
- * @description Mission details page (Guest and Volunteer compatible)
- */
 import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
-  Text,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -13,7 +8,8 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Href, router, useLocalSearchParams } from 'expo-router';
+import { Text } from '@/components/ThemedText';
+import { Href, router, useLocalSearchParams, useRouter } from 'expo-router';
 import BackButton from "@/components/BackButton";
 import ButtonAuth from "@/components/Button";
 import CategoryLabel from "@/components/CategoryLabel";
@@ -25,6 +21,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Mission } from "@/models/mission.model";
 import { Colors } from "@/constants/colors";
 import AlertToast from "@/components/AlertToast";
+import { useLanguage } from "@/context/LanguageContext";
 
 /**
  * Renders the mission details page for guests and volunteers, including responsive layout, mission metadata, and role-based actions.
@@ -34,21 +31,26 @@ import AlertToast from "@/components/AlertToast";
  * @returns The mission detail screen UI component with loading/error handling, formatted date/location display, and join/favorite action controls conditioned on authentication and user role.
  */
 export default function JoinMissionPage() {
-  const { id } = useLocalSearchParams<{ id: string }>(); 
+  const { id: missionId } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
   const isSmallScreenWeb = isWeb && width < 900;
-  const { userType } = useAuth();
+  const { user, userType } = useAuth();
+  const router = useRouter();
+  const { t, language } = useLanguage();
 
   const [mission, setMission] = useState<Mission | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
+  const [statusText, setStatusText] = useState(t('joinMission'));
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
   const [error, setError] = useState(false);
 
   // FETCH MISSION
   useEffect(() => {
-    const rawId = Array.isArray(id) ? id[0] : id;
+    setStatusText(t('joinMission')); // Reset text on language change or init
+    const rawId = Array.isArray(missionId) ? missionId[0] : missionId;
 
     if (!rawId) {
       setError(true);
@@ -68,15 +70,27 @@ export default function JoinMissionPage() {
       setError(false);
       setMission(null);
       try {
+        setLoading(true);
         const data = await missionService.getById(numericId);
         setMission(data);
         if (userType === 'volunteer') {
           try {
-            const favorites = await volunteerService.getFavorites();
+            const [favorites, myMissions] = await Promise.all([
+              volunteerService.getFavorites(),
+              volunteerService.getMyMissions()
+            ]);
+            
             const isAlreadyFavorite = favorites.some(fav => fav.id_mission === numericId);
             setIsFavorite(isAlreadyFavorite);
+
+            // Check if already ACCEPTED
+            const alreadyAccepted = myMissions.some(m => m.id_mission === numericId);
+            if (alreadyAccepted) {
+                setIsJoined(true);
+                setStatusText(t('joinedValidated'));
+            }
           } catch (favError) {
-            console.warn("Could not load favorites:", favError);
+            console.warn("Could not load volunteer data:", favError);
           }
         }
       } catch (e) {
@@ -88,7 +102,7 @@ export default function JoinMissionPage() {
     };
 
     fetchMission();
-  }, [id, userType]);
+  }, [missionId, userType, t]);
 
   const showToast = useCallback((title: string, message: string) => {
     setToast({ visible: true, title, message });
@@ -110,54 +124,60 @@ export default function JoinMissionPage() {
                 isSmallScreenWeb && { paddingLeft: 70 },
                 isWeb && { paddingTop: 25 }
             ]}>
-                <BackButton name_page="Retour" />
+                <BackButton name_page={t('back')} />
             </View>
             <View>
-                <Text style={{ textAlign: 'center', marginTop: 20 }}>{error ? "Erreur lors du chargement. Réessayez." : "Mission introuvable"}</Text>
+                <Text style={{ textAlign: 'center', marginTop: 20 }}>{error ? t('loadReportsError') : t('missionNotFound')}</Text>
             </View>
         </View>
     );
   }
 
   const finished = isMissionFinished(mission);
-  const mission_category = mission.category?.label || "Général";
+  const mission_category = mission.category?.label || t('generalCategory');
   const mission_category_color = Colors.orange; 
   const locationParts = [mission.location?.zip_code, mission.location?.country].filter(Boolean);
   const mission_location = locationParts.length > 0 
   ? locationParts.join(', ') 
-  : "Lieu non précisé";
+  : t('locationUnspecified');
+
+  const isFull = mission.is_full || (mission.available_slots !== undefined && mission.available_slots <= 0);
 
   const formatDateRange = (startStr: string, endStr?: string) => {
-    if (!startStr) return "Date à définir";
+    if (!startStr) return t('dateToBeDefined');
     const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(startStr);
+    
+    // Helper localized format
+    const locale = language === 'fr' ? 'fr-FR' : 'en-US';
+
     if (isDateOnly) {
         const [y, m, d] = startStr.split('-');
+        if (language === 'en') return `${y}-${m}-${d}`;
         return `${d}/${m}/${y}`;
     }
     
     const start = new Date(startStr);
-    const dateFormatted = start.toLocaleDateString("fr-FR");
-    const startHour = start.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+    const dateFormatted = start.toLocaleDateString(locale);
+    const startHour = start.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
     if (endStr) {
       const end = new Date(endStr);
-      const endHour = end.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+      const endHour = end.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
       
       const isSameDay = start.toDateString() === end.toDateString();
       
       if (isSameDay) {
-          return `${dateFormatted} de ${startHour} à ${endHour}`;
+          return `${dateFormatted} ${t('fromTime')} ${startHour} ${t('toTime')} ${endHour}`;
       } else {
-          const endDateFormatted = end.toLocaleDateString("fr-FR");
-          return `Du ${dateFormatted} au ${endDateFormatted}`;
+          const endDateFormatted = end.toLocaleDateString(locale);
+          return `${t('fromDate')} ${dateFormatted} ${t('toDate')} ${endDateFormatted}`;
       }
     }
-    return `${dateFormatted} à ${startHour}`;
+    return `${dateFormatted} ${t('toTime')} ${startHour}`; // 'à' or 'at' context
   };
 
-  // HANDLERS (LOGIQUE GUEST)
   const checkAuthAndRedirect = () => {
     if (!userType || userType === 'volunteer_guest') {
-      showToast("Connexion requise", "Vous devez être connecté pour effectuer cette action.");
+      showToast(t('loginRequired'), t('loginToAct'));
       return false;
     }
     return true;
@@ -165,23 +185,46 @@ export default function JoinMissionPage() {
 
   const handleJoinMission = async () => {
     if (!checkAuthAndRedirect()) return;
-    if (userType !== 'volunteer') {
-      showToast("Action indisponible", "Seuls les bénévoles peuvent rejoindre une mission.");
+    if (userType !== 'volunteer' || !missionId) {
+      showToast(t('actionUnavailable'), t('volunteersOnly'));
       return;
     }
 
+    if (isJoined) {
+        showToast("Info", t('alreadyJoinedInfo'));
+        return;
+    }
+
+    setLoading(true);
     try {
-      await volunteerService.applyToMission(mission.id_mission);
-      showToast("Succès", "Candidature envoyée avec succès !");
+      await volunteerService.applyToMission(Number(missionId));
+      setIsJoined(true);
+      setStatusText(t('waitingValidation'));
+      showToast(t('success'), t('applicationSent'));
     } catch (e: any) {
-      showToast("Erreur", e.message || "Une erreur est survenue.");
+      const msg = e.response?.data?.detail || e.message || "";
+      // Detect specific backend error for already applied
+      if (
+          msg.toLowerCase().includes("already") || 
+          msg.toLowerCase().includes("existe déjà") ||
+          e.response?.status === 409 || 
+          e.response?.status === 400
+      ) {
+          setIsJoined(true);
+          setStatusText(t('waitingValidation'));
+          showToast(t('alreadyApplied'), t('alreadyAppliedMsg'));
+      } else {
+          showToast(t('error'), t('missionCreateErr')); // Generic error or create error used as fallback
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const toggleFavorite = async () => {
     if (!checkAuthAndRedirect()) return;
       if (userType !== 'volunteer') {
-        showToast("Action indisponible", "Seuls les bénévoles peuvent gérer des favoris.");
+        showToast(t('actionUnavailable'), "Seuls les bénévoles peuvent gérer des favoris."); // Only volunters can manage favs
         return;
       }
 
@@ -194,19 +237,27 @@ export default function JoinMissionPage() {
         setIsFavorite(true);
       }
     } catch (e: any) {
-      showToast("Erreur", e.message || "Impossible de modifier les favoris.");
+      showToast(t('error'), e.message || t('favError'));
     }
   };
 
   const goToAssociation = () => {
       if (mission.id_asso) {
-        const isGuest = !userType || userType === 'volunteer_guest';
+        const isGuest = userType === 'volunteer_guest';
         const route = (isGuest
           ? `/(guest)/search/association/${mission.id_asso}`
           : `/(volunteer)/search/association/${mission.id_asso}`) as Href;
           router.push(route);
       }
   };
+
+  if (loading && !mission) {
+    return <ActivityIndicator style={{ flex: 1 }} size="large" />;
+  }
+   
+  if (!mission) {
+    return <Text>{t('missionNotFound')}</Text>;
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: Colors.white }]} >
@@ -228,7 +279,7 @@ export default function JoinMissionPage() {
               <BackButton name_page="" />
           </View>
           <Text 
-              style={[ styles.headerTitle, isWeb && { fontSize: 24, marginLeft: 0 }, !isWeb && { textAlign: 'center', maxWidth: '70%' }]}
+              style={[ styles.headerTitle, isWeb ? { fontSize: 24, marginLeft: 0 } : {}, !isWeb ? { textAlign: 'center', maxWidth: '70%' } : {}]}
               numberOfLines={2}
           >
               {mission.name}
@@ -247,16 +298,17 @@ export default function JoinMissionPage() {
 
           <View style={isWeb ? styles.webInfoColumn : undefined}>
             <View style={styles.row}>
-              <Text style={styles.label}>Catégorie :</Text>
+              <Text style={styles.label}>{t('categoryLabel')} :</Text>
               <CategoryLabel text={mission_category} backgroundColor={mission_category_color} />
             </View>
 
             <View style={styles.row}>
-              <Text style={styles.label}>Nombre de bénévoles :</Text>
+              <Text style={styles.label}>{t('numVolunteers')}</Text>
               <View style={styles.volunteerRow}>
-                <Text style={styles.volunteerText}>{mission.capacity_min} / {mission.capacity_max}</Text>
+                <Text style={styles.volunteerText}>{mission.volunteers_enrolled} / {mission.capacity_max}</Text>
                 <Image source={require("@/assets/images/people.png")} style={styles.peopleIcon} />
               </View>
+              <Text style={styles.volunteerText}>{t('minNum')} {mission.capacity_min}</Text>
             </View>
           </View>
         </View>
@@ -265,26 +317,34 @@ export default function JoinMissionPage() {
         <View style={styles.bottomCard}>
           <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center'}}>
             <Text style={styles.infoLine}>
-                <Text style={styles.infoLabel}>Association :</Text> {mission.association?.name || "Non spécifiée"}
+                <Text style={styles.infoLabel}>{t('association')} :</Text> {mission.association?.name || "Non spécifiée"}
             </Text>
             {!!mission.id_asso && (
-              <TouchableOpacity onPress={goToAssociation} style={{ marginLeft: 5 }}>
+              <TouchableOpacity 
+                onPress={() => {
+                    if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                    }
+                    goToAssociation();
+                }} 
+                style={{ marginLeft: 5 }}
+              >
                   <Text style={{ color: Colors.orange, textDecorationLine: 'underline', fontWeight: '600' }}>
-                      (Voir profil)
+                      {t('seeProfile')}
                   </Text>
               </TouchableOpacity>
             )}
           </View>
 
           <Text style={styles.infoLine}>
-            <Text style={styles.infoLabel}>Date :</Text> {formatDateRange(mission.date_start, mission.date_end)}
+            <Text style={styles.infoLabel}>{t('date')} :</Text> {formatDateRange(mission.date_start, mission.date_end)}
           </Text>
 
           <Text style={styles.infoLine}>
-            <Text style={styles.infoLabel}>Lieu :</Text> {mission_location}
+            <Text style={styles.infoLabel}>{t('locationLabel')} :</Text> {mission_location}
           </Text>
 
-          <Text style={styles.infoLabel}>Description :</Text>
+          <Text style={styles.infoLabel}>{t('description')} :</Text>
           <Text style={styles.description}>{mission.description}</Text>
         </View>
 
@@ -293,10 +353,26 @@ export default function JoinMissionPage() {
             {!finished && (userType === 'volunteer' || userType === 'volunteer_guest') ? (
                 <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
                     <View style={{flex: 1, marginRight: 10}}>
-                        <ButtonAuth text="Rejoindre la mission" onPress={handleJoinMission} />
+                      {isFull ? (
+                          <View style={[styles.buttonDisabled]}>
+                              <Text style={{ color: Colors.orange, fontSize: 20, fontWeight: '500', }}>{t('full')}</Text>
+                          </View>
+                      ) : (
+                          <ButtonAuth 
+                            text={statusText} 
+                            onPress={handleJoinMission}
+                            disabled={isJoined}
+                            style={isJoined ? { backgroundColor: 'gray' } : undefined}
+                          />
+                      )}
                     </View>
                     <TouchableOpacity
-                      onPress={toggleFavorite}
+                      onPress={() => {
+                        if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                           document.activeElement.blur();
+                        }
+                        toggleFavorite();
+                      }}
                       accessibilityRole="button"
                       accessibilityLabel={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
                       accessibilityState={{ checked: isFavorite }}
@@ -310,9 +386,9 @@ export default function JoinMissionPage() {
                 </View>
             ) : (
                 finished ? (
-                    <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>Cette mission est terminée.</Text>
+                    <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>{t('missionFinished')}</Text>
                 ) : (
-                    <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>Seules les bénévoles peuvent interagir avec cette mission.</Text>
+                    <Text style={{color: 'gray', fontStyle: 'italic', textAlign: 'center'}}>{t('volunteersOnlyInteract')}</Text>
                 )
             )}
         </View>

@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   Image,
@@ -15,7 +14,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { styles } from "../styles/components/MobileSearchBarStyle";
 import { Colors } from "@/constants/colors";
 import { SearchFilters } from "../types/search.types";
-
+import { useLanguage } from "@/context/LanguageContext";
+import { Text } from '@/components/ThemedText';
 interface Props {
   onSearch: (text: string, filters: SearchFilters) => void;
   category_list: string[];
@@ -38,11 +38,13 @@ interface City {
  * @param default_city - Optional default city name to prefill the city input and selected city
  * @returns The rendered React element for the mobile search bar and its filters modal
  */
+
 export default function MobileSearchBar({
   onSearch,
   category_list,
   default_city,
 }: Props) {
+  const { t, language, getFontSize, fontFamily } = useLanguage();
   const [searchText, setSearchText] = useState("");
 
   // Filters State
@@ -87,6 +89,17 @@ export default function MobileSearchBar({
       setCitySuggestions([]);
     }
   };
+
+  const cityInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (filtersOpen && Platform.OS === 'web') {
+        const timer = setTimeout(() => {
+            cityInputRef.current?.focus();
+        }, 100);
+        return () => clearTimeout(timer);
+    }
+  }, [filtersOpen]);
 
   const handleSelectCity = (item: City) => {
     setSelectedCityName(item.nom);
@@ -133,15 +146,23 @@ export default function MobileSearchBar({
       {/* TOP BAR */}
       <View style={styles.searchBar}>
         <TouchableOpacity
-          onPress={() => setFiltersOpen(true)}
+          onPress={() => {
+            // @ts-ignore
+            if (Platform.OS === 'web' && document.activeElement instanceof HTMLElement) {
+                // @ts-ignore
+                document.activeElement.blur();
+            }
+            setFiltersOpen(true);
+          }}
           style={styles.iconButton}
         >
           <Image source={require("../assets/images/setting.png")} style={styles.icon} />
         </TouchableOpacity>
 
         <TextInput
-          style={styles.input}
-          placeholder="Rechercher une mission..."
+          style={[styles.input, { fontSize: getFontSize(14), fontFamily }]}
+          placeholder={t('searchPlaceholder')}
+          placeholderTextColor={Colors.grayPlaceholder}
           value={searchText}
           onChangeText={setSearchText}
           onSubmitEditing={applySearch}
@@ -157,7 +178,7 @@ export default function MobileSearchBar({
         {(selectedCityName || selectedZipCode) && (
           <View style={styles.filterTag}>
             <Text style={styles.filterText}>
-               {selectedCityName ? selectedCityName : "Zone"} {selectedZipCode ? `(${selectedZipCode})` : ""}
+               {selectedCityName ? selectedCityName : t('zone')} {selectedZipCode ? `(${selectedZipCode})` : ""}
             </Text>
           </View>
         )}
@@ -169,7 +190,7 @@ export default function MobileSearchBar({
         {selectedDate && (
           <View style={styles.filterTag}>
             <Text style={styles.filterText}>
-              Dès le {selectedDate.toLocaleDateString("fr-FR")}
+              {t('from')} {selectedDate.toLocaleDateString(language === 'fr' ? "fr-FR" : "en-US")}
             </Text>
           </View>
         )}
@@ -177,9 +198,10 @@ export default function MobileSearchBar({
 
       {/* FILTERS PANEL */}
       <Modal visible={filtersOpen} animationType="slide" presentationStyle="pageSheet">
-        <View style={internalStyles.modalContainer}>
+        {/* @ts-ignore */}
+        <View style={internalStyles.modalContainer} accessibilityViewIsModal={true}>
             <View style={internalStyles.modalHeader}>
-                <Text style={internalStyles.modalTitle}>Filtres</Text>
+                <Text style={internalStyles.modalTitle}>{t('filters')}</Text>
                 <TouchableOpacity onPress={() => setFiltersOpen(false)}>
                     <Text style={{fontSize: 20, padding: 10}}>✕</Text>
                 </TouchableOpacity>
@@ -197,10 +219,11 @@ export default function MobileSearchBar({
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{ paddingBottom: 50 }}
             >
-              <Text style={styles.filterTitle}>Ville ou Code Postal</Text>
+              <Text style={styles.filterTitle}>{t('cityOrZipFull')}</Text>
               <TextInput
-                style={[styles.filterInput, { borderWidth: 1, borderColor: Colors.grayBorder, padding: 10, borderRadius: 8 }]}
-                placeholder="Ex: Paris ou 75001"
+                ref={cityInputRef}
+                style={[styles.filterInput, { borderWidth: 1, borderColor: Colors.grayBorder, padding: 10, borderRadius: 8, fontSize: getFontSize(14), fontFamily }]}
+                placeholder={t('cityOrZipExample')}
                 value={cityInputText}
                 onChangeText={(text) => {
                   setCityInputText(text);
@@ -223,7 +246,7 @@ export default function MobileSearchBar({
               )}
 
               {/* 2. Category Filter */}
-              <Text style={styles.filterTitle}>Catégorie</Text>
+              <Text style={styles.filterTitle}>{t('categoryLabel')}</Text>
               <View style={styles.categoryList}>
                 {category_list.map((cat) => (
                   <TouchableOpacity
@@ -240,14 +263,14 @@ export default function MobileSearchBar({
               </View>
 
               {/* 3. Date Filter */}
-              <Text style={styles.filterTitle}>Date de début</Text>
+              <Text style={styles.filterTitle}>{t('startDateLabel')}</Text>
               
               <TouchableOpacity 
                 onPress={toggleDatePicker}
                 style={internalStyles.dateButton}
               >
                 <Text style={{fontSize: 16, fontWeight: 'bold'}}>
-                    {selectedDate ? selectedDate.toLocaleDateString('fr-FR') : "📅 Sélectionner une date"}
+                    {selectedDate ? selectedDate.toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US') : t('selectDate')}
                 </Text>
               </TouchableOpacity>
 
@@ -269,7 +292,7 @@ export default function MobileSearchBar({
                         onPress={() => setShowDatePicker(false)}
                         style={{alignItems: 'center', padding: 10}}
                       >
-                          <Text style={{color: 'blue'}}>Masquer le calendrier</Text>
+                          <Text style={{color: 'blue'}}>{t('hideCalendar')}</Text>
                       </TouchableOpacity>
                   )}
                 </View>
@@ -280,14 +303,14 @@ export default function MobileSearchBar({
                   style={[styles.resetButton, {flex: 1, backgroundColor: Colors.whiteLittleGray}]}
                   onPress={resetFilters}
                 >
-                  <Text style={[styles.resetButtonText, {color: 'black'}]}>Effacer</Text>
+                  <Text style={[styles.resetButtonText, {color: 'black'}]}>{t('clear')}</Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity
                   style={[styles.resetButton, {flex: 1, backgroundColor: 'black'}]}
                   onPress={applySearch}
                 >
-                  <Text style={[styles.resetButtonText, {color: 'white'}]}>Voir les résultats</Text>
+                  <Text style={[styles.resetButtonText, {color: 'white'}]}>{t('seeResults')}</Text>
                 </TouchableOpacity>
               </View>
             </ScrollView>
@@ -298,7 +321,6 @@ export default function MobileSearchBar({
   );
 }
 
-// Styles internes pour le Modal DatePicker iOS
 const internalStyles = StyleSheet.create({
   dateButton: {
     backgroundColor: Colors.darkerWhite, 

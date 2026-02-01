@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Platform, TouchableOpacity, Text, View } from "react-native";
+import { Platform, TouchableOpacity, View } from "react-native";
+import { Text } from '@/components/ThemedText';
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Colors } from "../constants/colors";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-
-
-
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Props {
   date: Date | null;
@@ -47,6 +46,7 @@ export default function DatePickerField({
   minimumDate = new Date(),
 }: Props) {
   const [showPicker, setShowPicker] = useState(false);
+  const { t, language } = useLanguage();
 
   // Format YYYY-MM-DD HH:mm
   const formatDateTimeLocal = (d: Date) => {
@@ -128,14 +128,14 @@ export default function DatePickerField({
       >
         <Text>
           {date
-            ? date.toLocaleString("fr-FR", {
+            ? date.toLocaleString(language === 'fr' ? "fr-FR" : "en-US", {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
                 hour: "2-digit",
                 minute: "2-digit",
               })
-            : "Choisir une date"}
+            : t('chooseDate')}
         </Text>
       </TouchableOpacity>
 

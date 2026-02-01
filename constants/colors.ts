@@ -28,9 +28,11 @@ export const Colors = {
     champFond: '#6A66B8',
     lightViolet: '#A9A7ED',
     orangeVeryLight: '#FFEFDF',
+    lightPurple: '#CDCCEB',
+    orangeWhite: '#FFF5F0',
     colorCream: '#FFF8F2',
     grayToWhite: '#F5F5F5',
     grayBorder: '#CCCCCC',
-    lightPurple: '#CDCCEB',
-    orangeWhite: '#FFF5F0',
+    modernGray: '#F8F9FA',
+    modernMoreGray: '#F1F3F5',
 };

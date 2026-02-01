@@ -4,12 +4,12 @@ import {
   FlatList,
   Platform,
   useWindowDimensions,
-  Text,
   ActivityIndicator,
   Image,
   KeyboardAvoidingView
 } from 'react-native';
-import { Href, useRouter } from 'expo-router';
+import { Text } from '@/components/ThemedText';
+import { Href, useRouter, useFocusEffect } from 'expo-router';
 import { styles } from '@/styles/pages/SearchMissionStyles';
 import { Colors } from '@/constants/colors';
 import { SearchFilters } from '@/types/search.types';
@@ -26,6 +26,9 @@ import { missionService } from '@/services/missionService';
 import { volunteerService } from '@/services/volunteerService';
 import { useAuth } from '@/context/AuthContext';
 import { Mission } from '@/models/mission.model';
+import { categoryService } from '@/services/category.service';
+import { Category } from '@/models/category.model';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * Screen component that loads missions, provides searchable and filterable results, manages user favorites, and navigates to mission details.
@@ -40,6 +43,7 @@ export default function ResearchMission() {
   const isWeb = Platform.OS === 'web';
   const { width } = useWindowDimensions();
   const isSmallScreen = width < 900;
+  const { t } = useLanguage();
 
   // --- DATA ---
   const [allMissions, setAllMissions] = useState<Mission[]>([]);
@@ -49,43 +53,61 @@ export default function ResearchMission() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState({ visible: false, title: '', message: '' });
 
-  const CATEGORIES = ['Social', 'Environnement', 'Éducation', 'Santé', 'Sport', 'Culture'];
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
     let cancelled = false;
 
     const loadData = async () => {
-      setLoading(true);
+      // On ne met le loading qu'au premier chargement pour éviter le clignotement
+      if (allMissions.length === 0) setLoading(true);
+      
       try {
-        const missionsData = await missionService.getAll();
+        const [missionsData, categoriesData, favoritesData] = await Promise.all([
+              missionService.getAll(),
+              categoryService.getAll(),
+              userType === 'volunteer' ? volunteerService.getFavorites() : Promise.resolve([]),
+            ]);
         if (cancelled) return;
         setAllMissions(missionsData || []);
-        setFilteredMissions(missionsData || []);
+        
+        setFilteredMissions(prev => {
+             // Si la liste précédente était complète (pas de filtre), on met à jour
+             if (prev.length === 0 || prev.length === (allMissions.length > 0 ? allMissions.length : 0)) {
+                 return missionsData || [];
+             }
+             return prev;
+        });
+        
+        if (allMissions.length === 0) setFilteredMissions(missionsData || []); 
 
-        if (userType === 'volunteer') {
-          const favoritesData = await volunteerService.getFavorites();
-          if (cancelled) return;
-          const ids = favoritesData.map((m) => m.id_mission);
-          setFavoriteIds(ids);
-        } else {
-          setFavoriteIds([]);
-        }
-      } catch (error) {
-        if (cancelled) return;
-        console.error(error);
-        setToast({ visible: true, title: "Erreur", message: "Impossible de charger les missions." });
+        setAllMissions(missionsData || []);
+        setCategories(categoriesData || []);
+
+        if (favoritesData) {
+              const ids = favoritesData.map((m) => m.id_mission);
+              setFavoriteIds(ids);
+            } else {
+              setFavoriteIds([]);
+            }
+        } catch (error) {
+            if (cancelled) return;
+            console.error(error);
+            if (allMissions.length === 0) setToast({ visible: true, title: t('error'), message: t('loadError') });
       } finally {
         if (!cancelled) setLoading(false);
       }
     };
     loadData();
     return () => { cancelled = true; };
-  }, [userType]);
+  }, [userType, t]) 
+  );
 
   /**
-   * Logique de filtrage unifiée
-   * @param text - Texte de recherche (nom de la mission)
-   * @param filters - Objet contenant category, zipCode, date
+   * Unified filtering logic
+   * @param text - Search text (mission name)
+   * @param filters - Object containing category, postcode, date
    */
   const performFilter = (text: string, filters: Partial<SearchFilters>) => {
     const lowerText = text.toLowerCase();
@@ -136,11 +158,11 @@ export default function ResearchMission() {
   
   const checkAuthAndRedirect = useCallback(() => {
     if (!userType || userType === 'volunteer_guest') {
-      showToast("Connexion requise", "Vous devez être connecté pour effectuer cette action.");
+      showToast(t('loginRequired'), t('loginToAct'));
       return false;
     }
     return true;
-  }, [userType, showToast]);
+  }, [userType, showToast, t]);
 
   // --- FAVORITES & NAV ---
   const handleToggleFavorite = useCallback(async (missionId: number) => {
@@ -164,23 +186,15 @@ export default function ResearchMission() {
           ? [...prev, missionId] 
           : prev.filter(id => id !== missionId)
       );
-      showToast("Erreur", "Impossible de mettre à jour les favoris.");
+      showToast(t('error'), t('favError'));
     }
-  }, [checkAuthAndRedirect, favoriteIds, showToast]);
+  }, [checkAuthAndRedirect, favoriteIds, showToast, t]);
 
   const handlePressMission = useCallback((missionId: number) => {
     const rootPath = userType === 'volunteer' ? '/(volunteer)' : '/(guest)';
     const route = `${rootPath}/search/mission/${missionId}` as Href;
     router.push(route);
   }, [userType, router]);
-
-  if (loading && allMissions.length === 0) {
-    return (
-      <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
-        <ActivityIndicator size="large" color={Colors.orange} />
-      </View>
-    );
-  }
 
   return (
     <View style={[styles.container, { backgroundColor: Colors.white }]} >
@@ -210,7 +224,7 @@ export default function ResearchMission() {
             textAlign: 'left',
           }
         ]}>
-          Rechercher une mission
+          {t('searchMission')}
         </Text>
       </View>
 
@@ -218,12 +232,12 @@ export default function ResearchMission() {
       <View style={[styles.searchbar, {zIndex: 9999}] }>
         {isWeb ? (
           <SearchBar
-            categories={CATEGORIES}
+            categories={categories.map(c => c.label)}
             onSearch={handleWebSearch}
           />
         ) : (
           <MobileSearchBar
-            category_list={CATEGORIES}
+            category_list={categories.map(c => c.label)}
             onSearch={handleMobileSearch}
           />
         )}
@@ -270,11 +284,17 @@ export default function ResearchMission() {
           </View>
         )}
         ListEmptyComponent={
-          <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>Aucune mission trouvée.</Text>
+          loading ? (
+                    <View style={{flex: 1, justifyContent:'center', alignItems:'center', marginTop: 50}}>
+                        <ActivityIndicator size="large" color={Colors.orange} />
+                    </View>
+                ) : (
+                    <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>{t('noMissionsFound')}</Text>
+                )
         }
       />
         ) : (
-            <FlatList
+        <FlatList
         data={filteredMissions}
         numColumns={1}
         key={`flatlist-${1}`}
@@ -308,7 +328,7 @@ export default function ResearchMission() {
           </View>
         )}
         ListEmptyComponent={
-          <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>Aucune mission trouvée.</Text>
+          <Text style={{textAlign: 'center', marginTop: 50, color: 'gray'}}>{t('noMissionsFound')}</Text>
         }
         />
       )}

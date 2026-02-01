@@ -40,5 +40,30 @@ export const mapMissionPublicToMission = (mission: MissionPublic): Mission => ({
   association: mission.association,
 });
 
+/**
+ * Utility function to adapt API response to Frontend model.
+ * The API returns 'categories' (array), but the Front model often uses
+ * 'category' (singular) for main display of cards.
+ */
+export const mapApiToMission = (data: any): Mission => {
+  // Take first category for main display
+  const firstCategory = (data.categories && data.categories.length > 0) 
+    ? data.categories[0] 
+    : undefined;
+
+  return {
+    ...data,
+    // Manually map so existing UI works
+    category: firstCategory,
+    // Use id_categ from first category if present
+    id_categ: firstCategory ? (firstCategory.id_categ || firstCategory.id_category) : 0,
+    
+    // Ensure calculated fields are present
+    volunteers_enrolled: data.volunteers_enrolled || 0,
+    available_slots: data.available_slots || 0,
+    is_full: data.is_full ?? false,
+  };
+};
+
 
 // TODO: Add utility to calculate number of participants for a mission

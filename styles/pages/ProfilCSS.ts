@@ -70,11 +70,16 @@ export const styles = StyleSheet.create({
         color: Colors.black,
         textAlign: 'center',
     },
+    linkText: {
+        fontSize: 14,
+        color: '#4A90E2',
+        textDecorationLine: 'underline',
+        marginBottom: 24,
+    },
     leftColumn: {
         flex: 1,
         minWidth: 310,
         maxWidth: 450,
-        marginRight: 20,
     },
     rightColumn: {
         flex: 1,
@@ -89,7 +94,6 @@ export const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 3,
         maxWidth: '100%',
         width:'100%',
     },
@@ -160,7 +164,7 @@ export const styles = StyleSheet.create({
         borderRadius: 20,
     },
     calendarDaySelected: {
-        backgroundColor: Colors.orangeVeryLight,
+        backgroundColor: Colors.orange,
         borderWidth: 2,
         borderColor: Colors.brightOrange,
         borderRadius: 20,
@@ -221,23 +225,18 @@ export const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         color: Colors.black,
-        alignSelf: 'center',
+        marginBottom: 16,
     },
     textArea: {
         backgroundColor: Colors.white,
         borderWidth: 1,
-        borderColor: Colors.whiteLittleGray,
+        borderColor: '#E5E5E5',
         borderRadius: 8,
         padding: 12,
-        paddingTop: 12,
         fontSize: 14,
         color: Colors.black,
-        minHeight: 120,
-        textAlignVertical: Platform.select({
-            ios: undefined,
-            android: 'top' as const,
-        }),
-        includeFontPadding: false,
+        height: 120,
+        textAlignVertical: 'top',
         marginBottom: 12,
     },
     addressCard: {
@@ -253,45 +252,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         marginBottom: 12,
-    },
-    formRow: {
-        flexDirection: 'row',
-    },
-    menuGrid: {
-        alignItems: 'center',
-    },
-    menuCard: {
-        margin: 10,
-    },
-    menuIconContainer: {
-        width: 150,
-        height: 150,
-        borderRadius: 30,
-        backgroundColor: Colors.orangeVeryLight,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    menuIcon: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '50%',
-        height: '50%',
-        resizeMode: 'contain',
-        marginBottom: 10,
-    },
-    statsCardMobile: {
-        marginBottom: 30,
-        alignItems: 'center',
-    },
-    profilIcon: {
-        width: 200,
-        height: 200,
-        resizeMode: 'contain',
-    },
-    separatorLine: {
-        height: 2,
-        backgroundColor: Colors.violet,
-        alignSelf: 'stretch',
     },
     card: {
         backgroundColor: Colors.white,
@@ -406,5 +366,58 @@ export const styles = StyleSheet.create({
         width:15,
         height:15,
         resizeMode: 'contain',
-    }
+    },
+    infoIconAddress: {
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: '#4A90E2',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    formRow: {
+        flexDirection: 'row',
+    },
+    menuGrid: {
+        alignItems: 'center',
+    },
+    menuCard: {
+        margin: 10,
+    },
+    menuIconContainer: {
+        width: 150,
+        height: 150,
+        borderRadius: 30,
+        backgroundColor: Colors.orangeVeryLight,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    menuIcon: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '50%',
+        height: '50%',
+        resizeMode: 'contain',
+        marginBottom: 10,
+    },
+    menuLabel: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#333',
+        textAlign: 'center',
+    },
+    statsCardMobile: {
+        marginBottom: 30,
+        alignItems: 'center',
+    },
+    profilIcon: {
+        width: 200,
+        height: 200,
+        resizeMode: 'contain',
+    },
+    separatorLine: {
+        height: 2,
+        backgroundColor: Colors.violet,
+        alignSelf: 'stretch',
+    },
 });

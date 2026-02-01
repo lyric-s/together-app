@@ -1,5 +1,6 @@
 // app/(volunteer)/home/index.tsx
 import React from 'react';
+import HomeVolunteer from '@/pages/HomeVolunteer';
 /**
  * Page component for the volunteer home.
  *
@@ -7,5 +8,5 @@ import React from 'react';
  */
 
 export default function HomeVolunteerPage() {
-//    return <HomeVolunteer />;
+    return <HomeVolunteer />;
 }

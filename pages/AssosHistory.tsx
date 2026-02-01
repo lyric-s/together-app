@@ -6,7 +6,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { Text } from '@/components/ThemedText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
@@ -15,9 +16,13 @@ import { styles } from '@/styles/pages/AssosHistoryStyle';
 import { Mission } from '@/models/mission.model';
 import { associationService } from '@/services/associationService';
 import { mapMissionPublicToMission } from '@/utils/mission.utils';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function AssosHistory() {
   const router = useRouter();
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 900;
+  const { t } = useLanguage();
 
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,13 +54,13 @@ export default function AssosHistory() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* TITLE */}
-        <Text style={styles.title}>Les missions terminées</Text>
+        <Text style={[styles.title, isSmallScreen ? { paddingLeft: 55 } : {}]}>{t('finishedMissionsTitle')}</Text>
 
         {/* CONTENT */}
         {loading ? (
           <ActivityIndicator size="large" color="#7C3AED" style={{ marginTop: 50 }} />
         ) : missions.length === 0 ? (
-          <Text style={styles.emptyText}>Aucune mission terminée pour le moment.</Text>
+          <Text style={styles.emptyText}>{t('noFinishedMissions')}</Text>
         ) : (
           <ScrollView>
             <View style={styles.cardsContainer}>

@@ -5,15 +5,15 @@ import { AxiosError } from 'axios';
  *
  * For AxiosError inputs, prefers `response.data.detail` (string or array), then `response.data.message`,
  * then `response.data` as a string, then `error.message`, and finally the fallback
- * `"Une erreur inconnue est survenue."`. For non-Axios inputs, uses the message
- * `"Erreur inattendue de connexion."`. The original error is attached as `cause` and the input is logged to the console.
+ * `"An unknown error occurred."`. For non-Axios inputs, uses the message
+ * `"Unexpected connection error."`. The original error is attached as `cause` and the input is logged to the console.
  *
  * @param error - The caught value to analyze; may be an AxiosError with a response payload or any other value.
  * @throws An `Error` with the derived user-facing message. The thrown error's `cause` is the original input.
  */
 export function handleApiError(error: unknown): never {
   if (error instanceof AxiosError) {
-    let message = "Une erreur inconnue est survenue.";
+    let message = "An unknown error occurred.";
     const responseData = error.response?.data as any; // Cast explicite pour accès souple
 
     if (responseData) {
@@ -36,5 +36,5 @@ export function handleApiError(error: unknown): never {
   }
 
   console.error("Non-API Error:", error);
-  throw new Error("Erreur inattendue de connexion.", { cause: error });
+  throw new Error("Unexpected connection error.", { cause: error });
 }

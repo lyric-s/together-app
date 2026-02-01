@@ -4,7 +4,6 @@ import { useRouter } from 'expo-router';
 import MissionVolunteerCard from '@/components/MissionVolunteerCard';
 import {
   View,
-  Text,
   Image,
   ScrollView,
   TouchableOpacity,
@@ -13,10 +12,13 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { Text } from '@/components/ThemedText';
 import { Colors } from '@/constants/colors';
 import { styles } from '@/styles/pages/AccountWithoutCoCSS';
 import { Mission } from '@/models/mission.model';
 import { missionService } from '@/services/missionService';
+import Footer from '@/components/footer';
+import { useLanguage } from '@/context/LanguageContext';
 
 /**
  * Render the guest home page showing recent missions and CTAs for volunteers and associations.
@@ -31,6 +33,7 @@ export default function HomeGuest() {
   const isWeb = Platform.OS === 'web';
   const isMobile = !isWeb;
   const isSmallScreen = width < 900;
+  const { t } = useLanguage();
 
   const [missions, setMissions] = useState<Mission[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +48,7 @@ export default function HomeGuest() {
       setMissions(data ?? []);
     } catch (e) {
       console.error(e);
-      setError("Impossible de charger les missions pour le moment.");
+      setError(t('loadError'));
     } finally {
       setLoading(false);
     }
@@ -69,10 +72,10 @@ export default function HomeGuest() {
         router.push('/(auth)/register?userType=association');
     } else {
         Alert.alert(
-            "Inscription Association",
-            "Pour des raisons administratives (envoi de documents), l'inscription d'une association se fait uniquement sur notre site web.",
+            t('assoRegisterWebOnlyTitle'),
+            t('assoRegisterWebOnlyMsg'),
             [
-                { text: "D'accord", style: "default" }
+                { text: t('understood'), style: "default" }
             ]
         );
     }
@@ -105,13 +108,13 @@ export default function HomeGuest() {
         {/* LISTE DES MISSIONS */}
         <View style={isMobile ? styles.sectionMobile : styles.sectionWeb}>
           <View style={styles.sectionHeader}>
-            <Text style={isMobile ? styles.sectionTitle : [styles.sectionTitleWeb, isSmallScreen && {paddingLeft: 35}]}>
-               {isMobile ? 'Récent' : 'Missions récentes'}
+            <Text style={isMobile ? styles.sectionTitle : [styles.sectionTitleWeb, isSmallScreen ? {paddingLeft: 35} : {}]}>
+               {isMobile ? t('recent') : t('recentMissions')}
             </Text>
             
             {isMobile && (
               <TouchableOpacity onPress={() => router.push('/(guest)/search')}>
-                <Text style={styles.seeAllText}>Voir tout</Text>
+                <Text style={styles.seeAllText}>{t('seeAll')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -138,14 +141,14 @@ export default function HomeGuest() {
                   }}
                 >
                   <Text style={{ color: Colors.orange, fontWeight: '600' }}>
-                    ↻ Recharger
+                    {t('reload')}
                   </Text>
                 </TouchableOpacity>
               </View>
             ) : (
             <View style={isMobile ? {alignItems:'center'} : styles.missionsGrid}>
               {missions.length === 0 ? (
-                <Text style={{ color: 'gray', fontStyle: 'italic', padding: 20 }}>Aucune mission disponible.</Text>
+                <Text style={{ color: 'gray', fontStyle: 'italic', padding: 20 }}>{t('noMissions')}</Text>
               ) : (
                 missions.slice(0, 3).map((mission) => (
                   <View key={mission.id_mission} style={styles.cardWrapper}>
@@ -164,18 +167,17 @@ export default function HomeGuest() {
         {/* CTA BÉNÉVOLE */}
         <View style={isMobile ? styles.ctaSectionMobile : styles.ctaSectionWeb}>
           <Text style={isMobile ? styles.ctaTitleMobile : styles.ctaTitleWeb}>
-            Vous êtes un(e) bénévole, ou vous souhaitez en devenir un(e) !
+            {t('volunteerCtaTitle')}
           </Text>
           <Text style={isMobile ? styles.ctaDescriptionMobile : styles.ctaDescriptionWeb}>
-            Envie d'agir et de donner un peu de votre temps ?{'\n'}
-            <Text style={styles.boldText}>Together</Text> vous met en lien avec des associations proches de chez vous.
+            {t('volunteerCtaDesc')}
           </Text>
           <TouchableOpacity 
             style={isMobile ? styles.ctaButtonMobile : styles.ctaButtonWeb} 
             onPress={handleJoinRegister}
           >
             <Text style={isMobile ? styles.ctaButtonText : styles.ctaButtonTextWeb}>
-              REJOINDRE EN TANT QUE BÉNÉVOLE
+              {t('joinVolunteer')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -186,11 +188,10 @@ export default function HomeGuest() {
             styles.ctaSectionLavender
         ]}>
           <Text style={isMobile ? styles.ctaTitleMobile : styles.ctaTitleWeb}>
-            Vous êtes une association et vous cherchez des bénévoles !
+            {t('associationCtaTitle')}
           </Text>
           <Text style={isMobile ? styles.ctaDescriptionMobile : styles.ctaDescriptionWeb}>
-            Besoin de renfort pour vos actions ?{'\n'}
-            Avec <Text style={[styles.boldText, { color: Colors.inputBackground }]}>Together</Text>, publiez facilement vos missions.
+            {t('associationCtaDesc')}
           </Text>
           <TouchableOpacity 
             style={[
@@ -200,10 +201,12 @@ export default function HomeGuest() {
             onPress={handleJoinRegisterAssociation}
           >
             <Text style={isMobile ? styles.ctaButtonText : styles.ctaButtonTextWeb}>
-              REJOINDRE EN TANT QU'ASSOCIATION
+              {t('joinAssociation')}
             </Text>
           </TouchableOpacity>
         </View>
+
+        {isWeb && <Footer />}
 
       </ScrollView>
     </View>
